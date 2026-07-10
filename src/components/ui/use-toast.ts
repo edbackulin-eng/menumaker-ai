@@ -14,6 +14,10 @@ type Listener = (toasts: ToastItem[]) => void;
 
 let toasts: ToastItem[] = [];
 const listeners = new Set<Listener>();
+// Stable reference: useSyncExternalStore requires getServerSnapshot to
+// return the same value across calls, not just an equal one — a fresh `[]`
+// literal each call trips React's "should be cached" infinite-loop guard.
+const EMPTY_TOASTS: ToastItem[] = [];
 
 function emit() {
   for (const listener of listeners) listener(toasts);
@@ -39,7 +43,7 @@ export function useToast() {
   }, []);
 
   const getSnapshot = React.useCallback(() => toasts, []);
-  const getServerSnapshot = React.useCallback(() => [] as ToastItem[], []);
+  const getServerSnapshot = React.useCallback(() => EMPTY_TOASTS, []);
 
   const currentToasts = React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 

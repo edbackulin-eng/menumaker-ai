@@ -486,11 +486,11 @@ export default function DesignSystemPage() {
             <SidebarNav
               className="border-r-0"
               items={[
-                { label: "Головна", href: "#", icon: Home, active: true },
-                { label: "Меню", href: "#", icon: FileText },
-                { label: "Кредити", href: "#", icon: CreditCard },
-                { label: "Сповіщення", href: "#", icon: Bell },
-                { label: "Профіль", href: "#", icon: User },
+                { label: "Головна", href: "#home", icon: Home, active: true },
+                { label: "Меню", href: "#menus", icon: FileText },
+                { label: "Кредити", href: "#credits", icon: CreditCard },
+                { label: "Сповіщення", href: "#notifications", icon: Bell },
+                { label: "Профіль", href: "#profile", icon: User },
               ]}
             />
           </div>
