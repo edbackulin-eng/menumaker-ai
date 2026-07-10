@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
 import { publicEnv } from "@/config/env";
+import type { Database } from "@/types/database.types";
 
 /**
  * Supabase-клієнт для Server Components, Server Actions та Route Handlers.
@@ -15,7 +16,7 @@ import { publicEnv } from "@/config/env";
 export async function createClient() {
   const cookieStore = await cookies();
 
-  return createServerClient(
+  return createServerClient<Database>(
     publicEnv.NEXT_PUBLIC_SUPABASE_URL,
     publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
