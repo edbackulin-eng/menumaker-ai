@@ -19,6 +19,9 @@ const publicEnvSchema = z.object({
   NEXT_PUBLIC_APP_URL: z
     .string({ message: "NEXT_PUBLIC_APP_URL є обов'язковою змінною середовища." })
     .url("NEXT_PUBLIC_APP_URL має бути коректною URL-адресою застосунку."),
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: z
+    .string({ message: "NEXT_PUBLIC_TURNSTILE_SITE_KEY є обов'язковою змінною середовища." })
+    .min(1, "NEXT_PUBLIC_TURNSTILE_SITE_KEY не може бути порожньою."),
 });
 
 function loadPublicEnv() {
@@ -26,6 +29,7 @@ function loadPublicEnv() {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   });
 
   if (!parsed.success) {

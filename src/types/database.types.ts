@@ -33,6 +33,30 @@ export type Database = {
   };
   public: {
     Tables: {
+      auth_rate_limits: {
+        Row: {
+          attempt_count: number;
+          first_attempt_at: string;
+          key: string;
+          locked_until: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          attempt_count?: number;
+          first_attempt_at?: string;
+          key: string;
+          locked_until?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          attempt_count?: number;
+          first_attempt_at?: string;
+          key?: string;
+          locked_until?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       credit_costs: {
         Row: {
           action_type: string;
@@ -367,6 +391,26 @@ export type Database = {
     };
     Functions: {
       is_admin: { Args: never; Returns: boolean };
+      is_login_locked: {
+        Args: { p_key: string };
+        Returns: {
+          locked: boolean;
+          retry_after_seconds: number;
+        }[];
+      };
+      record_login_failure: {
+        Args: {
+          p_key: string;
+          p_lockout_seconds?: number;
+          p_max_attempts?: number;
+          p_window_seconds?: number;
+        };
+        Returns: {
+          attempt_count: number;
+          locked_until: string;
+        }[];
+      };
+      record_login_success: { Args: { p_key: string }; Returns: undefined };
     };
     Enums: {
       credit_transaction_type:
