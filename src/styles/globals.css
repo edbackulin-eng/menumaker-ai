@@ -1,25 +1,122 @@
 @import "tailwindcss";
 @config "../../tailwind.config.ts";
 
+/*
+ * Design tokens — MenuMaker AI main UI (marketing/dashboard/admin), not the
+ * generated-menu templates (those get their own tokens in the Menu
+ * Generator stage).
+ *
+ * Two layers, on purpose:
+ *   1. Primitive scales (--color-accent-*, --color-neutral-*, status colors)
+ *      — the raw palette, exposed as Tailwind classes like `bg-accent-400`.
+ *   2. Semantic aliases (--color-background, --color-foreground, ...) that
+ *      *reference* the primitives. Components should reach for these
+ *      (`bg-surface`, `text-foreground-secondary`) rather than primitives
+ *      directly wherever possible. When dark mode is implemented, only this
+ *      alias layer needs a `.dark { ... }` override block — component code
+ *      never has to change.
+ *
+ * Light mode only for now (no `.dark` overrides yet), per Stage 3 scope.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Accent (brand blue) --- */
+  --color-accent-50: #e6f1fb;
+  --color-accent-100: #b5d4f4;
+  --color-accent-200: #85b7eb;
+  --color-accent-400: #378add;
+  --color-accent-600: #185fa5;
+  --color-accent-800: #0c447c;
+  --color-accent-900: #042c53;
+
+  /* --- Neutral (text/surfaces/borders) --- */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
+  --color-neutral-950: #0a0a0a;
+
+  /* --- Semantic status colors (muted, not neon) --- */
+  --color-success-50: #eaf7ef;
+  --color-success-400: #2fa968;
+  --color-success-600: #1f8752;
+
+  --color-error-50: #fdeded;
+  --color-error-400: #e5484d;
+  --color-error-600: #c22a30;
+
+  --color-warning-50: #fef6e7;
+  --color-warning-400: #e8a93b;
+  --color-warning-600: #b9791e;
+
+  /* --- Semantic aliases (what components should use) --- */
+  --color-background: var(--color-neutral-50);
+  --color-surface: var(--color-neutral-0);
+  --color-surface-secondary: var(--color-neutral-100);
+  --color-foreground: var(--color-neutral-900);
+  --color-foreground-secondary: var(--color-neutral-600);
+  --color-foreground-tertiary: var(--color-neutral-400);
+  --color-border: var(--color-neutral-200);
+  --color-border-strong: var(--color-neutral-300);
+  --color-ring: var(--color-accent-400);
+
+  /* --- Typography scale (modular ~1.25, base 16px) --- */
+  --font-size-caption: 0.75rem; /* 12px */
+  --line-height-caption: 1rem; /* 16px */
+  --font-size-body-sm: 0.875rem; /* 14px */
+  --line-height-body-sm: 1.25rem; /* 20px */
+  --font-size-body: 1rem; /* 16px */
+  --line-height-body: 1.5rem; /* 24px */
+  --font-size-body-lg: 1.125rem; /* 18px */
+  --line-height-body-lg: 1.75rem; /* 28px */
+  --font-size-h6: 1.25rem; /* 20px */
+  --line-height-h6: 1.75rem;
+  --font-size-h5: 1.5rem; /* 24px */
+  --line-height-h5: 2rem;
+  --font-size-h4: 1.875rem; /* 30px */
+  --line-height-h4: 2.25rem;
+  --font-size-h3: 2.25rem; /* 36px */
+  --line-height-h3: 2.5rem;
+  --font-size-h2: 3rem; /* 48px */
+  --line-height-h2: 3.5rem;
+  --font-size-h1: 3.75rem; /* 60px */
+  --line-height-h1: 4rem;
+
+  /* --- Radius --- */
+  --radius-sm: 0.375rem; /* 6px — inputs, buttons */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px — cards */
+  --radius-xl: 1rem; /* 16px — modals */
+  --radius-full: 9999px; /* pills, avatars */
+
+  /* --- Shadows (soft, minimal — 3 levels) --- */
+  --shadow-sm: 0 1px 2px 0 rgb(23 23 23 / 0.05);
+  --shadow-md: 0 4px 12px -2px rgb(23 23 23 / 0.08), 0 2px 4px -2px rgb(23 23 23 / 0.04);
+  --shadow-lg: 0 12px 32px -8px rgb(23 23 23 / 0.12), 0 4px 8px -4px rgb(23 23 23 / 0.04);
+
+  /* --- Motion (subtle, fast — 150-250ms) --- */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-}
+/*
+ * Spacing (4px grid) and breakpoints intentionally use Tailwind's built-in
+ * defaults (spacing unit = 0.25rem/4px; breakpoints sm/md/lg/xl/2xl are
+ * already mobile-first) — they already match this project's requirements,
+ * so redefining them as tokens here would just add an indirection layer
+ * with no behavior change.
+ */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
