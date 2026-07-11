@@ -1,4 +1,5 @@
-import { fetchJson } from "@/lib/api-client/fetch-json";
+import { fetchJson, postFormData } from "@/lib/api-client/fetch-json";
+import type { MenuContent } from "@/services/ai/schemas/menu-content";
 import type { Tables } from "@/types/database.types";
 
 export type Menu = Tables<"menus">;
@@ -28,6 +29,19 @@ export interface UpdateMenuInput {
   locale?: string;
 }
 
+export interface ImportMenuInput {
+  title: string;
+  mode: "file" | "text";
+  file?: File;
+  text?: string;
+  locale?: string;
+}
+
+export interface ImportMenuResult extends Menu {
+  usedFreeMenu: boolean;
+  creditsBalance: number;
+}
+
 export const menusApi = {
   list(params: ListMenusParams = {}): Promise<PaginatedMenus> {
     const query = new URLSearchParams();
@@ -51,5 +65,29 @@ export const menusApi = {
 
   remove(id: string): Promise<void> {
     return fetchJson<void>(`/api/menus/${id}`, { method: "DELETE" });
+  },
+
+  import(input: ImportMenuInput): Promise<ImportMenuResult> {
+    const form = new FormData();
+    form.set("title", input.title);
+    form.set("mode", input.mode);
+    if (input.file) form.set("file", input.file);
+    if (input.text) form.set("text", input.text);
+    if (input.locale) form.set("locale", input.locale);
+    return postFormData<ImportMenuResult>("/api/menus/import", form);
+  },
+
+  confirm(id: string, content: MenuContent): Promise<Menu> {
+    return fetchJson<Menu>(`/api/menus/${id}/confirm`, {
+      method: "POST",
+      body: JSON.stringify({ content }),
+    });
+  },
+
+  applyTemplate(id: string, templateId: string): Promise<Menu> {
+    return fetchJson<Menu>(`/api/menus/${id}/apply-template`, {
+      method: "POST",
+      body: JSON.stringify({ template_id: templateId }),
+    });
   },
 };

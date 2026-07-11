@@ -1,0 +1,248 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+
+import { ApiClientError } from "@/lib/api-client/api-client-error";
+import { menusApi } from "@/lib/api-client/menus";
+import type { MenuContent } from "@/services/ai/schemas/menu-content";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { EmptyState } from "@/components/shared/empty-state";
+
+export interface MenuReviewEditorProps {
+  menuId: string;
+  initialContent: MenuContent;
+}
+
+function emptyItem() {
+  return {
+    name: "",
+    description: undefined,
+    price: undefined,
+  } as MenuContent["categories"][number]["items"][number];
+}
+
+export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorProps) {
+  const router = useRouter();
+  const [content, setContent] = useState<MenuContent>(initialContent);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function updateCategory(index: number, patch: Partial<MenuContent["categories"][number]>) {
+    setContent((prev) => ({
+      ...prev,
+      categories: prev.categories.map((category, i) =>
+        i === index ? { ...category, ...patch } : category,
+      ),
+    }));
+  }
+
+  function removeCategory(index: number) {
+    setContent((prev) => ({ ...prev, categories: prev.categories.filter((_, i) => i !== index) }));
+  }
+
+  function addCategory() {
+    setContent((prev) => ({
+      ...prev,
+      categories: [...prev.categories, { name: "Нова категорія", items: [] }],
+    }));
+  }
+
+  function updateItem(
+    categoryIndex: number,
+    itemIndex: number,
+    patch: Partial<MenuContent["categories"][number]["items"][number]>,
+  ) {
+    setContent((prev) => ({
+      ...prev,
+      categories: prev.categories.map((category, ci) =>
+        ci !== categoryIndex
+          ? category
+          : {
+              ...category,
+              items: category.items.map((item, ii) =>
+                ii === itemIndex ? { ...item, ...patch } : item,
+              ),
+            },
+      ),
+    }));
+  }
+
+  function removeItem(categoryIndex: number, itemIndex: number) {
+    setContent((prev) => ({
+      ...prev,
+      categories: prev.categories.map((category, ci) =>
+        ci !== categoryIndex
+          ? category
+          : { ...category, items: category.items.filter((_, ii) => ii !== itemIndex) },
+      ),
+    }));
+  }
+
+  function addItem(categoryIndex: number) {
+    setContent((prev) => ({
+      ...prev,
+      categories: prev.categories.map((category, ci) =>
+        ci !== categoryIndex ? category : { ...category, items: [...category.items, emptyItem()] },
+      ),
+    }));
+  }
+
+  const totalItems = content.categories.reduce((sum, category) => sum + category.items.length, 0);
+
+  async function handleConfirm() {
+    setError(null);
+
+    // Empty/blank names would otherwise fail the server-side zod validation
+    // with a less actionable error — filter them out client-side first.
+    const cleaned: MenuContent = {
+      ...content,
+      categories: content.categories
+        .map((category) => ({
+          ...category,
+          items: category.items.filter((item) => item.name.trim()),
+        }))
+        .filter((category) => category.name.trim()),
+    };
+
+    if (cleaned.categories.length === 0 || cleaned.categories.every((c) => c.items.length === 0)) {
+      setError("Додайте хоча б одну страву перед підтвердженням.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await menusApi.confirm(menuId, cleaned);
+      router.push(`/menus/${menuId}/template`);
+    } catch (err) {
+      setError(
+        err instanceof ApiClientError
+          ? err.message
+          : "Не вдалося підтвердити меню. Спробуйте ще раз.",
+      );
+      setIsSubmitting(false);
+    }
+  }
+
+  if (content.categories.length === 0) {
+    return (
+      <EmptyState
+        title="Категорій ще немає"
+        description="Додайте хоча б одну категорію та страву вручну, або поверніться до імпорту з іншим файлом."
+        action={
+          <Button variant="secondary" onClick={addCategory}>
+            <Plus className="size-4" aria-hidden="true" /> Додати категорію
+          </Button>
+        }
+      />
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {content.categories.map((category, categoryIndex) => (
+        <Card key={categoryIndex}>
+          <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
+            <Input
+              value={category.name}
+              onChange={(event) => updateCategory(categoryIndex, { name: event.target.value })}
+              placeholder="Назва категорії"
+              aria-label="Назва категорії"
+              containerClassName="flex-1"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => removeCategory(categoryIndex)}
+              aria-label="Видалити категорію"
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+            </Button>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {category.items.map((item, itemIndex) => (
+              <div
+                key={itemIndex}
+                className="border-border grid gap-2 rounded-md border p-3 sm:grid-cols-[1fr_auto_auto]"
+              >
+                <Input
+                  value={item.name}
+                  onChange={(event) =>
+                    updateItem(categoryIndex, itemIndex, { name: event.target.value })
+                  }
+                  placeholder="Назва страви"
+                  aria-label="Назва страви"
+                />
+                <Input
+                  type="number"
+                  inputMode="decimal"
+                  value={item.price ?? ""}
+                  onChange={(event) =>
+                    updateItem(categoryIndex, itemIndex, {
+                      price: event.target.value === "" ? undefined : Number(event.target.value),
+                    })
+                  }
+                  placeholder="Ціна"
+                  aria-label="Ціна"
+                  className="sm:w-28"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeItem(categoryIndex, itemIndex)}
+                  aria-label="Видалити страву"
+                >
+                  <Trash2 className="size-4" aria-hidden="true" />
+                </Button>
+                <Textarea
+                  value={item.description ?? ""}
+                  onChange={(event) =>
+                    updateItem(categoryIndex, itemIndex, {
+                      description: event.target.value || undefined,
+                    })
+                  }
+                  placeholder="Опис (необов'язково)"
+                  aria-label="Опис страви"
+                  rows={2}
+                  className="sm:col-span-3"
+                />
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => addItem(categoryIndex)}
+              className="self-start"
+            >
+              <Plus className="size-4" aria-hidden="true" /> Додати страву
+            </Button>
+          </CardContent>
+        </Card>
+      ))}
+
+      <Button type="button" variant="secondary" onClick={addCategory} className="self-start">
+        <Plus className="size-4" aria-hidden="true" /> Додати категорію
+      </Button>
+
+      {error && (
+        <div className="border-error-400/30 bg-error-50 text-body-sm text-error-600 rounded-md border px-4 py-3">
+          {error}
+        </div>
+      )}
+
+      <div className="flex items-center justify-between">
+        <p className="text-body-sm text-foreground-secondary">Розпізнано страв: {totalItems}</p>
+        <Button type="button" onClick={handleConfirm} isLoading={isSubmitting}>
+          Підтвердити і продовжити
+        </Button>
+      </div>
+    </div>
+  );
+}

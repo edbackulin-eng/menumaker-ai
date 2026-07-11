@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { publicEnv } from "@/config/env";
 import type { Database } from "@/types/database.types";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
+const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/menus"];
 const ADMIN_PREFIX = "/admin";
 
 /**

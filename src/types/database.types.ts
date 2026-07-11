@@ -257,6 +257,7 @@ export type Database = {
       menus: {
         Row: {
           content: Json;
+          content_confirmed_at: string | null;
           created_at: string;
           id: string;
           is_public: boolean;
@@ -272,6 +273,7 @@ export type Database = {
         };
         Insert: {
           content?: Json;
+          content_confirmed_at?: string | null;
           created_at?: string;
           id?: string;
           is_public?: boolean;
@@ -287,6 +289,7 @@ export type Database = {
         };
         Update: {
           content?: Json;
+          content_confirmed_at?: string | null;
           created_at?: string;
           id?: string;
           is_public?: boolean;
@@ -417,6 +420,21 @@ export type Database = {
           allowed: boolean;
           remaining: number;
           retry_after_seconds: number;
+        }[];
+      };
+      consume_menu_creation_credit: {
+        Args: {
+          p_cost: number;
+          p_description: string;
+          p_free_limit: number;
+          p_related_menu_id: string;
+          p_user_id: string;
+        };
+        Returns: {
+          new_balance: number;
+          new_free_menus_used: number;
+          success: boolean;
+          used_free: boolean;
         }[];
       };
       is_admin: { Args: never; Returns: boolean };

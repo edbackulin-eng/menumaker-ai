@@ -4,13 +4,7 @@ interface ErrorEnvelope {
   error: { code: string; message: string; details?: Record<string, string[]> };
 }
 
-/** Shared request/response handling for every api-client wrapper — parses the `{ data }`/`{ error }` envelope. */
-export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
-    ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers },
-  });
-
+async function parseEnvelope<T>(response: Response): Promise<T> {
   if (response.status === 204) {
     return undefined as T;
   }
@@ -28,4 +22,23 @@ export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> 
   }
 
   return (json as { data: T }).data;
+}
+
+/** Shared request/response handling for every JSON-body api-client wrapper — parses the `{ data }`/`{ error }` envelope. */
+export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...init,
+    headers: { "Content-Type": "application/json", ...init?.headers },
+  });
+  return parseEnvelope<T>(response);
+}
+
+/**
+ * For multipart/form-data requests (file uploads) — deliberately does not
+ * set Content-Type itself, since the browser must set it (with the
+ * multipart boundary) from the FormData body.
+ */
+export async function postFormData<T>(url: string, formData: FormData): Promise<T> {
+  const response = await fetch(url, { method: "POST", body: formData });
+  return parseEnvelope<T>(response);
 }
