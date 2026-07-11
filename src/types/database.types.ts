@@ -33,6 +33,27 @@ export type Database = {
   };
   public: {
     Tables: {
+      api_rate_limits: {
+        Row: {
+          key: string;
+          request_count: number;
+          updated_at: string;
+          window_start: string;
+        };
+        Insert: {
+          key: string;
+          request_count?: number;
+          updated_at?: string;
+          window_start?: string;
+        };
+        Update: {
+          key?: string;
+          request_count?: number;
+          updated_at?: string;
+          window_start?: string;
+        };
+        Relationships: [];
+      };
       auth_rate_limits: {
         Row: {
           attempt_count: number;
@@ -390,6 +411,14 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      check_rate_limit: {
+        Args: { p_key: string; p_limit: number; p_window_seconds: number };
+        Returns: {
+          allowed: boolean;
+          remaining: number;
+          retry_after_seconds: number;
+        }[];
+      };
       is_admin: { Args: never; Returns: boolean };
       is_login_locked: {
         Args: { p_key: string };
