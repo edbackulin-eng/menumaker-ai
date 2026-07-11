@@ -10,7 +10,9 @@ values
   ('menu_generation', 1, true),
   ('menu_translation', 1, true),
   ('ai_description', 1, true),
-  ('ai_improvement', 1, true)
+  ('ai_improvement', 1, true),
+  ('menu_structuring', 1, true),
+  ('text_fix', 1, true)
 on conflict (action_type) do nothing;
 
 -- All 12 template slots from the design brief. `config` stays `{}` until

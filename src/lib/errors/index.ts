@@ -6,4 +6,6 @@ export {
   NotFoundError,
   RateLimitError,
   InsufficientCreditsError,
+  AIProviderError,
+  AIOutputValidationError,
 } from "./api-error";

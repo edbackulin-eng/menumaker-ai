@@ -63,10 +63,45 @@ export class RateLimitError extends ApiError {
   }
 }
 
-/** Reserved for the AI/Menu Generator/Payments stages — not wired to any logic yet. */
+/** Thrown by src/services/ai/credit-guard.ts when a user's balance can't cover an AI call's cost. */
 export class InsufficientCreditsError extends ApiError {
   constructor(message = "Недостатньо кредитів для цієї дії.") {
     super(402, "insufficient_credits", message);
     this.name = "InsufficientCreditsError";
+  }
+}
+
+/**
+ * The AI provider itself failed (network error, timeout, upstream rate
+ * limit, 5xx from Anthropic). 502 — this server acted correctly, an
+ * upstream dependency didn't. `retryable` is informational only right now
+ * (surfaced in logs); callers don't yet act on it.
+ */
+export class AIProviderError extends ApiError {
+  constructor(
+    message = "AI-провайдер тимчасово недоступний.",
+    public readonly retryable = false,
+  ) {
+    super(502, "ai_provider_error", message);
+    this.name = "AIProviderError";
+  }
+}
+
+/**
+ * The AI provider responded successfully, but its output still didn't
+ * match the expected zod schema after one retry with a clarified prompt.
+ * Also 502: from the client's perspective this is the same class of
+ * problem as AIProviderError (upstream dependency misbehaved), not a
+ * client input error.
+ */
+export class AIOutputValidationError extends ApiError {
+  constructor(detail?: string) {
+    super(
+      502,
+      "ai_output_invalid",
+      "AI повернув некоректну відповідь після повторної спроби.",
+      detail ? { _root: [detail] } : undefined,
+    );
+    this.name = "AIOutputValidationError";
   }
 }

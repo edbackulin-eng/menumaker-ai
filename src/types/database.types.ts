@@ -440,6 +440,19 @@ export type Database = {
         }[];
       };
       record_login_success: { Args: { p_key: string }; Returns: undefined };
+      spend_credits: {
+        Args: {
+          p_amount: number;
+          p_description: string;
+          p_related_menu_id?: string;
+          p_type: Database["public"]["Enums"]["credit_transaction_type"];
+          p_user_id: string;
+        };
+        Returns: {
+          new_balance: number;
+          success: boolean;
+        }[];
+      };
     };
     Enums: {
       credit_transaction_type:

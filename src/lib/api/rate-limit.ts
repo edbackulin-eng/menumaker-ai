@@ -14,14 +14,20 @@ export interface RateLimitResult {
 }
 
 /**
- * `authenticated` tier keys by user id when a session exists, falling back
- * to IP for signed-out requests (e.g. hitting an authenticated-tier route
- * without a session — requireAuth() inside the handler still rejects it
- * with 401; this only decides *which counter* absorbs the request).
+ * Non-public tiers key by user id when a session exists, falling back to IP
+ * for signed-out requests (e.g. hitting an authenticated-tier route without
+ * a session — requireAuth() inside the handler still rejects it with 401;
+ * this only decides *which counter* absorbs the request).
+ *
+ * The key is prefixed with `tier` so distinct tiers never share a counter —
+ * without this, a stricter tier (e.g. `ai`, 10/min) applied on top of a
+ * counter also incremented by the general `authenticated` tier (60/min)
+ * would either wrongly trip early or dilute the stricter limit, depending
+ * on which check ran first.
  */
 async function getRateLimitKey(request: NextRequest, tier: RateLimitTier): Promise<string> {
   if (tier === "public") {
-    return `api:ip:${getClientIp(request)}`;
+    return `api:${tier}:ip:${getClientIp(request)}`;
   }
 
   const supabase = await createClient();
@@ -29,7 +35,7 @@ async function getRateLimitKey(request: NextRequest, tier: RateLimitTier): Promi
     data: { user },
   } = await supabase.auth.getUser();
 
-  return user ? `api:user:${user.id}` : `api:ip:${getClientIp(request)}`;
+  return user ? `api:${tier}:user:${user.id}` : `api:${tier}:ip:${getClientIp(request)}`;
 }
 
 export async function checkRateLimit(
