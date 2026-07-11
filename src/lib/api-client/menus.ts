@@ -1,4 +1,5 @@
 import { fetchJson, postFormData } from "@/lib/api-client/fetch-json";
+import type { StyleOverridesInput } from "@/lib/validations/menu-style";
 import type { MenuContent } from "@/services/ai/schemas/menu-content";
 import type { Tables } from "@/types/database.types";
 
@@ -88,6 +89,13 @@ export const menusApi = {
     return fetchJson<Menu>(`/api/menus/${id}/apply-template`, {
       method: "POST",
       body: JSON.stringify({ template_id: templateId }),
+    });
+  },
+
+  updateStyle(id: string, styleOverrides: StyleOverridesInput): Promise<Menu> {
+    return fetchJson<Menu>(`/api/menus/${id}/style`, {
+      method: "PATCH",
+      body: JSON.stringify(styleOverrides),
     });
   },
 };

@@ -20,6 +20,7 @@ export interface MenuReviewEditorProps {
 
 function emptyItem() {
   return {
+    id: crypto.randomUUID(),
     name: "",
     description: undefined,
     price: undefined,
@@ -48,7 +49,10 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
   function addCategory() {
     setContent((prev) => ({
       ...prev,
-      categories: [...prev.categories, { name: "Нова категорія", items: [] }],
+      categories: [
+        ...prev.categories,
+        { id: crypto.randomUUID(), name: "Нова категорія", items: [] },
+      ],
     }));
   }
 
@@ -145,7 +149,7 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
   return (
     <div className="flex flex-col gap-6">
       {content.categories.map((category, categoryIndex) => (
-        <Card key={categoryIndex}>
+        <Card key={category.id}>
           <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
             <Input
               value={category.name}
@@ -167,7 +171,7 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
           <CardContent className="flex flex-col gap-4">
             {category.items.map((item, itemIndex) => (
               <div
-                key={itemIndex}
+                key={item.id}
                 className="border-border grid gap-2 rounded-md border p-3 sm:grid-cols-[1fr_auto_auto]"
               >
                 <Input

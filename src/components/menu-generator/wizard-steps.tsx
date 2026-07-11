@@ -6,6 +6,7 @@ export const WIZARD_STEPS = [
   { key: "import", label: "Імпорт" },
   { key: "review", label: "Перегляд" },
   { key: "template", label: "Шаблон" },
+  { key: "editor", label: "Стиль" },
   { key: "result", label: "Результат" },
 ] as const;
 
@@ -15,7 +16,7 @@ export interface WizardStepsProps {
   current: WizardStepKey;
 }
 
-/** Progress indicator for the Menu Generator wizard (Import -> Review -> Template -> Result). Purely presentational — the pages themselves own navigation/guards. */
+/** Progress indicator for the Menu Generator wizard (Import -> Review -> Template -> Editor -> Result). Purely presentational — the pages themselves own navigation/guards. */
 export function WizardSteps({ current }: WizardStepsProps) {
   const currentIndex = WIZARD_STEPS.findIndex((step) => step.key === current);
 

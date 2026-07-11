@@ -266,6 +266,7 @@ export type Database = {
           public_slug: string | null;
           source_type: Database["public"]["Enums"]["menu_source_type"];
           status: Database["public"]["Enums"]["menu_status"];
+          style_overrides: Json;
           template_id: string | null;
           title: string;
           updated_at: string;
@@ -282,6 +283,7 @@ export type Database = {
           public_slug?: string | null;
           source_type?: Database["public"]["Enums"]["menu_source_type"];
           status?: Database["public"]["Enums"]["menu_status"];
+          style_overrides?: Json;
           template_id?: string | null;
           title: string;
           updated_at?: string;
@@ -298,6 +300,7 @@ export type Database = {
           public_slug?: string | null;
           source_type?: Database["public"]["Enums"]["menu_source_type"];
           status?: Database["public"]["Enums"]["menu_status"];
+          style_overrides?: Json;
           template_id?: string | null;
           title?: string;
           updated_at?: string;

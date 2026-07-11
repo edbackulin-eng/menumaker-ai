@@ -1,7 +1,11 @@
 import "server-only";
 
 import { getAIProvider } from "@/services/ai/provider-factory";
-import { menuContentSchema, type MenuContent } from "@/services/ai/schemas/menu-content";
+import {
+  assignContentIds,
+  menuContentAiOutputSchema,
+  type MenuContent,
+} from "@/services/ai/schemas/menu-content";
 import type { AIUsage } from "@/services/ai/types";
 
 const SYSTEM = `Ти впорядковуєш частково розпізнані дані меню ресторану: об'єднуєш дублікати категорій, впорядковуєш страви логічно, прибираєш порожні категорії. НЕ вигадуй нових страв, описів чи цін — лише впорядковуй наявні дані. JSON-схема відповіді: {"currency"?: string, "categories": [{"name": string, "items": [{"name": string, "description"?: string, "price"?: number}]}]}.`;
@@ -23,9 +27,12 @@ export async function structureMenu(partialData: unknown): Promise<StructureMenu
   const { data, usage } = await provider.completeStructured({
     system: SYSTEM,
     prompt: `Частково розпізнані дані меню (JSON):\n${JSON.stringify(partialData)}`,
-    schema: menuContentSchema,
+    schema: menuContentAiOutputSchema,
     schemaName: "menu-content",
     maxTokens: 4096,
   });
-  return { content: data, usage };
+  // Fresh ids, not a passthrough of any ids `partialData` may have carried —
+  // structuring can merge/drop/reorder items, so old identity can't be
+  // reliably preserved anyway.
+  return { content: assignContentIds(data), usage };
 }

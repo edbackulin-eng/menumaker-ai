@@ -49,6 +49,7 @@ function merge(content: MenuContent, payload: TranslationPayload): MenuContent {
   return {
     ...(content.currency ? { currency: content.currency } : {}),
     categories: content.categories.map((category, i) => ({
+      ...category,
       name: payload.categories[i]!.name,
       items: category.items.map((item, j) => {
         const translatedDescription = payload.categories[i]!.items[j]!.description;

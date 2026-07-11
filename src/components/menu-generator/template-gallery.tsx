@@ -55,7 +55,7 @@ export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
     setIsSubmitting(true);
     try {
       await menusApi.applyTemplate(menuId, selectedId);
-      router.push(`/menus/${menuId}/result`);
+      router.push(`/menus/${menuId}/editor`);
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : "Не вдалося застосувати шаблон.");
       setIsSubmitting(false);
@@ -114,7 +114,7 @@ export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
         isLoading={isSubmitting}
         className="self-start"
       >
-        Застосувати шаблон і завершити
+        Застосувати шаблон і перейти до стилю
       </Button>
     </div>
   );
