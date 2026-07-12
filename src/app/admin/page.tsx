@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { CalendarDays, FileText, Percent, Sparkles, UserPlus, Users } from "lucide-react";
 
-import { LogoutButton } from "@/components/auth/logout-button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { createServiceClient } from "@/lib/supabase/service";
+import { getAdminDashboardData } from "@/services/admin/dashboard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/shared/container";
 import { PageHeader } from "@/components/shared/page-header";
-import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { ActivityChart } from "@/components/admin/activity-chart";
+import { MetricCard } from "@/components/admin/metric-card";
+import { RecentRegistrationsList } from "@/components/admin/recent-registrations-list";
 
-export const metadata: Metadata = { title: "Адмін-панель — MenuMaker AI" };
+export const metadata: Metadata = { title: "Дашборд — Admin Panel" };
 
-export default async function AdminPage() {
-  // Authoritative check — proxy.ts's role check is an *optimistic* fast
-  // redirect (see src/proxy.ts comment), this is the real gate.
+export default async function AdminDashboardPage() {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/login");
@@ -20,26 +23,50 @@ export default async function AdminPage() {
     redirect("/dashboard?error=forbidden");
   }
 
+  const { stats, activity, recentUsers } = await getAdminDashboardData(createServiceClient());
+
   return (
     <Container size="lg" className="py-10">
       <PageHeader
-        title="Адмін-панель"
-        description="Мінімальна заглушка — повний UI адмінки будується на Етапі 10."
-        actions={<LogoutButton variant="secondary" />}
+        title="Дашборд"
+        description="Огляд реальної активності користувачів — реєстрації, безкоштовні спроби, конверсія."
       />
+
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard label="Усього користувачів" value={stats.total_users} icon={Users} />
+        <MetricCard label="Нові сьогодні" value={stats.new_users_today} icon={UserPlus} />
+        <MetricCard label="Нові за тиждень" value={stats.new_users_week} icon={CalendarDays} />
+        <MetricCard label="Нові за місяць" value={stats.new_users_month} icon={CalendarDays} />
+        <MetricCard label="Усього створено меню" value={stats.total_menus} icon={FileText} />
+        <MetricCard
+          label="Використано безкоштовних спроб"
+          value={stats.free_trials_used}
+          icon={Sparkles}
+          hint={`з ${stats.total_users} користувачів`}
+        />
+        <MetricCard
+          label="Конверсія у створення меню"
+          value={`${stats.conversion_pct}%`}
+          icon={Percent}
+          hint="користувачів створили хоча б одне меню"
+        />
+      </div>
+
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Доступ підтверджено</CardTitle>
-          <CardDescription>
-            {user.email} · роль: {user.role}
-          </CardDescription>
+          <CardTitle>Активність за останні 30 днів</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-body-sm text-foreground-secondary">
-            Цю сторінку бачать лише користувачі з роллю admin.
-          </p>
+          <ActivityChart data={activity} />
         </CardContent>
       </Card>
+
+      <div className="mt-8 flex items-center justify-between">
+        <h2 className="text-h6 text-foreground">Останні реєстрації</h2>
+      </div>
+      <div className="mt-3">
+        <RecentRegistrationsList users={recentUsers} />
+      </div>
     </Container>
   );
 }

@@ -33,6 +33,48 @@ export type Database = {
   };
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string;
+          admin_id: string;
+          created_at: string;
+          details: Json;
+          id: string;
+          target_user_id: string | null;
+        };
+        Insert: {
+          action: string;
+          admin_id: string;
+          created_at?: string;
+          details?: Json;
+          id?: string;
+          target_user_id?: string | null;
+        };
+        Update: {
+          action?: string;
+          admin_id?: string;
+          created_at?: string;
+          details?: Json;
+          id?: string;
+          target_user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_admin_id_fkey";
+            columns: ["admin_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "admin_audit_log_target_user_id_fkey";
+            columns: ["target_user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       api_rate_limits: {
         Row: {
           key: string;
@@ -417,12 +459,126 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_change_user_role: {
+        Args: {
+          p_admin_id: string;
+          p_new_role: Database["public"]["Enums"]["user_role"];
+          p_target_user_id: string;
+        };
+        Returns: {
+          new_role: Database["public"]["Enums"]["user_role"];
+          old_role: Database["public"]["Enums"]["user_role"];
+        }[];
+      };
+      admin_credits_breakdown: {
+        Args: never;
+        Returns: {
+          total_amount: number;
+          transaction_count: number;
+          type: Database["public"]["Enums"]["credit_transaction_type"];
+        }[];
+      };
+      admin_daily_activity: {
+        Args: { p_days?: number };
+        Returns: {
+          day: string;
+          new_menus: number;
+          new_users: number;
+        }[];
+      };
+      admin_dashboard_stats: {
+        Args: never;
+        Returns: {
+          conversion_pct: number;
+          free_trials_used: number;
+          new_users_month: number;
+          new_users_today: number;
+          new_users_week: number;
+          total_menus: number;
+          total_users: number;
+        }[];
+      };
+      admin_grant_credits: {
+        Args: {
+          p_admin_id: string;
+          p_amount: number;
+          p_reason: string;
+          p_target_user_id: string;
+        };
+        Returns: {
+          new_balance: number;
+        }[];
+      };
+      admin_list_menus: {
+        Args: {
+          p_limit?: number;
+          p_offset?: number;
+          p_status?: Database["public"]["Enums"]["menu_status"];
+        };
+        Returns: {
+          created_at: string;
+          id: string;
+          owner_email: string;
+          status: Database["public"]["Enums"]["menu_status"];
+          template_id: string;
+          template_name: Json;
+          title: string;
+          total_count: number;
+        }[];
+      };
+      admin_list_users: {
+        Args: {
+          p_limit?: number;
+          p_offset?: number;
+          p_role?: Database["public"]["Enums"]["user_role"];
+          p_search?: string;
+        };
+        Returns: {
+          created_at: string;
+          credits_balance: number;
+          email: string;
+          free_menus_used: number;
+          full_name: string;
+          id: string;
+          menu_count: number;
+          role: Database["public"]["Enums"]["user_role"];
+          total_count: number;
+        }[];
+      };
+      admin_locale_breakdown: {
+        Args: never;
+        Returns: {
+          locale: string;
+          user_count: number;
+        }[];
+      };
+      admin_registration_source_breakdown: {
+        Args: never;
+        Returns: {
+          provider: string;
+          user_count: number;
+        }[];
+      };
       check_rate_limit: {
         Args: { p_key: string; p_limit: number; p_window_seconds: number };
         Returns: {
           allowed: boolean;
           remaining: number;
           retry_after_seconds: number;
+        }[];
+      };
+      complete_stripe_payment: {
+        Args: {
+          p_amount: number;
+          p_credits: number;
+          p_currency: string;
+          p_stripe_checkout_session_id: string;
+          p_stripe_payment_id: string;
+          p_user_id: string;
+        };
+        Returns: {
+          already_processed: boolean;
+          new_balance: number;
         }[];
       };
       consume_menu_creation_credit: {
@@ -483,7 +639,8 @@ export type Database = {
         | "ai_description"
         | "refund"
         | "bonus"
-        | "free_tier";
+        | "free_tier"
+        | "admin_grant";
       menu_export_type: "pdf" | "png" | "web" | "qr";
       menu_source_type: "pdf" | "docx" | "xlsx" | "text" | "manual";
       menu_status: "draft" | "processing" | "completed" | "failed";
@@ -621,6 +778,7 @@ export const Constants = {
         "refund",
         "bonus",
         "free_tier",
+        "admin_grant",
       ],
       menu_export_type: ["pdf", "png", "web", "qr"],
       menu_source_type: ["pdf", "docx", "xlsx", "text", "manual"],

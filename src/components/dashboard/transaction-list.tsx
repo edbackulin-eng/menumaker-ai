@@ -4,7 +4,10 @@ import type { DashboardTransaction } from "@/services/dashboard/get-summary";
 import { EmptyState } from "@/components/shared/empty-state";
 import type { Database } from "@/types/database.types";
 
-const TYPE_LABEL: Record<Database["public"]["Enums"]["credit_transaction_type"], string> = {
+export const CREDIT_TRANSACTION_TYPE_LABEL: Record<
+  Database["public"]["Enums"]["credit_transaction_type"],
+  string
+> = {
   purchase: "Покупка кредитів",
   menu_generation: "Аналіз меню",
   menu_translation: "Переклад меню",
@@ -12,6 +15,7 @@ const TYPE_LABEL: Record<Database["public"]["Enums"]["credit_transaction_type"],
   refund: "Повернення",
   bonus: "Бонус",
   free_tier: "Безкоштовна спроба",
+  admin_grant: "Нараховано адміністратором",
 };
 
 const dateTimeFormatter = new Intl.DateTimeFormat("uk-UA", {
@@ -46,7 +50,7 @@ export function TransactionList({ transactions, emptyDescription }: TransactionL
         <li key={transaction.id} className="flex items-center justify-between gap-4 px-4 py-3">
           <div className="min-w-0">
             <p className="text-body-sm text-foreground font-medium">
-              {TYPE_LABEL[transaction.type]}
+              {CREDIT_TRANSACTION_TYPE_LABEL[transaction.type]}
             </p>
             <p className="text-caption text-foreground-tertiary">
               {dateTimeFormatter.format(new Date(transaction.created_at))}
