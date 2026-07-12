@@ -98,4 +98,8 @@ export const menusApi = {
       body: JSON.stringify(styleOverrides),
     });
   },
+
+  duplicate(id: string): Promise<Menu> {
+    return fetchJson<Menu>(`/api/menus/${id}/duplicate`, { method: "POST" });
+  },
 };
