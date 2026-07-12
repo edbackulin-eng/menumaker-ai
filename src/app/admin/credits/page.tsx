@@ -5,7 +5,7 @@ import { ArrowDownCircle, ArrowUpCircle } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getAdminCreditsStats } from "@/services/admin/credits";
-import { CREDIT_TRANSACTION_TYPE_LABEL } from "@/components/dashboard/transaction-list";
+import { CREDIT_TRANSACTION_TYPE_LABEL } from "@/config/credit-transaction-labels";
 import { Container } from "@/components/shared/container";
 import { PageHeader } from "@/components/shared/page-header";
 import { MetricCard } from "@/components/admin/metric-card";

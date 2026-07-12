@@ -1,0 +1,320 @@
+{
+  "metadata": {
+    "title": "MenuMaker AI",
+    "description": "Crea automáticamente cartas profesionales para restaurantes, cafeterías y bares."
+  },
+  "landing": {
+    "title": "MenuMaker AI",
+    "subtitle": "Próximamente"
+  },
+  "common": {
+    "or": "o",
+    "genericError": "Algo salió mal. Inténtalo de nuevo.",
+    "buttons": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "deleteForever": "Eliminar definitivamente",
+      "confirm": "Confirmar",
+      "back": "Atrás",
+      "continue": "Continuar",
+      "create": "Crear",
+      "upload": "Subir",
+      "download": "Descargar",
+      "copy": "Copiar",
+      "change": "Cambiar",
+      "apply": "Aplicar"
+    }
+  },
+  "localeSwitcher": {
+    "label": "Idioma",
+    "ariaLabel": "Elegir idioma de la interfaz"
+  },
+  "nav": {
+    "brand": "MenuMaker AI",
+    "ariaMain": "Navegación principal",
+    "items": {
+      "myMenus": "Mis cartas",
+      "credits": "Créditos",
+      "history": "Historial",
+      "profile": "Perfil"
+    },
+    "userMenu": {
+      "profile": "Perfil",
+      "logout": "Cerrar sesión"
+    }
+  },
+  "auth": {
+    "login": {
+      "metaTitle": "Iniciar sesión — MenuMaker AI",
+      "title": "Iniciar sesión",
+      "subtitle": "Nos alegra verte de nuevo.",
+      "googleCta": "Iniciar sesión con Google",
+      "noAccount": "¿No tienes una cuenta?",
+      "registerLink": "Regístrate",
+      "forgotPasswordLink": "¿Olvidaste tu contraseña?",
+      "emailLabel": "Correo electrónico",
+      "passwordLabel": "Contraseña",
+      "submit": "Iniciar sesión"
+    },
+    "register": {
+      "metaTitle": "Registro — MenuMaker AI",
+      "title": "Crear una cuenta",
+      "subtitle": "Tus primeras 3 cartas son gratis.",
+      "googleCta": "Registrarse con Google",
+      "haveAccount": "¿Ya tienes una cuenta?",
+      "loginLink": "Iniciar sesión",
+      "emailLabel": "Correo electrónico",
+      "passwordLabel": "Contraseña",
+      "passwordHelper": "Al menos 8 caracteres.",
+      "confirmPasswordLabel": "Confirma la contraseña",
+      "submit": "Registrarse"
+    },
+    "forgotPassword": {
+      "metaTitle": "Restablecer contraseña — MenuMaker AI",
+      "title": "¿Olvidaste tu contraseña?",
+      "subtitle": "Introduce tu correo y te enviaremos un enlace para restablecer la contraseña.",
+      "emailLabel": "Correo electrónico",
+      "submit": "Enviar enlace",
+      "submitted": "Si existe una cuenta con esa dirección, le hemos enviado un enlace para restablecer la contraseña. Revisa tu bandeja de entrada (y la carpeta de spam).",
+      "rememberedPassword": "¿Recordaste tu contraseña?",
+      "loginLink": "Iniciar sesión"
+    },
+    "resetPassword": {
+      "metaTitle": "Nueva contraseña — MenuMaker AI",
+      "invalidTitle": "Enlace no válido",
+      "invalidDescription": "Este enlace para restablecer la contraseña ya se ha usado o ha caducado.",
+      "requestNewLink": "Solicitar un nuevo enlace",
+      "title": "Nueva contraseña",
+      "subtitle": "Establece una nueva contraseña para tu cuenta.",
+      "passwordLabel": "Nueva contraseña",
+      "passwordHelper": "Al menos 8 caracteres.",
+      "confirmPasswordLabel": "Confirma la contraseña",
+      "submit": "Guardar nueva contraseña"
+    },
+    "logout": "Cerrar sesión"
+  },
+  "dashboard": {
+    "myMenus": {
+      "metaTitle": "Mis cartas — MenuMaker AI",
+      "title": "Mis cartas",
+      "count": "{count, plural, one {# carta} other {# cartas}}",
+      "createNew": "Crear nueva carta",
+      "createFirst": "Crear tu primera carta",
+      "freeTrialExhausted": "Has agotado tu prueba gratuita y no tienes suficientes créditos para crear una nueva carta.",
+      "viewCredits": "Ver créditos",
+      "emptyTitle": "Aún no tienes ninguna carta",
+      "emptyDescription": "Sube un archivo o pega el texto de tu carta — la IA reconocerá categorías, platos y precios en segundos.",
+      "paginationAria": "Paginación"
+    },
+    "credits": {
+      "metaTitle": "Créditos — MenuMaker AI",
+      "title": "Créditos",
+      "subtitle": "Tu saldo y el estado de la prueba gratuita.",
+      "topUp": "Recargar",
+      "balanceTitle": "Saldo",
+      "balanceUnit": "créditos",
+      "freeTrialTitle": "Prueba gratuita",
+      "available": "Disponible",
+      "used": "Utilizada",
+      "recentTransactions": "Transacciones recientes",
+      "viewAllHistory": "Ver historial completo"
+    },
+    "creditsUpgrade": {
+      "metaTitle": "Recargar — MenuMaker AI",
+      "title": "Recargar créditos",
+      "comingSoonTitle": "La compra de créditos estará disponible muy pronto",
+      "comingSoonDescription": "Estamos preparando el pago con Stripe — con tarjeta, de forma segura y en segundos. Mantente atento.",
+      "backToCredits": "Volver a créditos"
+    },
+    "history": {
+      "metaTitle": "Historial — MenuMaker AI",
+      "title": "Historial",
+      "subtitle": "Toda la actividad de créditos de tu cuenta.",
+      "paginationAria": "Paginación"
+    },
+    "profile": {
+      "metaTitle": "Perfil — MenuMaker AI",
+      "title": "Perfil",
+      "subtitle": "Gestiona tu cuenta.",
+      "avatarCardTitle": "Foto de perfil",
+      "detailsCardTitle": "Datos personales",
+      "nameLabel": "Nombre",
+      "saved": "Guardado.",
+      "saveError": "No se pudo guardar el perfil.",
+      "passwordCardTitle": "Contraseña",
+      "dangerZoneTitle": "Zona de peligro",
+      "dangerZoneDescription": "Eliminar tu cuenta es irreversible — todas tus cartas y datos se perderán para siempre.",
+      "deleteAccount": "Eliminar cuenta",
+      "deleteDialogTitle": "¿Eliminar la cuenta definitivamente?",
+      "deleteDialogDescription": "Esta acción no se puede deshacer. Todas tus cartas, créditos e historial se eliminarán permanentemente. Para confirmar, escribe tu correo ({email}) a continuación.",
+      "confirmEmailLabel": "Correo de confirmación",
+      "deleteError": "No se pudo eliminar la cuenta."
+    },
+    "avatarUpload": {
+      "changePhoto": "Cambiar foto",
+      "hint": "JPG, PNG o WebP, hasta 2 MB",
+      "error": "No se pudo subir el avatar."
+    },
+    "changePassword": {
+      "newPasswordLabel": "Nueva contraseña",
+      "confirmPasswordLabel": "Confirma la contraseña",
+      "passwordHelper": "Al menos 8 caracteres.",
+      "submit": "Cambiar contraseña",
+      "saved": "Contraseña cambiada.",
+      "error": "No se pudo cambiar la contraseña."
+    },
+    "transactions": {
+      "emptyTitle": "El historial está vacío",
+      "emptyDescription": "La actividad de créditos aparecerá aquí después de crear tu primera carta.",
+      "types": {
+        "purchase": "Compra de créditos",
+        "menu_generation": "Análisis de carta",
+        "menu_translation": "Traducción de carta",
+        "ai_description": "Descripción de plato por IA",
+        "refund": "Reembolso",
+        "bonus": "Bono",
+        "free_tier": "Prueba gratuita",
+        "admin_grant": "Otorgado por el administrador"
+      }
+    },
+    "menuCard": {
+      "actionsAria": "Acciones de la carta",
+      "editLabel": "Editar",
+      "duplicateLabel": "Duplicar",
+      "publicLink": "Enlace público",
+      "deleteLabel": "Eliminar",
+      "updatedPrefix": "Actualizado",
+      "deleteDialogTitle": "¿Eliminar «{title}»?",
+      "deleteDialogDescription": "Esta acción no se puede deshacer. La carta y todos los datos relacionados se eliminarán permanentemente.",
+      "duplicateError": "No se pudo duplicar la carta.",
+      "deleteError": "No se pudo eliminar la carta."
+    },
+    "statusBadge": {
+      "draft": "Borrador",
+      "processing": "Procesando",
+      "completed": "Completada",
+      "failed": "Error"
+    }
+  },
+  "menuGenerator": {
+    "wizardSteps": {
+      "ariaLabel": "Pasos para crear la carta",
+      "import": "Importar",
+      "review": "Revisar",
+      "template": "Plantilla",
+      "editor": "Estilo",
+      "result": "Resultado"
+    },
+    "import": {
+      "metaTitle": "Nueva carta — MenuMaker AI",
+      "title": "Crear una carta",
+      "subtitle": "Sube un archivo de tu carta o pega el texto — la IA reconocerá categorías, platos y precios.",
+      "nameLabel": "Nombre de la carta",
+      "namePlaceholder": "Ej. Carta de verano 2026",
+      "uploadTab": "Subir archivo",
+      "textTab": "Pegar texto",
+      "dropzoneHint": "PDF, Word (.docx) o Excel (.xlsx), hasta 10 MB",
+      "textLabel": "Texto de la carta",
+      "textPlaceholder": "Pega el texto de tu carta — categorías, platos, precios...",
+      "submit": "Analizar carta",
+      "submitting": "La IA está analizando tu carta...",
+      "errors": {
+        "titleRequired": "Indica un nombre para la carta.",
+        "fileRequired": "Elige un archivo para subir.",
+        "textRequired": "Pega el texto de la carta.",
+        "unexpected": "Se produjo un error inesperado. Inténtalo de nuevo.",
+        "creditsHint": "La compra de créditos estará disponible en la página Créditos (llegará en una etapa posterior)."
+      }
+    },
+    "dropzone": {
+      "cta": "Arrastra un archivo aquí o haz clic para seleccionarlo",
+      "removeAria": "Quitar archivo"
+    },
+    "review": {
+      "metaTitle": "Revisar carta — MenuMaker AI",
+      "subtitle": "Revisa las categorías, platos y precios reconocidos — corrige o añade lo que la IA pueda haber pasado por alto.",
+      "categoryNamePlaceholder": "Nombre de la categoría",
+      "categoryNameAria": "Nombre de la categoría",
+      "itemNamePlaceholder": "Nombre del plato",
+      "itemNameAria": "Nombre del plato",
+      "pricePlaceholder": "Precio",
+      "priceAria": "Precio",
+      "descriptionPlaceholder": "Descripción (opcional)",
+      "descriptionAria": "Descripción del plato",
+      "removeCategoryAria": "Eliminar categoría",
+      "removeItemAria": "Eliminar plato",
+      "newCategoryName": "Nueva categoría",
+      "addItem": "Añadir plato",
+      "addCategory": "Añadir categoría",
+      "addFirstCategory": "Añadir categoría",
+      "emptyTitle": "Todavía no hay categorías",
+      "emptyDescription": "Añade al menos una categoría y un plato manualmente, o vuelve atrás e importa otro archivo.",
+      "atLeastOneItemError": "Añade al menos un plato antes de confirmar.",
+      "confirmGenericError": "No se pudo confirmar la carta. Inténtalo de nuevo.",
+      "recognizedCount": "Platos reconocidos: {count}",
+      "confirm": "Confirmar y continuar"
+    },
+    "template": {
+      "metaTitle": "Elige una plantilla — MenuMaker AI",
+      "subtitle": "Elige una plantilla de diseño para tu carta.",
+      "defaultName": "Plantilla",
+      "categoryCuisine": "Cocina",
+      "categoryStyle": "Estilo",
+      "applyButton": "Aplicar plantilla y continuar al estilo",
+      "applyError": "No se pudo aplicar la plantilla."
+    },
+    "editor": {
+      "metaTitle": "Estilo de la carta — MenuMaker AI",
+      "subtitle": "Personaliza el color, la fuente, el diseño y el orden de los platos — los cambios se ven al instante en la vista previa.",
+      "accentColor": "Color de acento",
+      "contrastLabel": "Contraste del texto sobre el acento: {ratio}:1",
+      "contrastPass": "✓ WCAG AA",
+      "contrastAdjusted": "(el color del texto se ajusta automáticamente)",
+      "font": "Fuente",
+      "columns": "Número de columnas",
+      "save": "Guardar",
+      "continue": "Continuar",
+      "saveStatus": {
+        "pending": "Esperando para guardar…",
+        "saving": "Guardando…",
+        "saved": "Guardado",
+        "error": "No se pudo guardar — prueba el botón «Guardar»"
+      }
+    },
+    "result": {
+      "metaTitle": "Carta lista — MenuMaker AI",
+      "title": "¡Tu carta está lista!",
+      "summary": "«{title}» se creó correctamente: {categoryCount, plural, one {# categoría} other {# categorías}}, {itemCount, plural, one {# plato} other {# platos}}. Publícala como Web Menu o descarga los archivos finales a continuación."
+    }
+  },
+  "export": {
+    "webMenuTitle": "Web Menu",
+    "published": "Publicada",
+    "slugLabel": "Enlace (slug)",
+    "slugHelper": "Letras latinas, números, guiones. Déjalo en blanco para generarlo automáticamente a partir del nombre.",
+    "publish": "Publicar",
+    "unpublish": "Anular publicación",
+    "changeLink": "Cambiar enlace",
+    "copyLink": "Copiar",
+    "generateQr": "Generar código QR",
+    "downloadQr": "Descargar QR",
+    "qrAlt": "Código QR que enlaza con la carta",
+    "downloadFilesTitle": "Descargar archivos",
+    "downloadPdf": "Descargar PDF",
+    "downloadPng": "Descargar PNG",
+    "toasts": {
+      "publishedTitle": "Publicada",
+      "publishedDescription": "Tu Web Menu ya está disponible en su enlace.",
+      "unpublishedTitle": "Publicación anulada",
+      "unpublishedDescription": "El enlace se ha guardado — puedes volver a publicar cuando quieras.",
+      "copiedTitle": "Copiado",
+      "errorTitle": "Error",
+      "errorPublish": "No se pudo publicar la carta.",
+      "errorUnpublish": "No se pudo anular la publicación de la carta.",
+      "errorPdf": "No se pudo descargar el PDF.",
+      "errorPng": "No se pudo descargar la imagen.",
+      "errorQr": "No se pudo generar el código QR."
+    }
+  }
+}

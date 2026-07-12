@@ -1,0 +1,320 @@
+{
+  "metadata": {
+    "title": "MenuMaker AI",
+    "description": "Automatyczne tworzenie profesjonalnych menu dla restauracji, kawiarni i barów."
+  },
+  "landing": {
+    "title": "MenuMaker AI",
+    "subtitle": "Już wkrótce"
+  },
+  "common": {
+    "or": "lub",
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
+    "buttons": {
+      "save": "Zapisz",
+      "cancel": "Anuluj",
+      "delete": "Usuń",
+      "deleteForever": "Usuń na zawsze",
+      "confirm": "Potwierdź",
+      "back": "Wstecz",
+      "continue": "Dalej",
+      "create": "Utwórz",
+      "upload": "Wgraj",
+      "download": "Pobierz",
+      "copy": "Kopiuj",
+      "change": "Zmień",
+      "apply": "Zastosuj"
+    }
+  },
+  "localeSwitcher": {
+    "label": "Język",
+    "ariaLabel": "Wybierz język interfejsu"
+  },
+  "nav": {
+    "brand": "MenuMaker AI",
+    "ariaMain": "Nawigacja główna",
+    "items": {
+      "myMenus": "Moje menu",
+      "credits": "Kredyty",
+      "history": "Historia",
+      "profile": "Profil"
+    },
+    "userMenu": {
+      "profile": "Profil",
+      "logout": "Wyloguj się"
+    }
+  },
+  "auth": {
+    "login": {
+      "metaTitle": "Logowanie — MenuMaker AI",
+      "title": "Zaloguj się",
+      "subtitle": "Miło Cię znów widzieć.",
+      "googleCta": "Zaloguj się przez Google",
+      "noAccount": "Nie masz konta?",
+      "registerLink": "Zarejestruj się",
+      "forgotPasswordLink": "Nie pamiętasz hasła?",
+      "emailLabel": "Email",
+      "passwordLabel": "Hasło",
+      "submit": "Zaloguj się"
+    },
+    "register": {
+      "metaTitle": "Rejestracja — MenuMaker AI",
+      "title": "Utwórz konto",
+      "subtitle": "Pierwsze 3 menu są bezpłatne.",
+      "googleCta": "Zarejestruj się przez Google",
+      "haveAccount": "Masz już konto?",
+      "loginLink": "Zaloguj się",
+      "emailLabel": "Email",
+      "passwordLabel": "Hasło",
+      "passwordHelper": "Minimum 8 znaków.",
+      "confirmPasswordLabel": "Potwierdź hasło",
+      "submit": "Zarejestruj się"
+    },
+    "forgotPassword": {
+      "metaTitle": "Odzyskiwanie hasła — MenuMaker AI",
+      "title": "Nie pamiętasz hasła?",
+      "subtitle": "Podaj adres email — wyślemy link do zresetowania hasła.",
+      "emailLabel": "Email",
+      "submit": "Wyślij link",
+      "submitted": "Jeśli konto z tym adresem istnieje, wysłaliśmy na nie link do zresetowania hasła. Sprawdź skrzynkę odbiorczą (oraz folder spam).",
+      "rememberedPassword": "Przypomniałeś sobie hasło?",
+      "loginLink": "Zaloguj się"
+    },
+    "resetPassword": {
+      "metaTitle": "Nowe hasło — MenuMaker AI",
+      "invalidTitle": "Link jest nieprawidłowy",
+      "invalidDescription": "Ten link do resetowania hasła został już użyty lub wygasł.",
+      "requestNewLink": "Poproś o nowy link",
+      "title": "Nowe hasło",
+      "subtitle": "Ustaw nowe hasło do swojego konta.",
+      "passwordLabel": "Nowe hasło",
+      "passwordHelper": "Minimum 8 znaków.",
+      "confirmPasswordLabel": "Potwierdź hasło",
+      "submit": "Zapisz nowe hasło"
+    },
+    "logout": "Wyloguj się"
+  },
+  "dashboard": {
+    "myMenus": {
+      "metaTitle": "Moje menu — MenuMaker AI",
+      "title": "Moje menu",
+      "count": "{count, plural, one {# menu} few {# menu} many {# menu} other {# menu}}",
+      "createNew": "Utwórz nowe menu",
+      "createFirst": "Utwórz pierwsze menu",
+      "freeTrialExhausted": "Wykorzystano bezpłatny okres próbny, a saldo kredytów nie wystarcza na utworzenie nowego menu.",
+      "viewCredits": "Zobacz kredyty",
+      "emptyTitle": "Nie masz jeszcze żadnego menu",
+      "emptyDescription": "Wgraj plik lub wklej tekst menu — AI rozpozna kategorie, dania i ceny w kilka sekund.",
+      "paginationAria": "Paginacja"
+    },
+    "credits": {
+      "metaTitle": "Kredyty — MenuMaker AI",
+      "title": "Kredyty",
+      "subtitle": "Saldo i status bezpłatnego okresu próbnego.",
+      "topUp": "Doładuj",
+      "balanceTitle": "Saldo",
+      "balanceUnit": "kredytów",
+      "freeTrialTitle": "Bezpłatny okres próbny",
+      "available": "Dostępny",
+      "used": "Wykorzystany",
+      "recentTransactions": "Ostatnie transakcje",
+      "viewAllHistory": "Cała historia"
+    },
+    "creditsUpgrade": {
+      "metaTitle": "Doładowanie — MenuMaker AI",
+      "title": "Doładuj kredyty",
+      "comingSoonTitle": "Zakup kredytów będzie wkrótce dostępny",
+      "comingSoonDescription": "Przygotowujemy płatności przez Stripe — kartą, bezpiecznie, w kilka sekund. Bądź na bieżąco.",
+      "backToCredits": "Wróć do kredytów"
+    },
+    "history": {
+      "metaTitle": "Historia — MenuMaker AI",
+      "title": "Historia",
+      "subtitle": "Wszystkie operacje na kredytach Twojego konta.",
+      "paginationAria": "Paginacja"
+    },
+    "profile": {
+      "metaTitle": "Profil — MenuMaker AI",
+      "title": "Profil",
+      "subtitle": "Zarządzaj swoim kontem.",
+      "avatarCardTitle": "Zdjęcie profilowe",
+      "detailsCardTitle": "Dane osobowe",
+      "nameLabel": "Imię",
+      "saved": "Zapisano.",
+      "saveError": "Nie udało się zapisać profilu.",
+      "passwordCardTitle": "Hasło",
+      "dangerZoneTitle": "Strefa niebezpieczna",
+      "dangerZoneDescription": "Usunięcie konta jest nieodwracalne — wszystkie Twoje menu i dane zostaną utracone na zawsze.",
+      "deleteAccount": "Usuń konto",
+      "deleteDialogTitle": "Usunąć konto na zawsze?",
+      "deleteDialogDescription": "Tej operacji nie można cofnąć. Wszystkie Twoje menu, kredyty i historia zostaną trwale usunięte. Aby potwierdzić, wpisz poniżej swój adres email ({email}).",
+      "confirmEmailLabel": "Email do potwierdzenia",
+      "deleteError": "Nie udało się usunąć konta."
+    },
+    "avatarUpload": {
+      "changePhoto": "Zmień zdjęcie",
+      "hint": "JPG, PNG lub WebP, do 2 MB",
+      "error": "Nie udało się wgrać awatara."
+    },
+    "changePassword": {
+      "newPasswordLabel": "Nowe hasło",
+      "confirmPasswordLabel": "Potwierdź hasło",
+      "passwordHelper": "Minimum 8 znaków.",
+      "submit": "Zmień hasło",
+      "saved": "Hasło zostało zmienione.",
+      "error": "Nie udało się zmienić hasła."
+    },
+    "transactions": {
+      "emptyTitle": "Historia jest pusta",
+      "emptyDescription": "Operacje na kredytach pojawią się tutaj po utworzeniu pierwszego menu.",
+      "types": {
+        "purchase": "Zakup kredytów",
+        "menu_generation": "Analiza menu",
+        "menu_translation": "Tłumaczenie menu",
+        "ai_description": "Opis dania przez AI",
+        "refund": "Zwrot",
+        "bonus": "Bonus",
+        "free_tier": "Bezpłatny okres próbny",
+        "admin_grant": "Przyznane przez administratora"
+      }
+    },
+    "menuCard": {
+      "actionsAria": "Działania na menu",
+      "editLabel": "Edytuj",
+      "duplicateLabel": "Duplikuj",
+      "publicLink": "Link publiczny",
+      "deleteLabel": "Usuń",
+      "updatedPrefix": "Zaktualizowano",
+      "deleteDialogTitle": "Usunąć „{title}”?",
+      "deleteDialogDescription": "Tej operacji nie można cofnąć. Menu i wszystkie powiązane dane zostaną trwale usunięte.",
+      "duplicateError": "Nie udało się zduplikować menu.",
+      "deleteError": "Nie udało się usunąć menu."
+    },
+    "statusBadge": {
+      "draft": "Wersja robocza",
+      "processing": "Przetwarzanie",
+      "completed": "Ukończone",
+      "failed": "Błąd"
+    }
+  },
+  "menuGenerator": {
+    "wizardSteps": {
+      "ariaLabel": "Etapy tworzenia menu",
+      "import": "Import",
+      "review": "Przegląd",
+      "template": "Szablon",
+      "editor": "Styl",
+      "result": "Wynik"
+    },
+    "import": {
+      "metaTitle": "Nowe menu — MenuMaker AI",
+      "title": "Utwórz menu",
+      "subtitle": "Wgraj plik menu lub wklej tekst — AI rozpozna kategorie, dania i ceny.",
+      "nameLabel": "Nazwa menu",
+      "namePlaceholder": "Np. Menu letnie 2026",
+      "uploadTab": "Wgraj plik",
+      "textTab": "Wklej tekst",
+      "dropzoneHint": "PDF, Word (.docx) lub Excel (.xlsx), do 10 MB",
+      "textLabel": "Tekst menu",
+      "textPlaceholder": "Wklej tekst menu — kategorie, dania, ceny...",
+      "submit": "Analizuj menu",
+      "submitting": "AI analizuje Twoje menu...",
+      "errors": {
+        "titleRequired": "Podaj nazwę menu.",
+        "fileRequired": "Wybierz plik do wgrania.",
+        "textRequired": "Wklej tekst menu.",
+        "unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+        "creditsHint": "Zakup kredytów będzie dostępny na stronie Kredyty (pojawi się na kolejnym etapie)."
+      }
+    },
+    "dropzone": {
+      "cta": "Przeciągnij plik tutaj lub kliknij, aby wybrać",
+      "removeAria": "Usuń plik"
+    },
+    "review": {
+      "metaTitle": "Przegląd menu — MenuMaker AI",
+      "subtitle": "Sprawdź rozpoznane kategorie, dania i ceny — popraw lub dodaj to, co AI mogło pominąć.",
+      "categoryNamePlaceholder": "Nazwa kategorii",
+      "categoryNameAria": "Nazwa kategorii",
+      "itemNamePlaceholder": "Nazwa dania",
+      "itemNameAria": "Nazwa dania",
+      "pricePlaceholder": "Cena",
+      "priceAria": "Cena",
+      "descriptionPlaceholder": "Opis (opcjonalnie)",
+      "descriptionAria": "Opis dania",
+      "removeCategoryAria": "Usuń kategorię",
+      "removeItemAria": "Usuń danie",
+      "newCategoryName": "Nowa kategoria",
+      "addItem": "Dodaj danie",
+      "addCategory": "Dodaj kategorię",
+      "addFirstCategory": "Dodaj kategorię",
+      "emptyTitle": "Nie ma jeszcze żadnych kategorii",
+      "emptyDescription": "Dodaj ręcznie co najmniej jedną kategorię i danie albo wróć i zaimportuj inny plik.",
+      "atLeastOneItemError": "Dodaj co najmniej jedno danie przed zatwierdzeniem.",
+      "confirmGenericError": "Nie udało się zatwierdzić menu. Spróbuj ponownie.",
+      "recognizedCount": "Rozpoznane dania: {count}",
+      "confirm": "Zatwierdź i kontynuuj"
+    },
+    "template": {
+      "metaTitle": "Wybierz szablon — MenuMaker AI",
+      "subtitle": "Wybierz szablon graficzny dla swojego menu.",
+      "defaultName": "Szablon",
+      "categoryCuisine": "Kuchnia",
+      "categoryStyle": "Styl",
+      "applyButton": "Zastosuj szablon i przejdź do stylu",
+      "applyError": "Nie udało się zastosować szablonu."
+    },
+    "editor": {
+      "metaTitle": "Styl menu — MenuMaker AI",
+      "subtitle": "Dostosuj kolor, czcionkę, układ i kolejność dań — zmiany widać od razu w podglądzie.",
+      "accentColor": "Kolor akcentu",
+      "contrastLabel": "Kontrast tekstu na akcencie: {ratio}:1",
+      "contrastPass": "✓ WCAG AA",
+      "contrastAdjusted": "(kolor tekstu dobierany automatycznie)",
+      "font": "Czcionka",
+      "columns": "Liczba kolumn",
+      "save": "Zapisz",
+      "continue": "Dalej",
+      "saveStatus": {
+        "pending": "Oczekiwanie na zapis…",
+        "saving": "Zapisywanie…",
+        "saved": "Zapisano",
+        "error": "Nie udało się zapisać — spróbuj przycisku „Zapisz”"
+      }
+    },
+    "result": {
+      "metaTitle": "Menu gotowe — MenuMaker AI",
+      "title": "Twoje menu jest gotowe!",
+      "summary": "Menu „{title}” zostało pomyślnie utworzone: {categoryCount, plural, one {# kategoria} few {# kategorie} many {# kategorii} other {# kategorii}}, {itemCount, plural, one {# danie} few {# dania} many {# dań} other {# dań}}. Opublikuj je jako Web Menu lub pobierz gotowe pliki poniżej."
+    }
+  },
+  "export": {
+    "webMenuTitle": "Web Menu",
+    "published": "Opublikowano",
+    "slugLabel": "Link (slug)",
+    "slugHelper": "Litery łacińskie, cyfry, myślniki. Zostaw puste, aby wygenerować automatycznie z nazwy.",
+    "publish": "Opublikuj",
+    "unpublish": "Cofnij publikację",
+    "changeLink": "Zmień link",
+    "copyLink": "Kopiuj",
+    "generateQr": "Wygeneruj kod QR",
+    "downloadQr": "Pobierz kod QR",
+    "qrAlt": "Kod QR prowadzący do menu",
+    "downloadFilesTitle": "Pobierz pliki",
+    "downloadPdf": "Pobierz PDF",
+    "downloadPng": "Pobierz PNG",
+    "toasts": {
+      "publishedTitle": "Opublikowano",
+      "publishedDescription": "Twoje Web Menu jest teraz dostępne pod tym linkiem.",
+      "unpublishedTitle": "Cofnięto publikację",
+      "unpublishedDescription": "Link został zachowany — możesz opublikować ponownie w dowolnym momencie.",
+      "copiedTitle": "Skopiowano",
+      "errorTitle": "Błąd",
+      "errorPublish": "Nie udało się opublikować menu.",
+      "errorUnpublish": "Nie udało się cofnąć publikacji menu.",
+      "errorPdf": "Nie udało się pobrać pliku PDF.",
+      "errorPng": "Nie udało się pobrać obrazu.",
+      "errorQr": "Nie udało się wygenerować kodu QR."
+    }
+  }
+}

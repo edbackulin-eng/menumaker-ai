@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { updatePasswordAction } from "@/features/auth/actions";
 import { type ResetPasswordInput, resetPasswordSchema } from "@/lib/validations/auth";
 
 export function ResetPasswordForm() {
+  const t = useTranslations("auth.resetPassword");
   const {
     register,
     handleSubmit,
@@ -26,15 +28,15 @@ export function ResetPasswordForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
       <Input
-        label="Новий пароль"
+        label={t("passwordLabel")}
         type="password"
         autoComplete="new-password"
-        helperText="Щонайменше 8 символів."
+        helperText={t("passwordHelper")}
         error={errors.password?.message}
         {...register("password")}
       />
       <Input
-        label="Підтвердіть пароль"
+        label={t("confirmPasswordLabel")}
         type="password"
         autoComplete="new-password"
         error={errors.confirmPassword?.message}
@@ -42,7 +44,7 @@ export function ResetPasswordForm() {
       />
       {errors.root && <p className="text-body-sm text-error-600">{errors.root.message}</p>}
       <Button type="submit" isLoading={isSubmitting} className="w-full">
-        Зберегти новий пароль
+        {t("submit")}
       </Button>
     </form>
   );

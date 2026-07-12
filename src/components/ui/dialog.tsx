@@ -29,7 +29,7 @@ export const DialogContent = React.forwardRef<
       {children}
       <DialogPrimitive.Close
         className={cn(
-          "text-foreground-tertiary duration-fast hover:text-foreground absolute top-4 right-4 rounded-sm transition-colors",
+          "text-foreground-tertiary duration-fast hover:text-foreground absolute end-4 top-4 rounded-sm transition-colors",
           "focus-visible:ring-ring/30 focus-visible:ring-2 focus-visible:outline-none",
         )}
       >

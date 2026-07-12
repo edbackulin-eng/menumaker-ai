@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils/cn";
 import { DASHBOARD_NAV_ITEMS } from "@/components/dashboard/dashboard-nav-items";
 
@@ -16,10 +16,11 @@ import { DASHBOARD_NAV_ITEMS } from "@/components/dashboard/dashboard-nav-items"
  */
 export function DashboardMobileNav() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   return (
     <nav
-      aria-label="Основна навігація"
+      aria-label={t("ariaMain")}
       className="border-border bg-surface fixed inset-x-0 bottom-0 z-20 flex items-stretch justify-around border-t lg:hidden"
     >
       {DASHBOARD_NAV_ITEMS.map((item) => {
@@ -39,7 +40,7 @@ export function DashboardMobileNav() {
             )}
           >
             {Icon && <Icon className="size-5" aria-hidden="true" />}
-            {item.label}
+            {t(`items.${item.labelKey}`)}
           </Link>
         );
       })}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi } from "@/lib/api-client/menus";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +16,7 @@ const ACCEPTED_FILE_TYPES =
   "application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 export function ImportForm() {
+  const t = useTranslations("menuGenerator.import");
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [mode, setMode] = useState<"file" | "text">("file");
@@ -30,15 +32,15 @@ export function ImportForm() {
     setError(null);
 
     if (!title.trim()) {
-      setError({ message: "Вкажіть назву меню.", isInsufficientCredits: false });
+      setError({ message: t("errors.titleRequired"), isInsufficientCredits: false });
       return;
     }
     if (mode === "file" && !file) {
-      setError({ message: "Оберіть файл для завантаження.", isInsufficientCredits: false });
+      setError({ message: t("errors.fileRequired"), isInsufficientCredits: false });
       return;
     }
     if (mode === "text" && !text.trim()) {
-      setError({ message: "Вставте текст меню.", isInsufficientCredits: false });
+      setError({ message: t("errors.textRequired"), isInsufficientCredits: false });
       return;
     }
 
@@ -59,7 +61,7 @@ export function ImportForm() {
         });
       } else {
         setError({
-          message: "Сталася неочікувана помилка. Спробуйте ще раз.",
+          message: t("errors.unexpected"),
           isInsufficientCredits: false,
         });
       }
@@ -70,8 +72,8 @@ export function ImportForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
       <Input
-        label="Назва меню"
-        placeholder="Напр. Літнє меню 2026"
+        label={t("nameLabel")}
+        placeholder={t("namePlaceholder")}
         value={title}
         onChange={(event) => setTitle(event.target.value)}
         required
@@ -81,10 +83,10 @@ export function ImportForm() {
       <Tabs value={mode} onValueChange={(value) => setMode(value as "file" | "text")}>
         <TabsList>
           <TabsTrigger value="file" disabled={isSubmitting}>
-            Завантажити файл
+            {t("uploadTab")}
           </TabsTrigger>
           <TabsTrigger value="text" disabled={isSubmitting}>
-            Вставити текст
+            {t("textTab")}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="file">
@@ -93,13 +95,13 @@ export function ImportForm() {
             onFileChange={setFile}
             accept={ACCEPTED_FILE_TYPES}
             disabled={isSubmitting}
-            hint="PDF, Word (.docx) або Excel (.xlsx), до 10MB"
+            hint={t("dropzoneHint")}
           />
         </TabsContent>
         <TabsContent value="text">
           <Textarea
-            label="Текст меню"
-            placeholder="Вставте текст меню — категорії, страви, ціни..."
+            label={t("textLabel")}
+            placeholder={t("textPlaceholder")}
             rows={10}
             value={text}
             onChange={(event) => setText(event.target.value)}
@@ -111,17 +113,12 @@ export function ImportForm() {
       {error && (
         <div className="border-error-400/30 bg-error-50 text-body-sm text-error-600 rounded-md border px-4 py-3">
           <p>{error.message}</p>
-          {error.isInsufficientCredits && (
-            <p className="mt-1">
-              Поповнення кредитів буде доступне на сторінці Credits (з&apos;явиться на наступному
-              етапі).
-            </p>
-          )}
+          {error.isInsufficientCredits && <p className="mt-1">{t("errors.creditsHint")}</p>}
         </div>
       )}
 
       <Button type="submit" isLoading={isSubmitting} className="self-start">
-        {isSubmitting ? "AI аналізує меню..." : "Аналізувати меню"}
+        {isSubmitting ? t("submitting") : t("submit")}
       </Button>
     </form>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Copy, Download, ExternalLink, QrCode } from "lucide-react";
 import { useState } from "react";
 
@@ -38,6 +39,7 @@ export function ExportPanel({
   initialIsPublic,
   initialPublicSlug,
 }: ExportPanelProps) {
+  const t = useTranslations("export");
   const { toast } = useToast();
   const [isPublic, setIsPublic] = useState(initialIsPublic);
   const [publicSlug, setPublicSlug] = useState(initialPublicSlug);
@@ -61,11 +63,11 @@ export function ExportPanel({
       setSlugInput(menu.public_slug ?? "");
       toast({
         variant: "success",
-        title: "Опубліковано",
-        description: "Web Menu тепер доступне за посиланням.",
+        title: t("toasts.publishedTitle"),
+        description: t("toasts.publishedDescription"),
       });
     } catch (err) {
-      const message = err instanceof ApiClientError ? err.message : "Не вдалося опублікувати меню.";
+      const message = err instanceof ApiClientError ? err.message : t("toasts.errorPublish");
       setPublishError(message);
     } finally {
       setIsPublishing(false);
@@ -79,12 +81,11 @@ export function ExportPanel({
       await menusApi.unpublish(menuId);
       setIsPublic(false);
       toast({
-        title: "Знято з публікації",
-        description: "Посилання збережено — можете опублікувати знову будь-коли.",
+        title: t("toasts.unpublishedTitle"),
+        description: t("toasts.unpublishedDescription"),
       });
     } catch (err) {
-      const message =
-        err instanceof ApiClientError ? err.message : "Не вдалося зняти меню з публікації.";
+      const message = err instanceof ApiClientError ? err.message : t("toasts.errorUnpublish");
       setPublishError(message);
     } finally {
       setIsPublishing(false);
@@ -94,7 +95,7 @@ export function ExportPanel({
   async function handleCopyLink() {
     if (!publicUrl) return;
     await navigator.clipboard.writeText(publicUrl);
-    toast({ variant: "success", title: "Скопійовано", description: publicUrl });
+    toast({ variant: "success", title: t("toasts.copiedTitle"), description: publicUrl });
   }
 
   async function handleDownloadPdf() {
@@ -105,8 +106,8 @@ export function ExportPanel({
     } catch (err) {
       toast({
         variant: "error",
-        title: "Помилка",
-        description: err instanceof ApiClientError ? err.message : "Не вдалося завантажити PDF.",
+        title: t("toasts.errorTitle"),
+        description: err instanceof ApiClientError ? err.message : t("toasts.errorPdf"),
       });
     } finally {
       setIsDownloadingPdf(false);
@@ -121,9 +122,8 @@ export function ExportPanel({
     } catch (err) {
       toast({
         variant: "error",
-        title: "Помилка",
-        description:
-          err instanceof ApiClientError ? err.message : "Не вдалося завантажити зображення.",
+        title: t("toasts.errorTitle"),
+        description: err instanceof ApiClientError ? err.message : t("toasts.errorPng"),
       });
     } finally {
       setIsDownloadingPng(false);
@@ -138,8 +138,8 @@ export function ExportPanel({
     } catch (err) {
       toast({
         variant: "error",
-        title: "Помилка",
-        description: err instanceof ApiClientError ? err.message : "Не вдалося згенерувати QR-код.",
+        title: t("toasts.errorTitle"),
+        description: err instanceof ApiClientError ? err.message : t("toasts.errorQr"),
       });
     } finally {
       setIsGeneratingQr(false);
@@ -151,24 +151,24 @@ export function ExportPanel({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            Web Menu
-            {isPublic && <Badge variant="success">Опубліковано</Badge>}
+            {t("webMenuTitle")}
+            {isPublic && <Badge variant="success">{t("published")}</Badge>}
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <Input
-            label="Посилання (slug)"
+            label={t("slugLabel")}
             placeholder="napryklad-kavyarnya-lviv"
             value={slugInput}
             onChange={(event) => setSlugInput(event.target.value)}
-            helperText="Латиниця, цифри, дефіси. Залиште порожнім, щоб згенерувати автоматично з назви."
+            helperText={t("slugHelper")}
           />
           {publishError && <p className="text-body-sm text-error-600">{publishError}</p>}
 
           <div className="flex flex-wrap items-center gap-3">
             {!isPublic ? (
               <Button type="button" isLoading={isPublishing} onClick={() => void handlePublish()}>
-                Опублікувати
+                {t("publish")}
               </Button>
             ) : (
               <>
@@ -178,7 +178,7 @@ export function ExportPanel({
                   isLoading={isPublishing}
                   onClick={() => void handleUnpublish()}
                 >
-                  Зняти з публікації
+                  {t("unpublish")}
                 </Button>
                 {slugInput !== publicSlug && (
                   <Button
@@ -187,7 +187,7 @@ export function ExportPanel({
                     isLoading={isPublishing}
                     onClick={() => void handlePublish()}
                   >
-                    Змінити посилання
+                    {t("changeLink")}
                   </Button>
                 )}
               </>
@@ -213,7 +213,7 @@ export function ExportPanel({
                   onClick={() => void handleCopyLink()}
                 >
                   <Copy className="size-4" aria-hidden="true" />
-                  Скопіювати
+                  {t("copyLink")}
                 </Button>
               </div>
 
@@ -225,14 +225,14 @@ export function ExportPanel({
                   onClick={() => void handleGenerateQr()}
                 >
                   <QrCode className="size-4" aria-hidden="true" />
-                  Згенерувати QR-код
+                  {t("generateQr")}
                 </Button>
                 {qrPreviewUrl && (
                   <div className="flex items-center gap-3">
                     {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not a local/optimizable asset */}
                     <img
                       src={qrPreviewUrl}
-                      alt="QR-код на меню"
+                      alt={t("qrAlt")}
                       className="border-border size-20 rounded-md border"
                     />
                     <Button
@@ -242,7 +242,7 @@ export function ExportPanel({
                       onClick={() => void downloadFile(qrPreviewUrl, "menu-qr.png")}
                     >
                       <Download className="size-4" aria-hidden="true" />
-                      Завантажити QR
+                      {t("downloadQr")}
                     </Button>
                   </div>
                 )}
@@ -254,7 +254,7 @@ export function ExportPanel({
 
       <Card>
         <CardHeader>
-          <CardTitle>Завантажити файли</CardTitle>
+          <CardTitle>{t("downloadFilesTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
           <Button
@@ -264,7 +264,7 @@ export function ExportPanel({
             onClick={() => void handleDownloadPdf()}
           >
             <Download className="size-4" aria-hidden="true" />
-            Завантажити PDF
+            {t("downloadPdf")}
           </Button>
           <Button
             type="button"
@@ -273,7 +273,7 @@ export function ExportPanel({
             onClick={() => void handleDownloadPng()}
           >
             <Download className="size-4" aria-hidden="true" />
-            Завантажити PNG
+            {t("downloadPng")}
           </Button>
         </CardContent>
       </Card>

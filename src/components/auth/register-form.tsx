@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 
@@ -12,6 +13,7 @@ import { signUpAction } from "@/features/auth/actions";
 import { type RegisterInput, registerSchema } from "@/lib/validations/auth";
 
 export function RegisterForm() {
+  const t = useTranslations("auth.register");
   const turnstileRef = React.useRef<TurnstileWidgetHandle>(null);
   const {
     register,
@@ -43,22 +45,22 @@ export function RegisterForm() {
   return (
     <form onSubmit={onFormSubmit} className="flex flex-col gap-4" noValidate>
       <Input
-        label="Email"
+        label={t("emailLabel")}
         type="email"
         autoComplete="email"
         error={errors.email?.message}
         {...register("email")}
       />
       <Input
-        label="Пароль"
+        label={t("passwordLabel")}
         type="password"
         autoComplete="new-password"
-        helperText="Щонайменше 8 символів."
+        helperText={t("passwordHelper")}
         error={errors.password?.message}
         {...register("password")}
       />
       <Input
-        label="Підтвердіть пароль"
+        label={t("confirmPasswordLabel")}
         type="password"
         autoComplete="new-password"
         error={errors.confirmPassword?.message}
@@ -77,7 +79,7 @@ export function RegisterForm() {
       </div>
       {errors.root && <p className="text-body-sm text-error-600">{errors.root.message}</p>}
       <Button type="submit" isLoading={isSubmitting} className="w-full">
-        Зареєструватись
+        {t("submit")}
       </Button>
     </form>
   );

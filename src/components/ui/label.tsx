@@ -16,7 +16,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
       >
         {children}
         {required && (
-          <span className="text-error-600 ml-0.5" aria-hidden="true">
+          <span className="text-error-600 ms-0.5" aria-hidden="true">
             *
           </span>
         )}

@@ -1,24 +1,21 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { CURATED_LOCALES } from "@/config/profile";
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { profileApi } from "@/lib/api-client/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 
 export interface ProfileDetailsFormProps {
   initialFullName: string | null;
-  initialLocale: string;
 }
 
-const LOCALE_OPTIONS = CURATED_LOCALES.map((locale) => ({ value: locale.id, label: locale.label }));
-
-export function ProfileDetailsForm({ initialFullName, initialLocale }: ProfileDetailsFormProps) {
+export function ProfileDetailsForm({ initialFullName }: ProfileDetailsFormProps) {
+  const t = useTranslations("dashboard.profile");
+  const tButtons = useTranslations("common.buttons");
   const [fullName, setFullName] = useState(initialFullName ?? "");
-  const [locale, setLocale] = useState(initialLocale);
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
@@ -27,15 +24,12 @@ export function ProfileDetailsForm({ initialFullName, initialLocale }: ProfileDe
     setStatus(null);
     setIsSaving(true);
     try {
-      await profileApi.update({
-        full_name: fullName.trim(),
-        locale: locale as (typeof LOCALE_OPTIONS)[number]["value"],
-      });
-      setStatus({ type: "success", message: "Збережено." });
+      await profileApi.update({ full_name: fullName.trim() });
+      setStatus({ type: "success", message: t("saved") });
     } catch (err) {
       setStatus({
         type: "error",
-        message: err instanceof ApiClientError ? err.message : "Не вдалося зберегти профіль.",
+        message: err instanceof ApiClientError ? err.message : t("saveError"),
       });
     } finally {
       setIsSaving(false);
@@ -45,12 +39,11 @@ export function ProfileDetailsForm({ initialFullName, initialLocale }: ProfileDe
   return (
     <form onSubmit={(event) => void handleSubmit(event)} className="flex flex-col gap-4" noValidate>
       <Input
-        label="Ім'я"
+        label={t("nameLabel")}
         value={fullName}
         onChange={(event) => setFullName(event.target.value)}
         required
       />
-      <Select label="Мова" options={LOCALE_OPTIONS} value={locale} onValueChange={setLocale} />
       {status && (
         <p
           className={
@@ -63,7 +56,7 @@ export function ProfileDetailsForm({ initialFullName, initialLocale }: ProfileDe
         </p>
       )}
       <Button type="submit" isLoading={isSaving} className="self-start">
-        Зберегти
+        {tButtons("save")}
       </Button>
     </form>
   );

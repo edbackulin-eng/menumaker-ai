@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
 import { signInAction } from "@/features/auth/actions";
@@ -9,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { type LoginInput, loginSchema } from "@/lib/validations/auth";
 
 export function LoginForm() {
+  const t = useTranslations("auth.login");
   const {
     register,
     handleSubmit,
@@ -26,14 +28,14 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
       <Input
-        label="Email"
+        label={t("emailLabel")}
         type="email"
         autoComplete="email"
         error={errors.email?.message}
         {...register("email")}
       />
       <Input
-        label="Пароль"
+        label={t("passwordLabel")}
         type="password"
         autoComplete="current-password"
         error={errors.password?.message}
@@ -41,7 +43,7 @@ export function LoginForm() {
       />
       {errors.root && <p className="text-body-sm text-error-600">{errors.root.message}</p>}
       <Button type="submit" isLoading={isSubmitting} className="w-full">
-        Увійти
+        {t("submit")}
       </Button>
     </form>
   );

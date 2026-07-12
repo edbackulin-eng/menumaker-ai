@@ -1,11 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { useState } from "react";
 
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi } from "@/lib/api-client/menus";
+import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
@@ -44,6 +45,7 @@ const SWATCH_CLASSES: Record<string, string> = {
 };
 
 export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
+  const t = useTranslations("menuGenerator.template");
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,7 +59,7 @@ export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
       await menusApi.applyTemplate(menuId, selectedId);
       router.push(`/menus/${menuId}/editor`);
     } catch (err) {
-      setError(err instanceof ApiClientError ? err.message : "Не вдалося застосувати шаблон.");
+      setError(err instanceof ApiClientError ? err.message : t("applyError"));
       setIsSubmitting(false);
     }
   }
@@ -74,7 +76,7 @@ export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
               onClick={() => setSelectedId(template.id)}
               disabled={isSubmitting}
               className={cn(
-                "border-border duration-fast group flex flex-col overflow-hidden rounded-lg border text-left transition-colors",
+                "border-border duration-fast group flex flex-col overflow-hidden rounded-lg border text-start transition-colors",
                 isSelected && "ring-accent-400 ring-2 ring-offset-2",
               )}
             >
@@ -85,7 +87,7 @@ export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
                 )}
               >
                 {isSelected && (
-                  <span className="bg-accent-400 absolute top-2 right-2 flex size-6 items-center justify-center rounded-full text-white">
+                  <span className="bg-accent-400 absolute end-2 top-2 flex size-6 items-center justify-center rounded-full text-white">
                     <Check className="size-4" aria-hidden="true" />
                   </span>
                 )}
@@ -93,7 +95,7 @@ export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
               <div className="flex flex-col gap-1 p-3">
                 <p className="text-body-sm font-medium">{template.name}</p>
                 <Badge variant="neutral" className="w-fit">
-                  {template.category === "cuisine" ? "Кухня" : "Стиль"}
+                  {template.category === "cuisine" ? t("categoryCuisine") : t("categoryStyle")}
                 </Badge>
               </div>
             </button>
@@ -114,7 +116,7 @@ export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
         isLoading={isSubmitting}
         className="self-start"
       >
-        Застосувати шаблон і перейти до стилю
+        {t("applyButton")}
       </Button>
     </div>
   );

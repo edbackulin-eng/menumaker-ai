@@ -1,0 +1,320 @@
+{
+  "metadata": {
+    "title": "MenuMaker AI",
+    "description": "Автоматичне створення професійних меню для ресторанів, кафе та барів."
+  },
+  "landing": {
+    "title": "MenuMaker AI",
+    "subtitle": "Незабаром"
+  },
+  "common": {
+    "or": "або",
+    "genericError": "Щось пішло не так. Спробуйте ще раз.",
+    "buttons": {
+      "save": "Зберегти",
+      "cancel": "Скасувати",
+      "delete": "Видалити",
+      "deleteForever": "Видалити назавжди",
+      "confirm": "Підтвердити",
+      "back": "Назад",
+      "continue": "Продовжити",
+      "create": "Створити",
+      "upload": "Завантажити",
+      "download": "Завантажити",
+      "copy": "Скопіювати",
+      "change": "Змінити",
+      "apply": "Застосувати"
+    }
+  },
+  "localeSwitcher": {
+    "label": "Мова",
+    "ariaLabel": "Обрати мову інтерфейсу"
+  },
+  "nav": {
+    "brand": "MenuMaker AI",
+    "ariaMain": "Основна навігація",
+    "items": {
+      "myMenus": "Мої меню",
+      "credits": "Кредити",
+      "history": "Історія",
+      "profile": "Профіль"
+    },
+    "userMenu": {
+      "profile": "Профіль",
+      "logout": "Вийти"
+    }
+  },
+  "auth": {
+    "login": {
+      "metaTitle": "Вхід — MenuMaker AI",
+      "title": "Увійти",
+      "subtitle": "Раді бачити вас знову.",
+      "googleCta": "Увійти через Google",
+      "noAccount": "Немає акаунту?",
+      "registerLink": "Зареєструватись",
+      "forgotPasswordLink": "Забули пароль?",
+      "emailLabel": "Email",
+      "passwordLabel": "Пароль",
+      "submit": "Увійти"
+    },
+    "register": {
+      "metaTitle": "Реєстрація — MenuMaker AI",
+      "title": "Створити акаунт",
+      "subtitle": "Перші 3 меню — безкоштовно.",
+      "googleCta": "Зареєструватись через Google",
+      "haveAccount": "Вже маєте акаунт?",
+      "loginLink": "Увійти",
+      "emailLabel": "Email",
+      "passwordLabel": "Пароль",
+      "passwordHelper": "Щонайменше 8 символів.",
+      "confirmPasswordLabel": "Підтвердіть пароль",
+      "submit": "Зареєструватись"
+    },
+    "forgotPassword": {
+      "metaTitle": "Відновлення пароля — MenuMaker AI",
+      "title": "Забули пароль?",
+      "subtitle": "Введіть email — надішлемо посилання для скидання пароля.",
+      "emailLabel": "Email",
+      "submit": "Надіслати посилання",
+      "submitted": "Якщо акаунт з такою адресою існує, ми надіслали на неї лист з посиланням для скидання пароля. Перевірте пошту (і теку «Спам»).",
+      "rememberedPassword": "Згадали пароль?",
+      "loginLink": "Увійти"
+    },
+    "resetPassword": {
+      "metaTitle": "Новий пароль — MenuMaker AI",
+      "invalidTitle": "Посилання недійсне",
+      "invalidDescription": "Це посилання для скидання пароля вже використане або застаріло.",
+      "requestNewLink": "Запросити нове посилання",
+      "title": "Новий пароль",
+      "subtitle": "Встановіть новий пароль для свого акаунту.",
+      "passwordLabel": "Новий пароль",
+      "passwordHelper": "Щонайменше 8 символів.",
+      "confirmPasswordLabel": "Підтвердіть пароль",
+      "submit": "Зберегти новий пароль"
+    },
+    "logout": "Вийти"
+  },
+  "dashboard": {
+    "myMenus": {
+      "metaTitle": "Мої меню — MenuMaker AI",
+      "title": "Мої меню",
+      "count": "{count, plural, one {# меню} few {# меню} many {# меню} other {# меню}}",
+      "createNew": "Створити нове меню",
+      "createFirst": "Створити перше меню",
+      "freeTrialExhausted": "Безкоштовну спробу вичерпано, і на балансі немає кредитів для створення нового меню.",
+      "viewCredits": "Переглянути кредити",
+      "emptyTitle": "Ще немає жодного меню",
+      "emptyDescription": "Завантажте файл або вставте текст меню — AI розпізнає категорії, страви й ціни за лічені секунди.",
+      "paginationAria": "Пагінація"
+    },
+    "credits": {
+      "metaTitle": "Кредити — MenuMaker AI",
+      "title": "Кредити",
+      "subtitle": "Баланс і статус безкоштовної спроби.",
+      "topUp": "Поповнити",
+      "balanceTitle": "Баланс",
+      "balanceUnit": "кредитів",
+      "freeTrialTitle": "Безкоштовна спроба",
+      "available": "Доступна",
+      "used": "Використано",
+      "recentTransactions": "Останні транзакції",
+      "viewAllHistory": "Уся історія"
+    },
+    "creditsUpgrade": {
+      "metaTitle": "Поповнення — MenuMaker AI",
+      "title": "Поповнення кредитів",
+      "comingSoonTitle": "Купівля кредитів скоро буде доступна",
+      "comingSoonDescription": "Ми готуємо оплату через Stripe — карткою, безпечно і за кілька секунд. Слідкуйте за оновленнями.",
+      "backToCredits": "Повернутись до кредитів"
+    },
+    "history": {
+      "metaTitle": "Історія — MenuMaker AI",
+      "title": "Історія",
+      "subtitle": "Усі дії з кредитами вашого акаунту.",
+      "paginationAria": "Пагінація"
+    },
+    "profile": {
+      "metaTitle": "Профіль — MenuMaker AI",
+      "title": "Профіль",
+      "subtitle": "Керуйте своїм акаунтом.",
+      "avatarCardTitle": "Фото профілю",
+      "detailsCardTitle": "Особисті дані",
+      "nameLabel": "Ім'я",
+      "saved": "Збережено.",
+      "saveError": "Не вдалося зберегти профіль.",
+      "passwordCardTitle": "Пароль",
+      "dangerZoneTitle": "Небезпечна зона",
+      "dangerZoneDescription": "Видалення акаунту незворотне — усі ваші меню й дані буде втрачено назавжди.",
+      "deleteAccount": "Видалити акаунт",
+      "deleteDialogTitle": "Видалити акаунт назавжди?",
+      "deleteDialogDescription": "Цю дію неможливо скасувати. Усі ваші меню, кредити й історія будуть видалені назавжди. Щоб підтвердити, введіть свій email ({email}) нижче.",
+      "confirmEmailLabel": "Email для підтвердження",
+      "deleteError": "Не вдалося видалити акаунт."
+    },
+    "avatarUpload": {
+      "changePhoto": "Змінити фото",
+      "hint": "JPG, PNG або WebP, до 2MB",
+      "error": "Не вдалося завантажити аватар."
+    },
+    "changePassword": {
+      "newPasswordLabel": "Новий пароль",
+      "confirmPasswordLabel": "Підтвердіть пароль",
+      "passwordHelper": "Щонайменше 8 символів.",
+      "submit": "Змінити пароль",
+      "saved": "Пароль змінено.",
+      "error": "Не вдалося змінити пароль."
+    },
+    "transactions": {
+      "emptyTitle": "Історія порожня",
+      "emptyDescription": "Дії з кредитами з'являться тут після першого створення меню.",
+      "types": {
+        "purchase": "Покупка кредитів",
+        "menu_generation": "Аналіз меню",
+        "menu_translation": "Переклад меню",
+        "ai_description": "AI-опис страви",
+        "refund": "Повернення",
+        "bonus": "Бонус",
+        "free_tier": "Безкоштовна спроба",
+        "admin_grant": "Нараховано адміністратором"
+      }
+    },
+    "menuCard": {
+      "actionsAria": "Дії з меню",
+      "editLabel": "Редагувати",
+      "duplicateLabel": "Дублювати",
+      "publicLink": "Публічне посилання",
+      "deleteLabel": "Видалити",
+      "updatedPrefix": "Оновлено",
+      "deleteDialogTitle": "Видалити «{title}»?",
+      "deleteDialogDescription": "Цю дію неможливо скасувати. Меню та всі пов'язані дані буде видалено назавжди.",
+      "duplicateError": "Не вдалося дублювати меню.",
+      "deleteError": "Не вдалося видалити меню."
+    },
+    "statusBadge": {
+      "draft": "Чернетка",
+      "processing": "Обробка",
+      "completed": "Завершено",
+      "failed": "Помилка"
+    }
+  },
+  "menuGenerator": {
+    "wizardSteps": {
+      "ariaLabel": "Кроки створення меню",
+      "import": "Імпорт",
+      "review": "Перегляд",
+      "template": "Шаблон",
+      "editor": "Стиль",
+      "result": "Результат"
+    },
+    "import": {
+      "metaTitle": "Нове меню — MenuMaker AI",
+      "title": "Створити меню",
+      "subtitle": "Завантажте файл меню або вставте текст — AI розпізнає категорії, страви й ціни.",
+      "nameLabel": "Назва меню",
+      "namePlaceholder": "Напр. Літнє меню 2026",
+      "uploadTab": "Завантажити файл",
+      "textTab": "Вставити текст",
+      "dropzoneHint": "PDF, Word (.docx) або Excel (.xlsx), до 10MB",
+      "textLabel": "Текст меню",
+      "textPlaceholder": "Вставте текст меню — категорії, страви, ціни...",
+      "submit": "Аналізувати меню",
+      "submitting": "AI аналізує меню...",
+      "errors": {
+        "titleRequired": "Вкажіть назву меню.",
+        "fileRequired": "Оберіть файл для завантаження.",
+        "textRequired": "Вставте текст меню.",
+        "unexpected": "Сталася неочікувана помилка. Спробуйте ще раз.",
+        "creditsHint": "Поповнення кредитів буде доступне на сторінці Credits (з'явиться на наступному етапі)."
+      }
+    },
+    "dropzone": {
+      "cta": "Перетягніть файл сюди або натисніть, щоб обрати",
+      "removeAria": "Прибрати файл"
+    },
+    "review": {
+      "metaTitle": "Перегляд меню — MenuMaker AI",
+      "subtitle": "Перевірте розпізнані категорії, страви й ціни — виправте чи додайте, якщо AI щось пропустив.",
+      "categoryNamePlaceholder": "Назва категорії",
+      "categoryNameAria": "Назва категорії",
+      "itemNamePlaceholder": "Назва страви",
+      "itemNameAria": "Назва страви",
+      "pricePlaceholder": "Ціна",
+      "priceAria": "Ціна",
+      "descriptionPlaceholder": "Опис (необов'язково)",
+      "descriptionAria": "Опис страви",
+      "removeCategoryAria": "Видалити категорію",
+      "removeItemAria": "Видалити страву",
+      "newCategoryName": "Нова категорія",
+      "addItem": "Додати страву",
+      "addCategory": "Додати категорію",
+      "addFirstCategory": "Додати категорію",
+      "emptyTitle": "Категорій ще немає",
+      "emptyDescription": "Додайте хоча б одну категорію та страву вручну, або поверніться до імпорту з іншим файлом.",
+      "atLeastOneItemError": "Додайте хоча б одну страву перед підтвердженням.",
+      "confirmGenericError": "Не вдалося підтвердити меню. Спробуйте ще раз.",
+      "recognizedCount": "Розпізнано страв: {count}",
+      "confirm": "Підтвердити і продовжити"
+    },
+    "template": {
+      "metaTitle": "Оберіть шаблон — MenuMaker AI",
+      "subtitle": "Оберіть шаблон дизайну для вашого меню.",
+      "defaultName": "Шаблон",
+      "categoryCuisine": "Кухня",
+      "categoryStyle": "Стиль",
+      "applyButton": "Застосувати шаблон і перейти до стилю",
+      "applyError": "Не вдалося застосувати шаблон."
+    },
+    "editor": {
+      "metaTitle": "Стиль меню — MenuMaker AI",
+      "subtitle": "Налаштуйте колір, шрифт, макет і порядок страв — зміни видно одразу в прев'ю.",
+      "accentColor": "Акцентний колір",
+      "contrastLabel": "Контраст тексту на акценті: {ratio}:1",
+      "contrastPass": "✓ WCAG AA",
+      "contrastAdjusted": "(текст автоматично підбирається)",
+      "font": "Шрифт",
+      "columns": "Кількість колонок",
+      "save": "Зберегти",
+      "continue": "Продовжити",
+      "saveStatus": {
+        "pending": "Очікує збереження…",
+        "saving": "Збереження…",
+        "saved": "Збережено",
+        "error": "Не вдалося зберегти — спробуйте кнопку «Зберегти»"
+      }
+    },
+    "result": {
+      "metaTitle": "Меню готове — MenuMaker AI",
+      "title": "Меню готове!",
+      "summary": "Меню «{title}» успішно створено: {categoryCount, plural, one {# категорія} few {# категорії} many {# категорій} other {# категорій}}, {itemCount, plural, one {# страва} few {# страви} many {# страв} other {# страв}}. Опублікуйте його як Web Menu або завантажте готові файли нижче."
+    }
+  },
+  "export": {
+    "webMenuTitle": "Web Menu",
+    "published": "Опубліковано",
+    "slugLabel": "Посилання (slug)",
+    "slugHelper": "Латиниця, цифри, дефіси. Залиште порожнім, щоб згенерувати автоматично з назви.",
+    "publish": "Опублікувати",
+    "unpublish": "Зняти з публікації",
+    "changeLink": "Змінити посилання",
+    "copyLink": "Скопіювати",
+    "generateQr": "Згенерувати QR-код",
+    "downloadQr": "Завантажити QR",
+    "qrAlt": "QR-код на меню",
+    "downloadFilesTitle": "Завантажити файли",
+    "downloadPdf": "Завантажити PDF",
+    "downloadPng": "Завантажити PNG",
+    "toasts": {
+      "publishedTitle": "Опубліковано",
+      "publishedDescription": "Web Menu тепер доступне за посиланням.",
+      "unpublishedTitle": "Знято з публікації",
+      "unpublishedDescription": "Посилання збережено — можете опублікувати знову будь-коли.",
+      "copiedTitle": "Скопійовано",
+      "errorTitle": "Помилка",
+      "errorPublish": "Не вдалося опублікувати меню.",
+      "errorUnpublish": "Не вдалося зняти меню з публікації.",
+      "errorPdf": "Не вдалося завантажити PDF.",
+      "errorPng": "Не вдалося завантажити зображення.",
+      "errorQr": "Не вдалося згенерувати QR-код."
+    }
+  }
+}

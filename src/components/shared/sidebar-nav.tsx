@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
-import Link from "next/link";
+import NextLink from "next/link";
+import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -12,6 +13,14 @@ export interface SidebarNavItem {
 
 export interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   items: SidebarNavItem[];
+  ariaLabel?: string;
+  /** Defaults to raw `next/link` — the design-system demo page (outside `[locale]`) needs that default; DashboardSidebar passes the locale-aware `Link` from `@/i18n/navigation` instead. */
+  linkComponent?: ComponentType<{
+    href: string;
+    className?: string;
+    "aria-current"?: "page" | undefined;
+    children?: React.ReactNode;
+  }>;
 }
 
 /**
@@ -19,10 +28,16 @@ export interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
  * the real nav items (Menus, Credits, Settings, ...) via the `items` prop;
  * this component itself doesn't need to change.
  */
-export function SidebarNav({ items, className, ...props }: SidebarNavProps) {
+export function SidebarNav({
+  items,
+  ariaLabel = "Main navigation",
+  linkComponent: LinkComponent = NextLink,
+  className,
+  ...props
+}: SidebarNavProps) {
   return (
     <nav
-      aria-label="Основна навігація"
+      aria-label={ariaLabel}
       className={cn(
         "border-border bg-surface flex w-60 shrink-0 flex-col gap-1 border-r p-4",
         className,
@@ -32,7 +47,7 @@ export function SidebarNav({ items, className, ...props }: SidebarNavProps) {
       {items.map((item) => {
         const Icon = item.icon;
         return (
-          <Link
+          <LinkComponent
             key={item.href}
             href={item.href}
             aria-current={item.active ? "page" : undefined}
@@ -45,7 +60,7 @@ export function SidebarNav({ items, className, ...props }: SidebarNavProps) {
           >
             {Icon && <Icon className="size-4" aria-hidden="true" />}
             {item.label}
-          </Link>
+          </LinkComponent>
         );
       })}
     </nav>

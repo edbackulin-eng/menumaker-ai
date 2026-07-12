@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 
 import { ApiClientError } from "@/lib/api-client/api-client-error";
@@ -13,6 +14,7 @@ export interface AvatarUploadProps {
 }
 
 export function AvatarUpload({ initialAvatarUrl, name }: AvatarUploadProps) {
+  const t = useTranslations("dashboard.avatarUpload");
   const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +29,7 @@ export function AvatarUpload({ initialAvatarUrl, name }: AvatarUploadProps) {
       const profile = await profileApi.uploadAvatar(file);
       setAvatarUrl(profile.avatar_url);
     } catch (err) {
-      setError(err instanceof ApiClientError ? err.message : "Не вдалося завантажити аватар.");
+      setError(err instanceof ApiClientError ? err.message : t("error"));
     } finally {
       setIsUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -45,9 +47,9 @@ export function AvatarUpload({ initialAvatarUrl, name }: AvatarUploadProps) {
           isLoading={isUploading}
           onClick={() => inputRef.current?.click()}
         >
-          Змінити фото
+          {t("changePhoto")}
         </Button>
-        <p className="text-caption text-foreground-tertiary">JPG, PNG або WebP, до 2MB</p>
+        <p className="text-caption text-foreground-tertiary">{t("hint")}</p>
         {error && <p className="text-caption text-error-600">{error}</p>}
         <input
           ref={inputRef}

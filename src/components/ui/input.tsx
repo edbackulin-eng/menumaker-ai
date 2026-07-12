@@ -43,7 +43,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative flex items-center">
           {leftIcon && (
-            <span className="text-foreground-tertiary pointer-events-none absolute left-3 flex [&_svg]:size-4">
+            <span className="text-foreground-tertiary pointer-events-none absolute start-3 flex [&_svg]:size-4">
               {leftIcon}
             </span>
           )}
@@ -59,14 +59,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               "disabled:cursor-not-allowed disabled:opacity-50",
               error &&
                 "border-error-400 focus-visible:border-error-400 focus-visible:ring-error-400/30",
-              leftIcon && "pl-9",
-              rightIcon && "pr-9",
+              leftIcon && "ps-9",
+              rightIcon && "pe-9",
               className,
             )}
             {...props}
           />
           {rightIcon && (
-            <span className="text-foreground-tertiary pointer-events-none absolute right-3 flex [&_svg]:size-4">
+            <span className="text-foreground-tertiary pointer-events-none absolute end-3 flex [&_svg]:size-4">
               {rightIcon}
             </span>
           )}

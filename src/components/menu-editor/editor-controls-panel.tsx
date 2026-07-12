@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 
 import {
@@ -37,6 +38,7 @@ export function EditorControlsPanel({
   onColumnsChange,
   className,
 }: EditorControlsPanelProps) {
+  const t = useTranslations("menuGenerator.editor");
   const selectedHex = CURATED_ACCENT_COLORS.find((c) => c.id === accentColorId)?.hex ?? "#000000";
   const textOnAccent = pickReadableTextColor(selectedHex);
   const ratio = contrastRatio(selectedHex, textOnAccent);
@@ -44,7 +46,7 @@ export function EditorControlsPanel({
   return (
     <div className={cn("flex flex-col gap-6", className)}>
       <section className="flex flex-col gap-2">
-        <h3 className="text-body-sm text-foreground font-medium">Акцентний колір</h3>
+        <h3 className="text-body-sm text-foreground font-medium">{t("accentColor")}</h3>
         <div className="grid grid-cols-4 gap-2">
           {CURATED_ACCENT_COLORS.map((color) => {
             const isSelected = color.id === accentColorId;
@@ -74,13 +76,13 @@ export function EditorControlsPanel({
           })}
         </div>
         <p className="text-caption text-foreground-secondary">
-          Контраст тексту на акценті: {ratio.toFixed(1)}:1{" "}
-          {ratio >= WCAG_AA_NORMAL_TEXT_RATIO ? "✓ WCAG AA" : "(текст автоматично підбирається)"}
+          {t("contrastLabel", { ratio: ratio.toFixed(1) })}{" "}
+          {ratio >= WCAG_AA_NORMAL_TEXT_RATIO ? t("contrastPass") : t("contrastAdjusted")}
         </p>
       </section>
 
       <section className="flex flex-col gap-2">
-        <h3 className="text-body-sm text-foreground font-medium">Шрифт</h3>
+        <h3 className="text-body-sm text-foreground font-medium">{t("font")}</h3>
         <div className="grid grid-cols-2 gap-2">
           {CURATED_FONTS.map((font) => {
             const isSelected = font.id === fontId;
@@ -106,7 +108,7 @@ export function EditorControlsPanel({
       </section>
 
       <section className="flex flex-col gap-2">
-        <h3 className="text-body-sm text-foreground font-medium">Кількість колонок</h3>
+        <h3 className="text-body-sm text-foreground font-medium">{t("columns")}</h3>
         <div className="flex gap-2">
           {LAYOUT_COLUMN_OPTIONS.map((columnOption) => {
             const isSelected = columnOption === columns;

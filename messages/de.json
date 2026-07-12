@@ -1,0 +1,320 @@
+{
+  "metadata": {
+    "title": "MenuMaker AI",
+    "description": "Automatisch professionelle Speisekarten für Restaurants, Cafés und Bars erstellen."
+  },
+  "landing": {
+    "title": "MenuMaker AI",
+    "subtitle": "Demnächst verfügbar"
+  },
+  "common": {
+    "or": "oder",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "buttons": {
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "deleteForever": "Endgültig löschen",
+      "confirm": "Bestätigen",
+      "back": "Zurück",
+      "continue": "Weiter",
+      "create": "Erstellen",
+      "upload": "Hochladen",
+      "download": "Herunterladen",
+      "copy": "Kopieren",
+      "change": "Ändern",
+      "apply": "Übernehmen"
+    }
+  },
+  "localeSwitcher": {
+    "label": "Sprache",
+    "ariaLabel": "Sprache der Benutzeroberfläche wählen"
+  },
+  "nav": {
+    "brand": "MenuMaker AI",
+    "ariaMain": "Hauptnavigation",
+    "items": {
+      "myMenus": "Meine Speisekarten",
+      "credits": "Guthaben",
+      "history": "Verlauf",
+      "profile": "Profil"
+    },
+    "userMenu": {
+      "profile": "Profil",
+      "logout": "Abmelden"
+    }
+  },
+  "auth": {
+    "login": {
+      "metaTitle": "Anmelden — MenuMaker AI",
+      "title": "Anmelden",
+      "subtitle": "Schön, Sie wiederzusehen.",
+      "googleCta": "Mit Google anmelden",
+      "noAccount": "Noch kein Konto?",
+      "registerLink": "Registrieren",
+      "forgotPasswordLink": "Passwort vergessen?",
+      "emailLabel": "E-Mail",
+      "passwordLabel": "Passwort",
+      "submit": "Anmelden"
+    },
+    "register": {
+      "metaTitle": "Registrieren — MenuMaker AI",
+      "title": "Konto erstellen",
+      "subtitle": "Ihre ersten 3 Speisekarten sind kostenlos.",
+      "googleCta": "Mit Google registrieren",
+      "haveAccount": "Sie haben bereits ein Konto?",
+      "loginLink": "Anmelden",
+      "emailLabel": "E-Mail",
+      "passwordLabel": "Passwort",
+      "passwordHelper": "Mindestens 8 Zeichen.",
+      "confirmPasswordLabel": "Passwort bestätigen",
+      "submit": "Registrieren"
+    },
+    "forgotPassword": {
+      "metaTitle": "Passwort zurücksetzen — MenuMaker AI",
+      "title": "Passwort vergessen?",
+      "subtitle": "Geben Sie Ihre E-Mail-Adresse ein — wir senden Ihnen einen Link zum Zurücksetzen.",
+      "emailLabel": "E-Mail",
+      "submit": "Link senden",
+      "submitted": "Falls ein Konto mit dieser Adresse existiert, haben wir einen Link zum Zurücksetzen des Passworts gesendet. Prüfen Sie Ihr Postfach (auch den Spam-Ordner).",
+      "rememberedPassword": "Passwort wieder eingefallen?",
+      "loginLink": "Anmelden"
+    },
+    "resetPassword": {
+      "metaTitle": "Neues Passwort — MenuMaker AI",
+      "invalidTitle": "Link ungültig",
+      "invalidDescription": "Dieser Link zum Zurücksetzen des Passworts wurde bereits verwendet oder ist abgelaufen.",
+      "requestNewLink": "Neuen Link anfordern",
+      "title": "Neues Passwort",
+      "subtitle": "Legen Sie ein neues Passwort für Ihr Konto fest.",
+      "passwordLabel": "Neues Passwort",
+      "passwordHelper": "Mindestens 8 Zeichen.",
+      "confirmPasswordLabel": "Passwort bestätigen",
+      "submit": "Neues Passwort speichern"
+    },
+    "logout": "Abmelden"
+  },
+  "dashboard": {
+    "myMenus": {
+      "metaTitle": "Meine Speisekarten — MenuMaker AI",
+      "title": "Meine Speisekarten",
+      "count": "{count, plural, one {# Speisekarte} other {# Speisekarten}}",
+      "createNew": "Neue Speisekarte erstellen",
+      "createFirst": "Erste Speisekarte erstellen",
+      "freeTrialExhausted": "Ihre kostenlose Testphase ist aufgebraucht und Ihr Guthaben reicht nicht für eine neue Speisekarte.",
+      "viewCredits": "Guthaben ansehen",
+      "emptyTitle": "Noch keine Speisekarten",
+      "emptyDescription": "Laden Sie eine Datei hoch oder fügen Sie Ihren Menütext ein — die KI erkennt Kategorien, Gerichte und Preise in Sekunden.",
+      "paginationAria": "Seitennavigation"
+    },
+    "credits": {
+      "metaTitle": "Guthaben — MenuMaker AI",
+      "title": "Guthaben",
+      "subtitle": "Ihr Kontostand und der Status der kostenlosen Testphase.",
+      "topUp": "Aufladen",
+      "balanceTitle": "Kontostand",
+      "balanceUnit": "Credits",
+      "freeTrialTitle": "Kostenlose Testphase",
+      "available": "Verfügbar",
+      "used": "Verbraucht",
+      "recentTransactions": "Letzte Transaktionen",
+      "viewAllHistory": "Gesamten Verlauf ansehen"
+    },
+    "creditsUpgrade": {
+      "metaTitle": "Aufladen — MenuMaker AI",
+      "title": "Guthaben aufladen",
+      "comingSoonTitle": "Der Kauf von Credits ist bald verfügbar",
+      "comingSoonDescription": "Wir richten die Zahlung über Stripe ein — sicher per Karte, in wenigen Sekunden. Bleiben Sie dran.",
+      "backToCredits": "Zurück zum Guthaben"
+    },
+    "history": {
+      "metaTitle": "Verlauf — MenuMaker AI",
+      "title": "Verlauf",
+      "subtitle": "Alle Guthaben-Aktivitäten Ihres Kontos.",
+      "paginationAria": "Seitennavigation"
+    },
+    "profile": {
+      "metaTitle": "Profil — MenuMaker AI",
+      "title": "Profil",
+      "subtitle": "Verwalten Sie Ihr Konto.",
+      "avatarCardTitle": "Profilbild",
+      "detailsCardTitle": "Persönliche Daten",
+      "nameLabel": "Name",
+      "saved": "Gespeichert.",
+      "saveError": "Profil konnte nicht gespeichert werden.",
+      "passwordCardTitle": "Passwort",
+      "dangerZoneTitle": "Gefahrenzone",
+      "dangerZoneDescription": "Das Löschen Ihres Kontos ist unwiderruflich — alle Ihre Speisekarten und Daten gehen dauerhaft verloren.",
+      "deleteAccount": "Konto löschen",
+      "deleteDialogTitle": "Konto endgültig löschen?",
+      "deleteDialogDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Alle Speisekarten, Ihr Guthaben und der Verlauf werden dauerhaft gelöscht. Geben Sie zur Bestätigung Ihre E-Mail-Adresse ({email}) unten ein.",
+      "confirmEmailLabel": "E-Mail zur Bestätigung",
+      "deleteError": "Konto konnte nicht gelöscht werden."
+    },
+    "avatarUpload": {
+      "changePhoto": "Foto ändern",
+      "hint": "JPG, PNG oder WebP, bis zu 2 MB",
+      "error": "Avatar konnte nicht hochgeladen werden."
+    },
+    "changePassword": {
+      "newPasswordLabel": "Neues Passwort",
+      "confirmPasswordLabel": "Passwort bestätigen",
+      "passwordHelper": "Mindestens 8 Zeichen.",
+      "submit": "Passwort ändern",
+      "saved": "Passwort geändert.",
+      "error": "Passwort konnte nicht geändert werden."
+    },
+    "transactions": {
+      "emptyTitle": "Noch kein Verlauf",
+      "emptyDescription": "Guthaben-Aktivitäten erscheinen hier, sobald Sie Ihre erste Speisekarte erstellt haben.",
+      "types": {
+        "purchase": "Guthabenkauf",
+        "menu_generation": "Menüanalyse",
+        "menu_translation": "Menüübersetzung",
+        "ai_description": "KI-Gerichtbeschreibung",
+        "refund": "Rückerstattung",
+        "bonus": "Bonus",
+        "free_tier": "Kostenlose Testphase",
+        "admin_grant": "Von Administrator gutgeschrieben"
+      }
+    },
+    "menuCard": {
+      "actionsAria": "Menü-Aktionen",
+      "editLabel": "Bearbeiten",
+      "duplicateLabel": "Duplizieren",
+      "publicLink": "Öffentlicher Link",
+      "deleteLabel": "Löschen",
+      "updatedPrefix": "Aktualisiert",
+      "deleteDialogTitle": "„{title}“ löschen?",
+      "deleteDialogDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Die Speisekarte und alle zugehörigen Daten werden dauerhaft gelöscht.",
+      "duplicateError": "Speisekarte konnte nicht dupliziert werden.",
+      "deleteError": "Speisekarte konnte nicht gelöscht werden."
+    },
+    "statusBadge": {
+      "draft": "Entwurf",
+      "processing": "In Bearbeitung",
+      "completed": "Fertig",
+      "failed": "Fehler"
+    }
+  },
+  "menuGenerator": {
+    "wizardSteps": {
+      "ariaLabel": "Schritte zur Erstellung der Speisekarte",
+      "import": "Import",
+      "review": "Prüfen",
+      "template": "Vorlage",
+      "editor": "Stil",
+      "result": "Ergebnis"
+    },
+    "import": {
+      "metaTitle": "Neue Speisekarte — MenuMaker AI",
+      "title": "Speisekarte erstellen",
+      "subtitle": "Laden Sie eine Datei hoch oder fügen Sie Text ein — die KI erkennt Kategorien, Gerichte und Preise.",
+      "nameLabel": "Name der Speisekarte",
+      "namePlaceholder": "Z. B. Sommermenü 2026",
+      "uploadTab": "Datei hochladen",
+      "textTab": "Text einfügen",
+      "dropzoneHint": "PDF, Word (.docx) oder Excel (.xlsx), bis zu 10 MB",
+      "textLabel": "Menütext",
+      "textPlaceholder": "Fügen Sie Ihren Menütext ein — Kategorien, Gerichte, Preise...",
+      "submit": "Menü analysieren",
+      "submitting": "Die KI analysiert Ihre Speisekarte...",
+      "errors": {
+        "titleRequired": "Geben Sie einen Namen für die Speisekarte ein.",
+        "fileRequired": "Wählen Sie eine Datei zum Hochladen aus.",
+        "textRequired": "Fügen Sie Ihren Menütext ein.",
+        "unexpected": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+        "creditsHint": "Der Kauf von Credits wird auf der Seite „Guthaben“ verfügbar sein (kommt in einer späteren Phase)."
+      }
+    },
+    "dropzone": {
+      "cta": "Datei hierher ziehen oder klicken, um sie auszuwählen",
+      "removeAria": "Datei entfernen"
+    },
+    "review": {
+      "metaTitle": "Menü prüfen — MenuMaker AI",
+      "subtitle": "Prüfen Sie die erkannten Kategorien, Gerichte und Preise — korrigieren oder ergänzen Sie, was die KI übersehen hat.",
+      "categoryNamePlaceholder": "Kategoriename",
+      "categoryNameAria": "Kategoriename",
+      "itemNamePlaceholder": "Name des Gerichts",
+      "itemNameAria": "Name des Gerichts",
+      "pricePlaceholder": "Preis",
+      "priceAria": "Preis",
+      "descriptionPlaceholder": "Beschreibung (optional)",
+      "descriptionAria": "Beschreibung des Gerichts",
+      "removeCategoryAria": "Kategorie entfernen",
+      "removeItemAria": "Gericht entfernen",
+      "newCategoryName": "Neue Kategorie",
+      "addItem": "Gericht hinzufügen",
+      "addCategory": "Kategorie hinzufügen",
+      "addFirstCategory": "Kategorie hinzufügen",
+      "emptyTitle": "Noch keine Kategorien",
+      "emptyDescription": "Fügen Sie manuell mindestens eine Kategorie und ein Gericht hinzu, oder importieren Sie eine andere Datei.",
+      "atLeastOneItemError": "Fügen Sie mindestens ein Gericht hinzu, bevor Sie bestätigen.",
+      "confirmGenericError": "Die Speisekarte konnte nicht bestätigt werden. Bitte versuchen Sie es erneut.",
+      "recognizedCount": "Erkannte Gerichte: {count}",
+      "confirm": "Bestätigen und weiter"
+    },
+    "template": {
+      "metaTitle": "Vorlage wählen — MenuMaker AI",
+      "subtitle": "Wählen Sie eine Design-Vorlage für Ihre Speisekarte.",
+      "defaultName": "Vorlage",
+      "categoryCuisine": "Küche",
+      "categoryStyle": "Stil",
+      "applyButton": "Vorlage übernehmen und zum Stil wechseln",
+      "applyError": "Die Vorlage konnte nicht übernommen werden."
+    },
+    "editor": {
+      "metaTitle": "Menüstil — MenuMaker AI",
+      "subtitle": "Passen Sie Farbe, Schriftart, Layout und Reihenfolge der Gerichte an — Änderungen erscheinen sofort in der Vorschau.",
+      "accentColor": "Akzentfarbe",
+      "contrastLabel": "Textkontrast auf Akzentfarbe: {ratio}:1",
+      "contrastPass": "✓ WCAG AA",
+      "contrastAdjusted": "(Textfarbe wird automatisch angepasst)",
+      "font": "Schriftart",
+      "columns": "Anzahl der Spalten",
+      "save": "Speichern",
+      "continue": "Weiter",
+      "saveStatus": {
+        "pending": "Warten auf Speichern…",
+        "saving": "Wird gespeichert…",
+        "saved": "Gespeichert",
+        "error": "Speichern fehlgeschlagen — versuchen Sie es über die Schaltfläche „Speichern“"
+      }
+    },
+    "result": {
+      "metaTitle": "Speisekarte fertig — MenuMaker AI",
+      "title": "Ihre Speisekarte ist fertig!",
+      "summary": "„{title}“ wurde erfolgreich erstellt: {categoryCount, plural, one {# Kategorie} other {# Kategorien}}, {itemCount, plural, one {# Gericht} other {# Gerichte}}. Veröffentlichen Sie sie als Web Menu oder laden Sie die fertigen Dateien unten herunter."
+    }
+  },
+  "export": {
+    "webMenuTitle": "Web Menu",
+    "published": "Veröffentlicht",
+    "slugLabel": "Link (Slug)",
+    "slugHelper": "Lateinische Buchstaben, Zahlen, Bindestriche. Leer lassen, um automatisch aus dem Namen zu generieren.",
+    "publish": "Veröffentlichen",
+    "unpublish": "Veröffentlichung aufheben",
+    "changeLink": "Link ändern",
+    "copyLink": "Kopieren",
+    "generateQr": "QR-Code generieren",
+    "downloadQr": "QR-Code herunterladen",
+    "qrAlt": "QR-Code, der zur Speisekarte führt",
+    "downloadFilesTitle": "Dateien herunterladen",
+    "downloadPdf": "PDF herunterladen",
+    "downloadPng": "PNG herunterladen",
+    "toasts": {
+      "publishedTitle": "Veröffentlicht",
+      "publishedDescription": "Ihr Web Menu ist jetzt über den Link erreichbar.",
+      "unpublishedTitle": "Veröffentlichung aufgehoben",
+      "unpublishedDescription": "Der Link bleibt gespeichert — Sie können jederzeit erneut veröffentlichen.",
+      "copiedTitle": "Kopiert",
+      "errorTitle": "Fehler",
+      "errorPublish": "Die Speisekarte konnte nicht veröffentlicht werden.",
+      "errorUnpublish": "Die Veröffentlichung konnte nicht aufgehoben werden.",
+      "errorPdf": "Das PDF konnte nicht heruntergeladen werden.",
+      "errorPng": "Das Bild konnte nicht heruntergeladen werden.",
+      "errorQr": "Der QR-Code konnte nicht generiert werden."
+    }
+  }
+}

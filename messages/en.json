@@ -1,0 +1,320 @@
+{
+  "metadata": {
+    "title": "MenuMaker AI",
+    "description": "Automatically create professional menus for restaurants, cafés, and bars."
+  },
+  "landing": {
+    "title": "MenuMaker AI",
+    "subtitle": "Coming soon"
+  },
+  "common": {
+    "or": "or",
+    "genericError": "Something went wrong. Please try again.",
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteForever": "Delete forever",
+      "confirm": "Confirm",
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create",
+      "upload": "Upload",
+      "download": "Download",
+      "copy": "Copy",
+      "change": "Change",
+      "apply": "Apply"
+    }
+  },
+  "localeSwitcher": {
+    "label": "Language",
+    "ariaLabel": "Choose interface language"
+  },
+  "nav": {
+    "brand": "MenuMaker AI",
+    "ariaMain": "Main navigation",
+    "items": {
+      "myMenus": "My Menus",
+      "credits": "Credits",
+      "history": "History",
+      "profile": "Profile"
+    },
+    "userMenu": {
+      "profile": "Profile",
+      "logout": "Log out"
+    }
+  },
+  "auth": {
+    "login": {
+      "metaTitle": "Log in — MenuMaker AI",
+      "title": "Log in",
+      "subtitle": "Welcome back.",
+      "googleCta": "Log in with Google",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Sign up",
+      "forgotPasswordLink": "Forgot your password?",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Log in"
+    },
+    "register": {
+      "metaTitle": "Sign up — MenuMaker AI",
+      "title": "Create an account",
+      "subtitle": "Your first 3 menus are free.",
+      "googleCta": "Sign up with Google",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "passwordHelper": "At least 8 characters.",
+      "confirmPasswordLabel": "Confirm password",
+      "submit": "Sign up"
+    },
+    "forgotPassword": {
+      "metaTitle": "Reset password — MenuMaker AI",
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email and we'll send you a password reset link.",
+      "emailLabel": "Email",
+      "submit": "Send link",
+      "submitted": "If an account with that address exists, we've sent a password reset link to it. Check your inbox (and spam folder).",
+      "rememberedPassword": "Remembered your password?",
+      "loginLink": "Log in"
+    },
+    "resetPassword": {
+      "metaTitle": "New password — MenuMaker AI",
+      "invalidTitle": "Invalid link",
+      "invalidDescription": "This password reset link has already been used or has expired.",
+      "requestNewLink": "Request a new link",
+      "title": "New password",
+      "subtitle": "Set a new password for your account.",
+      "passwordLabel": "New password",
+      "passwordHelper": "At least 8 characters.",
+      "confirmPasswordLabel": "Confirm password",
+      "submit": "Save new password"
+    },
+    "logout": "Log out"
+  },
+  "dashboard": {
+    "myMenus": {
+      "metaTitle": "My Menus — MenuMaker AI",
+      "title": "My Menus",
+      "count": "{count, plural, one {# menu} other {# menus}}",
+      "createNew": "Create new menu",
+      "createFirst": "Create your first menu",
+      "freeTrialExhausted": "You've used your free trial and don't have enough credits to create a new menu.",
+      "viewCredits": "View credits",
+      "emptyTitle": "No menus yet",
+      "emptyDescription": "Upload a file or paste your menu text — AI will recognize categories, dishes, and prices in seconds.",
+      "paginationAria": "Pagination"
+    },
+    "credits": {
+      "metaTitle": "Credits — MenuMaker AI",
+      "title": "Credits",
+      "subtitle": "Your balance and free trial status.",
+      "topUp": "Top up",
+      "balanceTitle": "Balance",
+      "balanceUnit": "credits",
+      "freeTrialTitle": "Free trial",
+      "available": "Available",
+      "used": "Used",
+      "recentTransactions": "Recent transactions",
+      "viewAllHistory": "View full history"
+    },
+    "creditsUpgrade": {
+      "metaTitle": "Top up — MenuMaker AI",
+      "title": "Top up credits",
+      "comingSoonTitle": "Buying credits will be available soon",
+      "comingSoonDescription": "We're setting up payments via Stripe — pay by card, securely, in seconds. Stay tuned.",
+      "backToCredits": "Back to credits"
+    },
+    "history": {
+      "metaTitle": "History — MenuMaker AI",
+      "title": "History",
+      "subtitle": "All credit activity on your account.",
+      "paginationAria": "Pagination"
+    },
+    "profile": {
+      "metaTitle": "Profile — MenuMaker AI",
+      "title": "Profile",
+      "subtitle": "Manage your account.",
+      "avatarCardTitle": "Profile photo",
+      "detailsCardTitle": "Personal details",
+      "nameLabel": "Name",
+      "saved": "Saved.",
+      "saveError": "Couldn't save your profile.",
+      "passwordCardTitle": "Password",
+      "dangerZoneTitle": "Danger zone",
+      "dangerZoneDescription": "Deleting your account is irreversible — all your menus and data will be lost forever.",
+      "deleteAccount": "Delete account",
+      "deleteDialogTitle": "Delete your account forever?",
+      "deleteDialogDescription": "This action can't be undone. All your menus, credits, and history will be permanently deleted. To confirm, type your email ({email}) below.",
+      "confirmEmailLabel": "Confirm your email",
+      "deleteError": "Couldn't delete your account."
+    },
+    "avatarUpload": {
+      "changePhoto": "Change photo",
+      "hint": "JPG, PNG, or WebP, up to 2MB",
+      "error": "Couldn't upload your avatar."
+    },
+    "changePassword": {
+      "newPasswordLabel": "New password",
+      "confirmPasswordLabel": "Confirm password",
+      "passwordHelper": "At least 8 characters.",
+      "submit": "Change password",
+      "saved": "Password changed.",
+      "error": "Couldn't change your password."
+    },
+    "transactions": {
+      "emptyTitle": "No history yet",
+      "emptyDescription": "Credit activity will show up here after you create your first menu.",
+      "types": {
+        "purchase": "Credit purchase",
+        "menu_generation": "Menu analysis",
+        "menu_translation": "Menu translation",
+        "ai_description": "AI dish description",
+        "refund": "Refund",
+        "bonus": "Bonus",
+        "free_tier": "Free trial",
+        "admin_grant": "Granted by admin"
+      }
+    },
+    "menuCard": {
+      "actionsAria": "Menu actions",
+      "editLabel": "Edit",
+      "duplicateLabel": "Duplicate",
+      "publicLink": "Public link",
+      "deleteLabel": "Delete",
+      "updatedPrefix": "Updated",
+      "deleteDialogTitle": "Delete \"{title}\"?",
+      "deleteDialogDescription": "This action can't be undone. The menu and all related data will be permanently deleted.",
+      "duplicateError": "Couldn't duplicate the menu.",
+      "deleteError": "Couldn't delete the menu."
+    },
+    "statusBadge": {
+      "draft": "Draft",
+      "processing": "Processing",
+      "completed": "Completed",
+      "failed": "Failed"
+    }
+  },
+  "menuGenerator": {
+    "wizardSteps": {
+      "ariaLabel": "Menu creation steps",
+      "import": "Import",
+      "review": "Review",
+      "template": "Template",
+      "editor": "Style",
+      "result": "Result"
+    },
+    "import": {
+      "metaTitle": "New menu — MenuMaker AI",
+      "title": "Create a menu",
+      "subtitle": "Upload a menu file or paste text — AI will recognize categories, dishes, and prices.",
+      "nameLabel": "Menu name",
+      "namePlaceholder": "E.g. Summer Menu 2026",
+      "uploadTab": "Upload file",
+      "textTab": "Paste text",
+      "dropzoneHint": "PDF, Word (.docx), or Excel (.xlsx), up to 10MB",
+      "textLabel": "Menu text",
+      "textPlaceholder": "Paste your menu text — categories, dishes, prices...",
+      "submit": "Analyze menu",
+      "submitting": "AI is analyzing your menu...",
+      "errors": {
+        "titleRequired": "Enter a menu name.",
+        "fileRequired": "Choose a file to upload.",
+        "textRequired": "Paste your menu text.",
+        "unexpected": "An unexpected error occurred. Please try again.",
+        "creditsHint": "Buying credits will be available on the Credits page (coming in a later stage)."
+      }
+    },
+    "dropzone": {
+      "cta": "Drag a file here or click to browse",
+      "removeAria": "Remove file"
+    },
+    "review": {
+      "metaTitle": "Review menu — MenuMaker AI",
+      "subtitle": "Check the recognized categories, dishes, and prices — fix or add anything AI might have missed.",
+      "categoryNamePlaceholder": "Category name",
+      "categoryNameAria": "Category name",
+      "itemNamePlaceholder": "Dish name",
+      "itemNameAria": "Dish name",
+      "pricePlaceholder": "Price",
+      "priceAria": "Price",
+      "descriptionPlaceholder": "Description (optional)",
+      "descriptionAria": "Dish description",
+      "removeCategoryAria": "Remove category",
+      "removeItemAria": "Remove dish",
+      "newCategoryName": "New category",
+      "addItem": "Add dish",
+      "addCategory": "Add category",
+      "addFirstCategory": "Add category",
+      "emptyTitle": "No categories yet",
+      "emptyDescription": "Add at least one category and dish manually, or go back and import a different file.",
+      "atLeastOneItemError": "Add at least one dish before confirming.",
+      "confirmGenericError": "Couldn't confirm the menu. Please try again.",
+      "recognizedCount": "Dishes recognized: {count}",
+      "confirm": "Confirm and continue"
+    },
+    "template": {
+      "metaTitle": "Choose a template — MenuMaker AI",
+      "subtitle": "Choose a design template for your menu.",
+      "defaultName": "Template",
+      "categoryCuisine": "Cuisine",
+      "categoryStyle": "Style",
+      "applyButton": "Apply template and continue to style",
+      "applyError": "Couldn't apply the template."
+    },
+    "editor": {
+      "metaTitle": "Menu style — MenuMaker AI",
+      "subtitle": "Customize color, font, layout, and dish order — changes appear instantly in the preview.",
+      "accentColor": "Accent color",
+      "contrastLabel": "Text contrast on accent: {ratio}:1",
+      "contrastPass": "✓ WCAG AA",
+      "contrastAdjusted": "(text color adjusted automatically)",
+      "font": "Font",
+      "columns": "Number of columns",
+      "save": "Save",
+      "continue": "Continue",
+      "saveStatus": {
+        "pending": "Waiting to save…",
+        "saving": "Saving…",
+        "saved": "Saved",
+        "error": "Couldn't save — try the \"Save\" button"
+      }
+    },
+    "result": {
+      "metaTitle": "Menu ready — MenuMaker AI",
+      "title": "Your menu is ready!",
+      "summary": "\"{title}\" was created successfully: {categoryCount, plural, one {# category} other {# categories}}, {itemCount, plural, one {# dish} other {# dishes}}. Publish it as a Web Menu or download the finished files below."
+    }
+  },
+  "export": {
+    "webMenuTitle": "Web Menu",
+    "published": "Published",
+    "slugLabel": "Link (slug)",
+    "slugHelper": "Latin letters, numbers, hyphens. Leave blank to auto-generate from the menu name.",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "changeLink": "Change link",
+    "copyLink": "Copy",
+    "generateQr": "Generate QR code",
+    "downloadQr": "Download QR",
+    "qrAlt": "QR code linking to the menu",
+    "downloadFilesTitle": "Download files",
+    "downloadPdf": "Download PDF",
+    "downloadPng": "Download PNG",
+    "toasts": {
+      "publishedTitle": "Published",
+      "publishedDescription": "Your Web Menu is now available at its link.",
+      "unpublishedTitle": "Unpublished",
+      "unpublishedDescription": "The link is saved — you can publish again anytime.",
+      "copiedTitle": "Copied",
+      "errorTitle": "Error",
+      "errorPublish": "Couldn't publish the menu.",
+      "errorUnpublish": "Couldn't unpublish the menu.",
+      "errorPdf": "Couldn't download the PDF.",
+      "errorPng": "Couldn't download the image.",
+      "errorQr": "Couldn't generate the QR code."
+    }
+  }
+}

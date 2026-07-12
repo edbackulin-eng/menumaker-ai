@@ -1,11 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { profileApi } from "@/lib/api-client/profile";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -23,6 +24,8 @@ export interface DeleteAccountSectionProps {
 }
 
 export function DeleteAccountSection({ email }: DeleteAccountSectionProps) {
+  const t = useTranslations("dashboard.profile");
+  const tButtons = useTranslations("common.buttons");
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState("");
@@ -41,7 +44,7 @@ export function DeleteAccountSection({ email }: DeleteAccountSectionProps) {
       await createClient().auth.signOut();
       router.push("/");
     } catch (err) {
-      setError(err instanceof ApiClientError ? err.message : "Не вдалося видалити акаунт.");
+      setError(err instanceof ApiClientError ? err.message : t("deleteError"));
       setIsDeleting(false);
     }
   }
@@ -49,28 +52,23 @@ export function DeleteAccountSection({ email }: DeleteAccountSectionProps) {
   return (
     <Card className="border-error-400/30">
       <CardHeader>
-        <CardTitle>Небезпечна зона</CardTitle>
-        <CardDescription>
-          Видалення акаунту незворотне — усі ваші меню й дані буде втрачено назавжди.
-        </CardDescription>
+        <CardTitle>{t("dangerZoneTitle")}</CardTitle>
+        <CardDescription>{t("dangerZoneDescription")}</CardDescription>
       </CardHeader>
       <CardContent>
         <Button type="button" variant="destructive" onClick={() => setIsOpen(true)}>
-          Видалити акаунт
+          {t("deleteAccount")}
         </Button>
       </CardContent>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Видалити акаунт назавжди?</DialogTitle>
-            <DialogDescription>
-              Цю дію неможливо скасувати. Усі ваші меню, кредити й історія будуть видалені назавжди.
-              Щоб підтвердити, введіть свій email ({email}) нижче.
-            </DialogDescription>
+            <DialogTitle>{t("deleteDialogTitle")}</DialogTitle>
+            <DialogDescription>{t("deleteDialogDescription", { email })}</DialogDescription>
           </DialogHeader>
           <Input
-            label="Email для підтвердження"
+            label={t("confirmEmailLabel")}
             value={confirmEmail}
             onChange={(event) => setConfirmEmail(event.target.value)}
             placeholder={email}
@@ -79,7 +77,7 @@ export function DeleteAccountSection({ email }: DeleteAccountSectionProps) {
           {error && <p className="text-body-sm text-error-600 mt-2">{error}</p>}
           <DialogFooter>
             <Button type="button" variant="secondary" onClick={() => setIsOpen(false)}>
-              Скасувати
+              {tButtons("cancel")}
             </Button>
             <Button
               type="button"
@@ -88,7 +86,7 @@ export function DeleteAccountSection({ email }: DeleteAccountSectionProps) {
               isLoading={isDeleting}
               onClick={() => void handleDelete()}
             >
-              Видалити назавжди
+              {tButtons("deleteForever")}
             </Button>
           </DialogFooter>
         </DialogContent>

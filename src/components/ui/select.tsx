@@ -104,7 +104,7 @@ export function Select({
                     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
                   )}
                 >
-                  <SelectPrimitive.ItemIndicator className="absolute left-2 flex items-center">
+                  <SelectPrimitive.ItemIndicator className="absolute start-2 flex items-center">
                     <Check className="text-accent-400 size-4" aria-hidden="true" />
                   </SelectPrimitive.ItemIndicator>
                   <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>

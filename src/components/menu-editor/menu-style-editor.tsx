@@ -11,7 +11,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { AccentColorId, FontId, LayoutColumns } from "@/config/menu-style";
@@ -20,6 +20,7 @@ import { categoryAwareKeyboardCoordinates } from "@/lib/dnd/category-aware-keybo
 import { applyStyleOrder } from "@/lib/utils/menu-content-order";
 import type { StyleOverridesInput } from "@/lib/validations/menu-style";
 import type { MenuContent } from "@/services/ai/schemas/menu-content";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { EditorControlsPanel } from "@/components/menu-editor/editor-controls-panel";
 import { MenuLivePreview } from "@/components/menu-editor/menu-live-preview";
@@ -41,6 +42,7 @@ export function MenuStyleEditor({
   initialStyleOverrides,
   templateDefaults,
 }: MenuStyleEditorProps) {
+  const t = useTranslations("menuGenerator.editor");
   const router = useRouter();
   const [styleOverrides, setStyleOverrides] = useState<StyleOverridesInput>(initialStyleOverrides);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -179,10 +181,10 @@ export function MenuStyleEditor({
         <SaveStatusLabel status={saveStatus} />
         <div className="flex gap-2">
           <Button type="button" variant="secondary" onClick={() => void flushSave(styleOverrides)}>
-            Зберегти
+            {t("save")}
           </Button>
           <Button type="button" onClick={() => void handleContinue()} isLoading={isContinuing}>
-            Продовжити
+            {t("continue")}
           </Button>
         </div>
       </div>
@@ -191,14 +193,8 @@ export function MenuStyleEditor({
 }
 
 function SaveStatusLabel({ status }: { status: SaveStatus }) {
-  const text: Record<SaveStatus, string> = {
-    idle: "",
-    pending: "Очікує збереження…",
-    saving: "Збереження…",
-    saved: "Збережено",
-    error: "Не вдалося зберегти — спробуйте кнопку «Зберегти»",
-  };
-  if (!text[status]) return <span />;
+  const t = useTranslations("menuGenerator.editor.saveStatus");
+  if (status === "idle") return <span />;
   return (
     <p
       className={
@@ -207,7 +203,7 @@ function SaveStatusLabel({ status }: { status: SaveStatus }) {
           : "text-body-sm text-foreground-secondary"
       }
     >
-      {text[status]}
+      {t(status)}
     </p>
   );
 }

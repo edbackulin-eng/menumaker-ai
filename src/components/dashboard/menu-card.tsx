@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useFormatter, useTranslations } from "next-intl";
 import { Copy, ExternalLink, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
@@ -9,6 +8,7 @@ import { getAccentColorHex, type AccentColorId } from "@/config/menu-style";
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi, type Menu } from "@/lib/api-client/menus";
 import { pickReadableTextColor } from "@/lib/utils/color-contrast";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -33,13 +33,11 @@ export interface MenuCardProps {
   fontLabel: string;
 }
 
-const dateFormatter = new Intl.DateTimeFormat("uk-UA", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-});
-
 export function MenuCard({ menu, accentColorId, fontLabel }: MenuCardProps) {
+  const t = useTranslations("dashboard.menuCard");
+  const tButtons = useTranslations("common.buttons");
+  const tStatus = useTranslations("dashboard.statusBadge");
+  const format = useFormatter();
   const router = useRouter();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDuplicating, setIsDuplicating] = useState(false);
@@ -58,7 +56,7 @@ export function MenuCard({ menu, accentColorId, fontLabel }: MenuCardProps) {
       await menusApi.duplicate(menu.id);
       router.refresh();
     } catch (err) {
-      setError(err instanceof ApiClientError ? err.message : "Не вдалося дублювати меню.");
+      setError(err instanceof ApiClientError ? err.message : t("duplicateError"));
     } finally {
       setIsDuplicating(false);
     }
@@ -72,7 +70,7 @@ export function MenuCard({ menu, accentColorId, fontLabel }: MenuCardProps) {
       setIsDeleteOpen(false);
       router.refresh();
     } catch (err) {
-      setError(err instanceof ApiClientError ? err.message : "Не вдалося видалити меню.");
+      setError(err instanceof ApiClientError ? err.message : t("deleteError"));
       setIsDeleting(false);
     }
   }
@@ -103,7 +101,7 @@ export function MenuCard({ menu, accentColorId, fontLabel }: MenuCardProps) {
           </p>
           <DropdownMenu>
             <DropdownMenuTrigger
-              aria-label="Дії з меню"
+              aria-label={t("actionsAria")}
               className="text-foreground-tertiary hover:bg-surface-secondary hover:text-foreground focus-visible:ring-ring/30 -m-1 flex size-7 shrink-0 items-center justify-center rounded-md focus-visible:ring-2 focus-visible:outline-none"
             >
               <MoreVertical className="size-4" aria-hidden="true" />
@@ -113,40 +111,45 @@ export function MenuCard({ menu, accentColorId, fontLabel }: MenuCardProps) {
                 <DropdownMenuItem asChild>
                   <Link href={`/menus/${menu.id}/editor`}>
                     <Pencil className="size-4" aria-hidden="true" />
-                    Редагувати
+                    {t("editLabel")}
                   </Link>
                 </DropdownMenuItem>
               )}
               {canDuplicate && (
                 <DropdownMenuItem onSelect={() => void handleDuplicate()} disabled={isDuplicating}>
                   <Copy className="size-4" aria-hidden="true" />
-                  Дублювати
+                  {t("duplicateLabel")}
                 </DropdownMenuItem>
               )}
               {menu.is_public && menu.public_slug && (
                 <DropdownMenuItem asChild>
-                  <a href={`/menu/${menu.public_slug}`} target="_blank" rel="noreferrer">
+                  <a href={`/m/${menu.public_slug}`} target="_blank" rel="noreferrer">
                     <ExternalLink className="size-4" aria-hidden="true" />
-                    Публічне посилання
+                    {t("publicLink")}
                   </a>
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
               <DropdownMenuItem destructive onSelect={() => setIsDeleteOpen(true)}>
                 <Trash2 className="size-4" aria-hidden="true" />
-                Видалити
+                {t("deleteLabel")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
         <div className="flex items-center justify-between gap-2">
-          <MenuStatusBadge status={menu.status} />
+          <MenuStatusBadge status={menu.status} label={tStatus(menu.status)} />
           <span className="text-caption text-foreground-tertiary">{fontLabel}</span>
         </div>
 
         <p className="text-caption text-foreground-tertiary mt-auto">
-          Оновлено {dateFormatter.format(new Date(menu.updated_at))}
+          {t("updatedPrefix")}{" "}
+          {format.dateTime(new Date(menu.updated_at), {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })}
         </p>
 
         {error && <p className="text-caption text-error-600">{error}</p>}
@@ -155,14 +158,12 @@ export function MenuCard({ menu, accentColorId, fontLabel }: MenuCardProps) {
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Видалити «{menu.title}»?</DialogTitle>
-            <DialogDescription>
-              Цю дію неможливо скасувати. Меню та всі пов&apos;язані дані буде видалено назавжди.
-            </DialogDescription>
+            <DialogTitle>{t("deleteDialogTitle", { title: menu.title })}</DialogTitle>
+            <DialogDescription>{t("deleteDialogDescription")}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button type="button" variant="secondary" onClick={() => setIsDeleteOpen(false)}>
-              Скасувати
+              {tButtons("cancel")}
             </Button>
             <Button
               type="button"
@@ -170,7 +171,7 @@ export function MenuCard({ menu, accentColorId, fontLabel }: MenuCardProps) {
               onClick={() => void handleDelete()}
               isLoading={isDeleting}
             >
-              Видалити назавжди
+              {tButtons("deleteForever")}
             </Button>
           </DialogFooter>
         </DialogContent>

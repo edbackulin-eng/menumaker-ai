@@ -1,12 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi } from "@/lib/api-client/menus";
 import type { MenuContent } from "@/services/ai/schemas/menu-content";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,7 @@ function emptyItem() {
 }
 
 export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorProps) {
+  const t = useTranslations("menuGenerator.review");
   const router = useRouter();
   const [content, setContent] = useState<MenuContent>(initialContent);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,7 +53,7 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
       ...prev,
       categories: [
         ...prev.categories,
-        { id: crypto.randomUUID(), name: "Нова категорія", items: [] },
+        { id: crypto.randomUUID(), name: t("newCategoryName"), items: [] },
       ],
     }));
   }
@@ -114,7 +116,7 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
     };
 
     if (cleaned.categories.length === 0 || cleaned.categories.every((c) => c.items.length === 0)) {
-      setError("Додайте хоча б одну страву перед підтвердженням.");
+      setError(t("atLeastOneItemError"));
       return;
     }
 
@@ -123,11 +125,7 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
       await menusApi.confirm(menuId, cleaned);
       router.push(`/menus/${menuId}/template`);
     } catch (err) {
-      setError(
-        err instanceof ApiClientError
-          ? err.message
-          : "Не вдалося підтвердити меню. Спробуйте ще раз.",
-      );
+      setError(err instanceof ApiClientError ? err.message : t("confirmGenericError"));
       setIsSubmitting(false);
     }
   }
@@ -135,11 +133,11 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
   if (content.categories.length === 0) {
     return (
       <EmptyState
-        title="Категорій ще немає"
-        description="Додайте хоча б одну категорію та страву вручну, або поверніться до імпорту з іншим файлом."
+        title={t("emptyTitle")}
+        description={t("emptyDescription")}
         action={
           <Button variant="secondary" onClick={addCategory}>
-            <Plus className="size-4" aria-hidden="true" /> Додати категорію
+            <Plus className="size-4" aria-hidden="true" /> {t("addFirstCategory")}
           </Button>
         }
       />
@@ -154,8 +152,8 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
             <Input
               value={category.name}
               onChange={(event) => updateCategory(categoryIndex, { name: event.target.value })}
-              placeholder="Назва категорії"
-              aria-label="Назва категорії"
+              placeholder={t("categoryNamePlaceholder")}
+              aria-label={t("categoryNameAria")}
               containerClassName="flex-1"
             />
             <Button
@@ -163,7 +161,7 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
               variant="ghost"
               size="sm"
               onClick={() => removeCategory(categoryIndex)}
-              aria-label="Видалити категорію"
+              aria-label={t("removeCategoryAria")}
             >
               <Trash2 className="size-4" aria-hidden="true" />
             </Button>
@@ -179,8 +177,8 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
                   onChange={(event) =>
                     updateItem(categoryIndex, itemIndex, { name: event.target.value })
                   }
-                  placeholder="Назва страви"
-                  aria-label="Назва страви"
+                  placeholder={t("itemNamePlaceholder")}
+                  aria-label={t("itemNameAria")}
                 />
                 <Input
                   type="number"
@@ -191,8 +189,8 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
                       price: event.target.value === "" ? undefined : Number(event.target.value),
                     })
                   }
-                  placeholder="Ціна"
-                  aria-label="Ціна"
+                  placeholder={t("pricePlaceholder")}
+                  aria-label={t("priceAria")}
                   className="sm:w-28"
                 />
                 <Button
@@ -200,7 +198,7 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
                   variant="ghost"
                   size="sm"
                   onClick={() => removeItem(categoryIndex, itemIndex)}
-                  aria-label="Видалити страву"
+                  aria-label={t("removeItemAria")}
                 >
                   <Trash2 className="size-4" aria-hidden="true" />
                 </Button>
@@ -211,8 +209,8 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
                       description: event.target.value || undefined,
                     })
                   }
-                  placeholder="Опис (необов'язково)"
-                  aria-label="Опис страви"
+                  placeholder={t("descriptionPlaceholder")}
+                  aria-label={t("descriptionAria")}
                   rows={2}
                   className="sm:col-span-3"
                 />
@@ -225,14 +223,14 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
               onClick={() => addItem(categoryIndex)}
               className="self-start"
             >
-              <Plus className="size-4" aria-hidden="true" /> Додати страву
+              <Plus className="size-4" aria-hidden="true" /> {t("addItem")}
             </Button>
           </CardContent>
         </Card>
       ))}
 
       <Button type="button" variant="secondary" onClick={addCategory} className="self-start">
-        <Plus className="size-4" aria-hidden="true" /> Додати категорію
+        <Plus className="size-4" aria-hidden="true" /> {t("addCategory")}
       </Button>
 
       {error && (
@@ -242,9 +240,11 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
       )}
 
       <div className="flex items-center justify-between">
-        <p className="text-body-sm text-foreground-secondary">Розпізнано страв: {totalItems}</p>
+        <p className="text-body-sm text-foreground-secondary">
+          {t("recognizedCount", { count: totalItems })}
+        </p>
         <Button type="button" onClick={handleConfirm} isLoading={isSubmitting}>
-          Підтвердити і продовжити
+          {t("confirm")}
         </Button>
       </div>
     </div>

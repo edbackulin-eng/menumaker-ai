@@ -1,16 +1,11 @@
+import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 
-export const WIZARD_STEPS = [
-  { key: "import", label: "Імпорт" },
-  { key: "review", label: "Перегляд" },
-  { key: "template", label: "Шаблон" },
-  { key: "editor", label: "Стиль" },
-  { key: "result", label: "Результат" },
-] as const;
+export const WIZARD_STEP_KEYS = ["import", "review", "template", "editor", "result"] as const;
 
-export type WizardStepKey = (typeof WIZARD_STEPS)[number]["key"];
+export type WizardStepKey = (typeof WIZARD_STEP_KEYS)[number];
 
 export interface WizardStepsProps {
   current: WizardStepKey;
@@ -18,15 +13,16 @@ export interface WizardStepsProps {
 
 /** Progress indicator for the Menu Generator wizard (Import -> Review -> Template -> Editor -> Result). Purely presentational — the pages themselves own navigation/guards. */
 export function WizardSteps({ current }: WizardStepsProps) {
-  const currentIndex = WIZARD_STEPS.findIndex((step) => step.key === current);
+  const t = useTranslations("menuGenerator.wizardSteps");
+  const currentIndex = WIZARD_STEP_KEYS.indexOf(current);
 
   return (
-    <ol className="flex items-center gap-2" aria-label="Кроки створення меню">
-      {WIZARD_STEPS.map((step, index) => {
+    <ol className="flex items-center gap-2" aria-label={t("ariaLabel")}>
+      {WIZARD_STEP_KEYS.map((key, index) => {
         const isDone = index < currentIndex;
         const isCurrent = index === currentIndex;
         return (
-          <li key={step.key} className="flex items-center gap-2">
+          <li key={key} className="flex items-center gap-2">
             <span
               aria-current={isCurrent ? "step" : undefined}
               className={cn(
@@ -37,9 +33,9 @@ export function WizardSteps({ current }: WizardStepsProps) {
               )}
             >
               {isDone ? <Check className="size-3.5" aria-hidden="true" /> : index + 1}
-              {step.label}
+              {t(key)}
             </span>
-            {index < WIZARD_STEPS.length - 1 && (
+            {index < WIZARD_STEP_KEYS.length - 1 && (
               <span className="bg-border h-px w-6" aria-hidden="true" />
             )}
           </li>

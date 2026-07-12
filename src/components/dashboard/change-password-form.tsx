@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { changePasswordAction } from "@/features/profile/actions";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function ChangePasswordForm() {
+  const t = useTranslations("dashboard.changePassword");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -18,11 +20,11 @@ export function ChangePasswordForm() {
     setIsSaving(true);
     const result = await changePasswordAction({ password, confirmPassword });
     if (result.success) {
-      setStatus({ type: "success", message: "Пароль змінено." });
+      setStatus({ type: "success", message: t("saved") });
       setPassword("");
       setConfirmPassword("");
     } else {
-      setStatus({ type: "error", message: result.error ?? "Не вдалося змінити пароль." });
+      setStatus({ type: "error", message: result.error ?? t("error") });
     }
     setIsSaving(false);
   }
@@ -30,7 +32,7 @@ export function ChangePasswordForm() {
   return (
     <form onSubmit={(event) => void handleSubmit(event)} className="flex flex-col gap-4" noValidate>
       <Input
-        label="Новий пароль"
+        label={t("newPasswordLabel")}
         type="password"
         autoComplete="new-password"
         value={password}
@@ -38,7 +40,7 @@ export function ChangePasswordForm() {
         required
       />
       <Input
-        label="Підтвердіть пароль"
+        label={t("confirmPasswordLabel")}
         type="password"
         autoComplete="new-password"
         value={confirmPassword}
@@ -57,7 +59,7 @@ export function ChangePasswordForm() {
         </p>
       )}
       <Button type="submit" isLoading={isSaving} className="self-start">
-        Змінити пароль
+        {t("submit")}
       </Button>
     </form>
   );

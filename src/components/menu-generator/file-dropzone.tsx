@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { FileText, Upload, X } from "lucide-react";
 import { useId, useRef, useState } from "react";
 
@@ -15,6 +16,7 @@ export interface FileDropzoneProps {
 
 /** Standard file-upload drop zone (drag-and-drop + click-to-browse) — not to be confused with the future drag-and-drop *menu style* editor (a separate, later stage). */
 export function FileDropzone({ file, onFileChange, accept, disabled, hint }: FileDropzoneProps) {
+  const t = useTranslations("menuGenerator.dropzone");
   const [isDragActive, setIsDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const inputId = useId();
@@ -38,7 +40,7 @@ export function FileDropzone({ file, onFileChange, accept, disabled, hint }: Fil
           type="button"
           onClick={() => onFileChange(null)}
           disabled={disabled}
-          aria-label="Прибрати файл"
+          aria-label={t("removeAria")}
           className="text-foreground-secondary hover:text-foreground hover:bg-surface-secondary flex size-8 shrink-0 items-center justify-center rounded-md"
         >
           <X className="size-4" aria-hidden="true" />
@@ -76,7 +78,7 @@ export function FileDropzone({ file, onFileChange, accept, disabled, hint }: Fil
       )}
     >
       <Upload className="text-foreground-secondary size-8" aria-hidden="true" />
-      <p className="text-body-sm font-medium">Перетягніть файл сюди або натисніть, щоб обрати</p>
+      <p className="text-body-sm font-medium">{t("cta")}</p>
       {hint && <p className="text-caption text-foreground-secondary">{hint}</p>}
       <input
         ref={inputRef}

@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 
@@ -10,6 +11,7 @@ import { resetPasswordRequestAction } from "@/features/auth/actions";
 import { type ForgotPasswordInput, forgotPasswordSchema } from "@/lib/validations/auth";
 
 export function ForgotPasswordForm() {
+  const t = useTranslations("auth.forgotPassword");
   const [submitted, setSubmitted] = React.useState(false);
   const {
     register,
@@ -23,25 +25,20 @@ export function ForgotPasswordForm() {
   };
 
   if (submitted) {
-    return (
-      <p className="text-body-sm text-foreground-secondary">
-        Якщо акаунт з такою адресою існує, ми надіслали на неї лист з посиланням для скидання
-        пароля. Перевірте пошту (і теку «Спам»).
-      </p>
-    );
+    return <p className="text-body-sm text-foreground-secondary">{t("submitted")}</p>;
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
       <Input
-        label="Email"
+        label={t("emailLabel")}
         type="email"
         autoComplete="email"
         error={errors.email?.message}
         {...register("email")}
       />
       <Button type="submit" isLoading={isSubmitting} className="w-full">
-        Надіслати посилання
+        {t("submit")}
       </Button>
     </form>
   );

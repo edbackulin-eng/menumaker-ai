@@ -1,24 +1,69 @@
 import { createServerClient } from "@supabase/ssr";
+import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { publicEnv } from "@/config/env";
+import { isLocaleId, type LocaleId } from "@/config/profile";
+import { routing } from "@/i18n/routing";
 import type { Database } from "@/types/database.types";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/menus"];
+// Checked against the pathname *after* stripping the `/{locale}` segment —
+// `/admin` is deliberately absent here, it lives outside the locale segment
+// entirely (see the early-return branch below) and keeps its own
+// always-Ukrainian, unlocalized guard.
+const PROTECTED_PREFIXES = ["/dashboard", "/menus"];
 const ADMIN_PREFIX = "/admin";
+// `/m` (public menu pages, Stage 11) is deliberately unlocalized too — its
+// URLs are permanent, externally shared artifacts (QR codes, printed
+// materials); inserting a locale segment would break every one already
+// generated (see Stage 12 report for the full reasoning).
+const UNLOCALIZED_PREFIXES = ["/admin", "/api", "/auth/callback", "/design-system", "/m"];
+
+const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
+const LOCALE_PATH_PATTERN = new RegExp(`^/(${routing.locales.join("|")})(?=/|$)`);
+
+const handleI18nRouting = createMiddleware(routing);
+
+/**
+ * Article 30 of the Law of Ukraine "On Ensuring the Functioning of the
+ * Ukrainian Language as the State Language" requires a Ukrainian version to
+ * load by default for visitors located in Ukraine, ahead of the site's
+ * general technical default (English) — but only as a refinement of
+ * *auto-detection*, not as an override of a choice the visitor already made
+ * (an existing locale cookie, or — for a signed-in user — their saved
+ * `profiles.locale`). Both of those are checked by the caller before this
+ * is ever consulted.
+ */
+function isRequestFromUkraine(request: NextRequest): boolean {
+  return request.headers.get("x-vercel-ip-country") === "UA";
+}
+
+/**
+ * next-intl only ever looks at a request's `Accept-Language` header to
+ * auto-detect a first-visit locale — there's no supported hook to hand it a
+ * locale directly while still letting it run its normal redirect/rewrite
+ * logic. So the two higher-priority signals below (saved profile locale,
+ * Ukraine geo-priority) are applied by rewriting this header in place
+ * before `handleI18nRouting` runs. `request.headers` is a live, mutable
+ * `Headers` instance on the incoming `NextRequest` — mutating it is safe
+ * and is the documented pattern for this kind of composition.
+ */
+function applyLocalePriorityOverride(request: NextRequest, locale: LocaleId): void {
+  request.headers.set("accept-language", `${locale};q=1.0`);
+}
 
 /**
  * Next.js 16 renamed middleware.ts -> proxy.ts (same mechanism, nodejs-only
- * runtime). Runs on nearly every request (see matcher below) to keep the
- * Supabase session cookie fresh — Supabase's own guidance for App Router.
- *
- * The /admin role check here is an *optimistic* check for a fast redirect;
- * Next's own docs say proxy "should not be used as a full session
- * management or authorization solution" for exactly this kind of DB-backed
- * check, so the /admin page itself re-verifies role server-side too
- * (defense in depth, not just relying on this file).
+ * runtime). Composes three concerns that each need the same request:
+ * (1) Supabase session-cookie refresh, (2) next-intl locale routing, (3)
+ * this app's own auth/admin route guards. Order matters — session refresh
+ * must run first (auth guards below need a fresh `user`), and the
+ * locale-priority override must be applied before `handleI18nRouting` runs
+ * (it works by rewriting the request it reads).
  */
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient<Database>(
@@ -49,36 +94,112 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
-  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  // /admin, /api/**, /auth/callback, /design-system, /m live outside the
+  // `[locale]` segment entirely — never hand these to next-intl's routing
+  // middleware (it would try to locale-prefix them). `/admin`'s own redirect
+  // targets (/login, /dashboard) DO live under `[locale]`, though — bare
+  // "/login" would otherwise bounce through a second, redundant redirect via
+  // next-intl's own auto-detection, so this picks the locale directly (the
+  // visitor's saved cookie, else the technical default).
+  if (
+    UNLOCALIZED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+  ) {
+    if (pathname.startsWith(ADMIN_PREFIX) && !user) {
+      const cookieLocale = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
+      const locale =
+        cookieLocale && isLocaleId(cookieLocale) ? cookieLocale : routing.defaultLocale;
+      const loginUrl = new URL(`/${locale}/login`, request.url);
+      loginUrl.searchParams.set("next", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (pathname.startsWith(ADMIN_PREFIX) && user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.role !== "admin") {
+        const cookieLocale = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
+        const locale =
+          cookieLocale && isLocaleId(cookieLocale) ? cookieLocale : routing.defaultLocale;
+        const dashboardUrl = new URL(`/${locale}/dashboard`, request.url);
+        dashboardUrl.searchParams.set("error", "forbidden");
+        return NextResponse.redirect(dashboardUrl);
+      }
+    }
+
+    return response;
+  }
+
+  // Locale-priority resolution — only matters for a request that doesn't
+  // already carry an explicit `/{locale}` prefix (i.e. next-intl is about
+  // to auto-detect and redirect). If it already has one, or the visitor
+  // already has an explicit locale cookie, next-intl's own logic (URL
+  // prefix, then cookie) takes over untouched — an explicit past choice
+  // always outranks auto-detection.
+  const hasExplicitLocalePrefix = LOCALE_PATH_PATTERN.test(pathname);
+  const hasLocaleCookie = request.cookies.has(LOCALE_COOKIE_NAME);
+
+  if (!hasExplicitLocalePrefix && !hasLocaleCookie) {
+    let savedLocale: LocaleId | null = null;
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("locale")
+        .eq("id", user.id)
+        .single();
+      if (profile?.locale && isLocaleId(profile.locale)) {
+        savedLocale = profile.locale;
+      }
+    }
+
+    if (savedLocale) {
+      applyLocalePriorityOverride(request, savedLocale);
+    } else if (isRequestFromUkraine(request)) {
+      applyLocalePriorityOverride(request, "uk");
+    }
+  }
+
+  const intlResponse = handleI18nRouting(request);
+
+  // Carry the (possibly rotated) Supabase session cookies over onto
+  // whichever response next-intl produced — a locale redirect and a
+  // same-URL continuation both still need a fresh session cookie.
+  for (const cookie of response.cookies.getAll()) {
+    intlResponse.cookies.set(cookie);
+  }
+
+  if (intlResponse.headers.get("location")) {
+    // next-intl decided to redirect (adding/correcting the locale prefix);
+    // the browser will re-request with that prefix, so the auth guard
+    // below runs on the *next* pass instead of this one.
+    return intlResponse;
+  }
+
+  const localeMatch = LOCALE_PATH_PATTERN.exec(pathname);
+  const pathWithoutLocale = localeMatch ? pathname.slice(localeMatch[0].length) || "/" : pathname;
+  const isProtected = PROTECTED_PREFIXES.some(
+    (prefix) => pathWithoutLocale === prefix || pathWithoutLocale.startsWith(`${prefix}/`),
+  );
 
   if (isProtected && !user) {
-    const loginUrl = new URL("/login", request.url);
+    const locale = localeMatch?.[1] ?? routing.defaultLocale;
+    const loginUrl = new URL(`/${locale}/login`, request.url);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (pathname.startsWith(ADMIN_PREFIX) && user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.role !== "admin") {
-      const dashboardUrl = new URL("/dashboard", request.url);
-      dashboardUrl.searchParams.set("error", "forbidden");
-      return NextResponse.redirect(dashboardUrl);
-    }
-  }
-
-  return response;
+  return intlResponse;
 }
 
 export const config = {
   matcher: [
     // Everything except static assets / image optimization / favicon, so
-    // the session stays fresh app-wide, not just on protected routes.
+    // the session stays fresh app-wide, not just on protected routes. next
+    // -intl's own routing further narrows which of these get locale
+    // handling (see UNLOCALIZED_PREFIXES above).
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

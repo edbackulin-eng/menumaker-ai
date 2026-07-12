@@ -15,6 +15,18 @@ const STATUS_VARIANT: Record<Tables<"menus">["status"], BadgeProps["variant"]> =
   failed: "error",
 };
 
-export function MenuStatusBadge({ status }: { status: Tables<"menus">["status"] }) {
-  return <Badge variant={STATUS_VARIANT[status]}>{STATUS_LABEL[status]}</Badge>;
+export interface MenuStatusBadgeProps {
+  status: Tables<"menus">["status"];
+  /**
+   * Overrides the default (Ukrainian) label — used by the localized
+   * dashboard (`MenuCard`, via `dashboard.statusBadge.*` translations).
+   * Left unset, this renders the Ukrainian label unconditionally, which is
+   * what the admin panel needs (it stays Ukrainian regardless of interface
+   * locale and has no next-intl context available to it at all).
+   */
+  label?: string;
+}
+
+export function MenuStatusBadge({ status, label }: MenuStatusBadgeProps) {
+  return <Badge variant={STATUS_VARIANT[status]}>{label ?? STATUS_LABEL[status]}</Badge>;
 }

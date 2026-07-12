@@ -1,9 +1,10 @@
 "use server";
 
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 
 import { publicEnv } from "@/config/env";
+import { redirect } from "@/i18n/navigation";
 import { checkLoginLock, recordLoginFailure, recordLoginSuccess } from "@/lib/auth/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { verifyTurnstileToken } from "@/lib/turnstile/verify";
@@ -63,7 +64,7 @@ export async function signUpAction(input: RegisterInput): Promise<ActionResult> 
     return { success: false, error: "Не вдалося зареєструватись. Спробуйте пізніше." };
   }
 
-  redirect("/dashboard");
+  return redirect({ href: "/dashboard", locale: await getLocale() });
 }
 
 export async function signInAction(input: LoginInput): Promise<ActionResult> {
@@ -91,7 +92,7 @@ export async function signInAction(input: LoginInput): Promise<ActionResult> {
   }
 
   await recordLoginSuccess(email);
-  redirect("/dashboard");
+  return redirect({ href: "/dashboard", locale: await getLocale() });
 }
 
 export async function resetPasswordRequestAction(
@@ -128,11 +129,11 @@ export async function updatePasswordAction(input: ResetPasswordInput): Promise<A
     };
   }
 
-  redirect("/dashboard");
+  return redirect({ href: "/dashboard", locale: await getLocale() });
 }
 
 export async function signOutAction(): Promise<never> {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  return redirect({ href: "/login", locale: await getLocale() });
 }
