@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { buttonVariants } from "@/components/ui/button-variants";
-import { Card, CardContent } from "@/components/ui/card";
+import { publicEnv } from "@/config/env";
 import { Container } from "@/components/shared/container";
 import { PageHeader } from "@/components/shared/page-header";
+import { ExportPanel } from "@/components/menu-export/export-panel";
 import { WizardSteps } from "@/components/menu-generator/wizard-steps";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
@@ -52,20 +51,16 @@ export default async function MenuResultPage({ params }: PageProps) {
       <div className="mt-6 mb-8">
         <WizardSteps current="result" />
       </div>
-      <Card>
-        <CardContent className="flex flex-col gap-4 pt-6">
-          <p className="text-body text-foreground-secondary">
-            Меню «{menu.title}» успішно створено: {categoryCount} категорій, {itemCount} страв.
-          </p>
-          <p className="text-body-sm text-foreground-secondary">
-            Редагування вигляду, експорт (PDF/PNG/Web/QR) та повний список ваших меню
-            з&apos;являться на наступних етапах.
-          </p>
-          <Link href="/dashboard" className={buttonVariants({ className: "self-start" })}>
-            Перейти до кабінету
-          </Link>
-        </CardContent>
-      </Card>
+      <p className="text-body text-foreground-secondary mb-6">
+        Меню «{menu.title}» успішно створено: {categoryCount} категорій, {itemCount} страв.
+        Опублікуйте його як Web Menu або завантажте готові файли нижче.
+      </p>
+      <ExportPanel
+        menuId={menu.id}
+        appUrl={publicEnv.NEXT_PUBLIC_APP_URL}
+        initialIsPublic={menu.is_public}
+        initialPublicSlug={menu.public_slug}
+      />
     </Container>
   );
 }

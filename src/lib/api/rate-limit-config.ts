@@ -10,6 +10,11 @@ export const API_RATE_LIMITS = {
   // usage), unlike ordinary CRUD requests — this bounds runaway/accidental
   // client-side loops independently of a user's credit balance.
   ai: { limit: 10, windowSeconds: 60 },
+  // PDF/PNG/QR generation (Stage 11) is CPU/memory-heavy (font embedding,
+  // image rasterization, multi-page layout) but costs no credits — a tier
+  // between `ai` and `authenticated` bounds the resource cost without
+  // needing a whole credits-ledger conversation for a free action.
+  export: { limit: 15, windowSeconds: 60 },
 } as const;
 
 export type RateLimitTier = keyof typeof API_RATE_LIMITS;

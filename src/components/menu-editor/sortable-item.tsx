@@ -6,6 +6,7 @@ import { GripVertical } from "lucide-react";
 import { memo } from "react";
 
 import type { MenuItem } from "@/services/ai/schemas/menu-content";
+import { MenuItemContent } from "@/components/menu-render/menu-item-content";
 
 export interface SortableItemProps {
   item: MenuItem;
@@ -48,33 +49,7 @@ export const SortableItem = memo(function SortableItem({
       >
         <GripVertical className="size-4" aria-hidden="true" />
       </button>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-2">
-          <span
-            data-testid="item-name"
-            className="text-body font-medium"
-            style={{ fontFamily: "var(--menu-font)", opacity: isDragging ? 0.5 : 1 }}
-          >
-            {item.name}
-          </span>
-          {item.price !== undefined && (
-            <span
-              className="text-body shrink-0 font-semibold"
-              style={{ fontFamily: "var(--menu-font)" }}
-            >
-              {item.price} {currency ?? ""}
-            </span>
-          )}
-        </div>
-        {item.description && (
-          <p
-            className="text-caption text-foreground-secondary mt-0.5"
-            style={{ fontFamily: "var(--menu-font)" }}
-          >
-            {item.description}
-          </p>
-        )}
-      </div>
+      <MenuItemContent item={item} currency={currency} dimmed={isDragging} />
     </li>
   );
 });

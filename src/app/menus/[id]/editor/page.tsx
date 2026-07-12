@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import {
-  CURATED_ACCENT_COLORS,
-  CURATED_FONTS,
-  isAccentColorId,
-  isFontId,
-} from "@/config/menu-style";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { MENU_EDITOR_FONT_VARIABLES_CLASSNAME } from "@/lib/fonts/menu-fonts";
 import { createClient } from "@/lib/supabase/server";
+import { resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
 import { styleOverridesSchema } from "@/lib/validations/menu-style";
 import { menuContentSchema } from "@/services/ai/schemas/menu-content";
 import { Container } from "@/components/shared/container";
@@ -55,17 +50,9 @@ export default async function MenuEditorPage({ params }: PageProps) {
     .eq("id", menu.template_id)
     .maybeSingle();
 
-  const config = (template?.config ?? {}) as Record<string, unknown>;
-  const defaultAccentColorId =
-    typeof config.defaultAccentColorId === "string" && isAccentColorId(config.defaultAccentColorId)
-      ? config.defaultAccentColorId
-      : CURATED_ACCENT_COLORS[0].id;
-  const defaultFontId =
-    typeof config.defaultFontId === "string" && isFontId(config.defaultFontId)
-      ? config.defaultFontId
-      : CURATED_FONTS[0].id;
-  const defaultColumns =
-    config.defaultColumns === 2 || config.defaultColumns === 3 ? config.defaultColumns : 1;
+  const templateDefaults = resolveTemplateDefaults(
+    template?.config as Record<string, unknown> | null,
+  );
 
   const parsedContent = menuContentSchema.safeParse(menu.content);
   const content = parsedContent.success ? parsedContent.data : { categories: [] };
@@ -86,11 +73,7 @@ export default async function MenuEditorPage({ params }: PageProps) {
         menuId={menu.id}
         content={content}
         initialStyleOverrides={initialStyleOverrides}
-        templateDefaults={{
-          accentColorId: defaultAccentColorId,
-          fontId: defaultFontId,
-          columns: defaultColumns,
-        }}
+        templateDefaults={templateDefaults}
       />
     </Container>
   );

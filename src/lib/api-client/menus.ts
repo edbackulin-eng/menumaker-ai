@@ -102,4 +102,32 @@ export const menusApi = {
   duplicate(id: string): Promise<Menu> {
     return fetchJson<Menu>(`/api/menus/${id}/duplicate`, { method: "POST" });
   },
+
+  publish(id: string, slug?: string): Promise<Menu> {
+    return fetchJson<Menu>(`/api/menus/${id}/publish`, {
+      method: "PATCH",
+      body: JSON.stringify({ is_public: true, ...(slug ? { slug } : {}) }),
+    });
+  },
+
+  unpublish(id: string): Promise<Menu> {
+    return fetchJson<Menu>(`/api/menus/${id}/publish`, {
+      method: "PATCH",
+      body: JSON.stringify({ is_public: false }),
+    });
+  },
+
+  exportPdf(id: string): Promise<{ url: string }> {
+    return fetchJson<{ url: string }>(`/api/menus/${id}/export/pdf`, { method: "POST" });
+  },
+
+  exportPng(id: string): Promise<{ url: string }> {
+    return fetchJson<{ url: string }>(`/api/menus/${id}/export/png`, { method: "POST" });
+  },
+
+  exportQr(id: string): Promise<{ url: string; targetUrl: string }> {
+    return fetchJson<{ url: string; targetUrl: string }>(`/api/menus/${id}/export/qr`, {
+      method: "POST",
+    });
+  },
 };
