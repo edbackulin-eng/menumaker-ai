@@ -33,7 +33,7 @@ export function WizardSteps({ current }: WizardStepsProps) {
               )}
             >
               {isDone ? <Check className="size-3.5" aria-hidden="true" /> : index + 1}
-              {t(key)}
+              <span>{t(key)}</span>
             </span>
             {index < WIZARD_STEP_KEYS.length - 1 && (
               <span className="bg-border h-px w-6" aria-hidden="true" />

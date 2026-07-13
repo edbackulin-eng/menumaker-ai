@@ -58,7 +58,7 @@ export default async function HistoryPage({ params, searchParams }: PageProps) {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <Container size="lg" className="py-10">
+    <Container size="lg" className="py-8">
       <PageHeader title={t("title")} description={t("subtitle")} />
       <div className="mt-6">
         <TransactionList transactions={transactions} />

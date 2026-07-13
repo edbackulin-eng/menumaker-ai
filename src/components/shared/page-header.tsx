@@ -52,9 +52,9 @@ export function PageHeader({
         </nav>
       )}
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-h4 text-foreground">{title}</h1>
-          {description && <p className="text-body text-foreground-secondary">{description}</p>}
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-h3 text-foreground font-bold">{title}</h1>
+          {description && <p className="text-body-sm text-foreground-secondary">{description}</p>}
         </div>
         {actions && <div className="flex shrink-0 items-center gap-3">{actions}</div>}
       </div>

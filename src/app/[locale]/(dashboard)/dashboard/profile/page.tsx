@@ -31,7 +31,7 @@ export default async function ProfilePage({ params }: PageProps) {
   }
 
   return (
-    <Container size="md" className="py-10">
+    <Container size="md" className="py-8">
       <PageHeader title={t("title")} description={t("subtitle")} />
 
       <div className="mt-6 flex flex-col gap-6">

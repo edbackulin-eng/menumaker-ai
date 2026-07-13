@@ -216,39 +216,58 @@ export function ExportPanel({
                   {t("copyLink")}
                 </Button>
               </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      {/*
+        QR generation *technically* requires a published public URL to
+        encode (it can't exist before that) — but hiding the button
+        entirely until then made it invisible as a feature (PO feedback:
+        "QR isn't offered as an export option"). Shown here as its own
+        peer card next to PDF/PNG, always visible, disabled with an
+        explanatory hint until the menu is published.
+      */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("qrCardTitle")}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          {!isPublic && (
+            <p className="text-body-sm text-foreground-secondary">{t("qrRequiresPublish")}</p>
+          )}
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              isLoading={isGeneratingQr}
+              disabled={!isPublic}
+              onClick={() => void handleGenerateQr()}
+            >
+              <QrCode className="size-4" aria-hidden="true" />
+              {t("generateQr")}
+            </Button>
+            {qrPreviewUrl && (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not a local/optimizable asset */}
+                <img
+                  src={qrPreviewUrl}
+                  alt={t("qrAlt")}
+                  className="border-border size-20 rounded-md border"
+                />
                 <Button
                   type="button"
                   variant="secondary"
-                  isLoading={isGeneratingQr}
-                  onClick={() => void handleGenerateQr()}
+                  size="sm"
+                  onClick={() => void downloadFile(qrPreviewUrl, "menu-qr.png")}
                 >
-                  <QrCode className="size-4" aria-hidden="true" />
-                  {t("generateQr")}
+                  <Download className="size-4" aria-hidden="true" />
+                  {t("downloadQr")}
                 </Button>
-                {qrPreviewUrl && (
-                  <div className="flex items-center gap-3">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not a local/optimizable asset */}
-                    <img
-                      src={qrPreviewUrl}
-                      alt={t("qrAlt")}
-                      className="border-border size-20 rounded-md border"
-                    />
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => void downloadFile(qrPreviewUrl, "menu-qr.png")}
-                    >
-                      <Download className="size-4" aria-hidden="true" />
-                      {t("downloadQr")}
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+              </>
+            )}
+          </div>
         </CardContent>
       </Card>
 

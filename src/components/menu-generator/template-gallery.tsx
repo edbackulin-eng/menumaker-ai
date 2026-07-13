@@ -6,50 +6,43 @@ import { useState } from "react";
 
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi } from "@/lib/api-client/menus";
+import type { ResolvedMenuStyle } from "@/lib/utils/resolve-menu-style";
+import type { MenuContent } from "@/services/ai/schemas/menu-content";
 import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
+import { MenuStaticView } from "@/components/menu-render/menu-static-view";
 
 export interface TemplateCard {
   id: string;
   slug: string;
   name: string;
   category: string;
+  style: ResolvedMenuStyle;
 }
 
 export interface TemplateGalleryProps {
   menuId: string;
   templates: TemplateCard[];
+  /** The menu's own confirmed content — rendered live inside each template card (Stage 13: "show me my actual menu in this style," not an abstract color swatch). */
+  content: MenuContent;
 }
 
-/**
- * Placeholder swatch per template slug — real per-template visual design
- * (colors/fonts/layout) is out of scope for this stage (the future
- * drag-and-drop style editor); this only needs to look like a distinct,
- * selectable card.
- */
-const SWATCH_CLASSES: Record<string, string> = {
-  "coffee-shop": "bg-gradient-to-br from-amber-700 to-amber-950",
-  restaurant: "bg-gradient-to-br from-red-700 to-red-950",
-  pizza: "bg-gradient-to-br from-orange-500 to-red-700",
-  sushi: "bg-gradient-to-br from-rose-600 to-slate-900",
-  burger: "bg-gradient-to-br from-yellow-600 to-orange-800",
-  bakery: "bg-gradient-to-br from-orange-300 to-amber-600",
-  bar: "bg-gradient-to-br from-purple-700 to-slate-950",
-  luxury: "bg-gradient-to-br from-yellow-500 to-slate-900",
-  modern: "bg-gradient-to-br from-sky-500 to-indigo-700",
-  minimal: "bg-gradient-to-br from-neutral-200 to-neutral-400",
-  elegant: "bg-gradient-to-br from-rose-300 to-neutral-700",
-  dark: "bg-gradient-to-br from-neutral-800 to-black",
-};
+// Same scaled-render trick as MenuCard's mini preview (see that file's
+// comment) — a fixed generous source width scaled down via CSS transform,
+// clipped by the card's own overflow-hidden.
+const PREVIEW_SOURCE_WIDTH = 720;
+const PREVIEW_SCALE = 0.34;
 
-export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
+export function TemplateGallery({ menuId, templates, content }: TemplateGalleryProps) {
   const t = useTranslations("menuGenerator.template");
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const hasPreviewableContent = content.categories.some((c) => c.items.length > 0);
 
   async function handleApply() {
     if (!selectedId) return;
@@ -80,14 +73,25 @@ export function TemplateGallery({ menuId, templates }: TemplateGalleryProps) {
                 isSelected && "ring-accent-400 ring-2 ring-offset-2",
               )}
             >
-              <div
-                className={cn(
-                  "relative flex h-24 items-center justify-center",
-                  SWATCH_CLASSES[template.slug] ?? "bg-neutral-400",
+              <div className="bg-surface-secondary relative h-32 overflow-hidden">
+                {hasPreviewableContent ? (
+                  <div
+                    className="pointer-events-none absolute top-0 left-0 origin-top-left"
+                    style={{ width: PREVIEW_SOURCE_WIDTH, transform: `scale(${PREVIEW_SCALE})` }}
+                    aria-hidden="true"
+                  >
+                    <MenuStaticView
+                      content={content}
+                      accentColorId={template.style.accentColorId}
+                      fontId={template.style.fontId}
+                      columns={template.style.columns}
+                    />
+                  </div>
+                ) : (
+                  <div className="bg-surface-secondary absolute inset-0" />
                 )}
-              >
                 {isSelected && (
-                  <span className="bg-accent-400 absolute end-2 top-2 flex size-6 items-center justify-center rounded-full text-white">
+                  <span className="bg-accent-400 absolute end-2 top-2 z-10 flex size-6 items-center justify-center rounded-full text-white">
                     <Check className="size-4" aria-hidden="true" />
                   </span>
                 )}

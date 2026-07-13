@@ -35,7 +35,7 @@ export default async function CreditsPage({ params }: PageProps) {
   const freeMenuAvailable = summary.freeMenusUsed < summary.freeMenuLimit;
 
   return (
-    <Container size="lg" className="py-10">
+    <Container size="lg" className="py-8">
       <PageHeader
         title={t("title")}
         description={t("subtitle")}

@@ -28,7 +28,7 @@ export default async function CreditsUpgradePage({ params }: PageProps) {
   }
 
   return (
-    <Container size="md" className="py-10">
+    <Container size="md" className="py-8">
       <PageHeader title={t("title")} />
       <EmptyState
         className="mt-6"

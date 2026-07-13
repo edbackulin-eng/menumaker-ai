@@ -53,7 +53,7 @@ export default async function MenuResultPage({ params }: PageProps) {
     : 0;
 
   return (
-    <Container size="md" className="py-10">
+    <Container size="md" className="py-8">
       <PageHeader title={t("title")} description={menu.title} />
       <div className="mt-6 mb-8">
         <WizardSteps current="result" />

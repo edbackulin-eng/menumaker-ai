@@ -9,6 +9,8 @@ import { WizardSteps } from "@/components/menu-generator/wizard-steps";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
+import { resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
+import { menuContentSchema } from "@/services/ai/schemas/menu-content";
 import type { Json } from "@/types/database.types";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -46,7 +48,7 @@ export default async function MenuTemplatePage({ params }: PageProps) {
   const supabase = await createClient();
   const { data: menu } = await supabase
     .from("menus")
-    .select("id, title, locale, content_confirmed_at, status")
+    .select("id, title, locale, content, content_confirmed_at, status")
     .eq("id", id)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -64,9 +66,12 @@ export default async function MenuTemplatePage({ params }: PageProps) {
 
   const { data: templates } = await supabase
     .from("menu_templates")
-    .select("id, slug, name, category")
+    .select("id, slug, name, category, config")
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
+
+  const parsedContent = menuContentSchema.safeParse(menu.content);
+  const content = parsedContent.success ? parsedContent.data : { categories: [] };
 
   const defaultName = t("defaultName");
   const cards = (templates ?? []).map((template) => ({
@@ -74,15 +79,16 @@ export default async function MenuTemplatePage({ params }: PageProps) {
     slug: template.slug,
     category: template.category,
     name: localizedTemplateName(template.name, menu.locale, defaultName),
+    style: resolveTemplateDefaults(template.config as Record<string, unknown> | null),
   }));
 
   return (
-    <Container size="lg" className="py-10">
+    <Container size="lg" className="py-8">
       <PageHeader title={menu.title} description={t("subtitle")} />
       <div className="mt-6 mb-8">
         <WizardSteps current="template" />
       </div>
-      <TemplateGallery menuId={menu.id} templates={cards} />
+      <TemplateGallery menuId={menu.id} templates={cards} content={content} />
     </Container>
   );
 }

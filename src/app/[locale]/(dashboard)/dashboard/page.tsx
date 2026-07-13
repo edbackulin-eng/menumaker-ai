@@ -13,6 +13,7 @@ import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { MenuCard } from "@/components/dashboard/menu-card";
+import { MenuTemplatePreviewMockups } from "@/components/dashboard/menu-template-preview-mockups";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("dashboard.myMenus");
@@ -62,7 +63,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <Container size="xl" className="py-10">
+    <Container size="xl" className="py-8">
       <PageHeader
         title={t("title")}
         description={t("count", { count: total })}
@@ -77,7 +78,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
       />
 
       {!eligibility && (
-        <div className="border-warning-400/30 bg-warning-50 text-body-sm text-warning-600 mt-6 flex flex-wrap items-center justify-between gap-3 rounded-md border px-4 py-3">
+        <div className="border-warning-400/30 bg-warning-50 text-body-sm text-warning-600 mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border px-4 py-3">
           <span>{t("freeTrialExhausted")}</span>
           <Link href="/dashboard/credits" className="font-medium underline underline-offset-2">
             {t("viewCredits")}
@@ -87,7 +88,8 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
 
       {(menus ?? []).length === 0 ? (
         <EmptyState
-          className="mt-10"
+          className="mt-8"
+          preview={<MenuTemplatePreviewMockups />}
           title={t("emptyTitle")}
           description={t("emptyDescription")}
           action={
@@ -100,7 +102,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
         />
       ) : (
         <>
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {(menus ?? []).map((menu) => {
               const config = menu.template_id
                 ? templateConfigById.get(menu.template_id)
@@ -127,6 +129,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
                   key={menu.id}
                   menu={menu}
                   accentColorId={accentColorId}
+                  fontId={fontId}
                   fontLabel={fontLabel}
                 />
               );

@@ -68,7 +68,7 @@ export default async function MenuEditorPage({ params }: PageProps) {
   const initialStyleOverrides = parsedStyleOverrides.success ? parsedStyleOverrides.data : {};
 
   return (
-    <Container size="xl" className={`py-10 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
+    <Container size="xl" className={`py-8 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
       <PageHeader title={menu.title} description={t("subtitle")} />
       <div className="mt-6 mb-8">
         <WizardSteps current="editor" />

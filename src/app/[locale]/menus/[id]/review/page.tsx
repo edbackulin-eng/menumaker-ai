@@ -57,7 +57,7 @@ export default async function MenuReviewPage({ params }: PageProps) {
   const initialContent = parsedContent.success ? parsedContent.data : { categories: [] };
 
   return (
-    <Container size="lg" className="py-10">
+    <Container size="lg" className="py-8">
       <PageHeader title={menu.title} description={t("subtitle")} />
       <div className="mt-6 mb-8">
         <WizardSteps current="review" />

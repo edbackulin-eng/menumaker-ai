@@ -7,6 +7,8 @@ export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description?: string;
   action?: React.ReactNode;
+  /** Optional visual — e.g. example output mockups — shown above the title. Answers "what will I get" instead of just describing it in text (see Stage 13 UI critique). */
+  preview?: React.ReactNode;
 }
 
 export function EmptyState({
@@ -14,6 +16,7 @@ export function EmptyState({
   title,
   description,
   action,
+  preview,
   className,
   ...props
 }: EmptyStateProps) {
@@ -25,6 +28,7 @@ export function EmptyState({
       )}
       {...props}
     >
+      {preview && <div className="mb-2">{preview}</div>}
       {Icon && (
         <div className="bg-surface-secondary flex size-12 items-center justify-center rounded-full">
           <Icon className="text-foreground-tertiary size-6" aria-hidden="true" />
