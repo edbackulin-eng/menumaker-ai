@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi } from "@/lib/api-client/menus";
+import { slugify } from "@/lib/utils/slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,14 +54,20 @@ export function ExportPanel({
 
   const publicUrl = publicSlug ? `${appUrl}/m/${publicSlug}` : null;
 
+  /** Shared by handlePublish (explicit "Publish" click, wants its own toast) and handleGenerateQr (publishes silently as an implementation step — see that function's comment). */
+  async function publishMenu() {
+    const menu = await menusApi.publish(menuId, slugInput.trim() || undefined);
+    setIsPublic(true);
+    setPublicSlug(menu.public_slug);
+    setSlugInput(menu.public_slug ?? "");
+    return menu;
+  }
+
   async function handlePublish() {
     setPublishError(null);
     setIsPublishing(true);
     try {
-      const menu = await menusApi.publish(menuId, slugInput.trim() || undefined);
-      setIsPublic(true);
-      setPublicSlug(menu.public_slug);
-      setSlugInput(menu.public_slug ?? "");
+      await publishMenu();
       toast({
         variant: "success",
         title: t("toasts.publishedTitle"),
@@ -130,9 +137,22 @@ export function ExportPanel({
     }
   }
 
+  // QR *technically* requires a published public URL to encode, but making
+  // the user run a separate "Publish" step first before this button even
+  // does anything was pure friction — the sequencing is an implementation
+  // detail, not something the user should have to understand. Publishing
+  // here is silent (no toast) specifically so it doesn't compete with the
+  // QR image itself as the visible confirmation of "this worked"; the
+  // Web Menu card above still updates to its published state (badge, URL,
+  // Unpublish button) as a side effect, which is enough of a trace for
+  // anyone who goes looking for it.
   async function handleGenerateQr() {
     setIsGeneratingQr(true);
+    setPublishError(null);
     try {
+      if (!isPublic) {
+        await publishMenu();
+      }
       const { url } = await menusApi.exportQr(menuId);
       setQrPreviewUrl(url);
     } catch (err) {
@@ -161,6 +181,17 @@ export function ExportPanel({
             placeholder="napryklad-kavyarnya-lviv"
             value={slugInput}
             onChange={(event) => setSlugInput(event.target.value)}
+            // Normalizes on blur rather than on every keystroke — kebab-
+            // casing a Cyrillic paste mid-type would otherwise fight the
+            // cursor position. This is what actually fixes "field shows
+            // raw Cyrillic that contradicts its own Latin-only hint": the
+            // field re-derives a valid slug the moment the user leaves it,
+            // instead of leaving invalid text sitting there for them to
+            // manually retype.
+            onBlur={(event) => {
+              const normalized = slugify(event.target.value);
+              if (normalized !== event.target.value) setSlugInput(normalized);
+            }}
             helperText={t("slugHelper")}
           />
           {publishError && <p className="text-body-sm text-error-600">{publishError}</p>}
@@ -223,26 +254,21 @@ export function ExportPanel({
 
       {/*
         QR generation *technically* requires a published public URL to
-        encode (it can't exist before that) — but hiding the button
-        entirely until then made it invisible as a feature (PO feedback:
-        "QR isn't offered as an export option"). Shown here as its own
-        peer card next to PDF/PNG, always visible, disabled with an
-        explanatory hint until the menu is published.
+        encode — handleGenerateQr publishes the menu first (silently) if
+        it isn't already, so this card never needs to explain that
+        sequencing or gate the button on it. Always visible, always
+        enabled, next to PDF/PNG as an equal peer.
       */}
       <Card>
         <CardHeader>
           <CardTitle>{t("qrCardTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {!isPublic && (
-            <p className="text-body-sm text-foreground-secondary">{t("qrRequiresPublish")}</p>
-          )}
           <div className="flex flex-wrap items-center gap-3">
             <Button
               type="button"
               variant="secondary"
               isLoading={isGeneratingQr}
-              disabled={!isPublic}
               onClick={() => void handleGenerateQr()}
             >
               <QrCode className="size-4" aria-hidden="true" />

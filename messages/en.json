@@ -42,6 +42,11 @@
     "userMenu": {
       "profile": "Profile",
       "logout": "Log out"
+    },
+    "sidebar": {
+      "newMenu": "New menu",
+      "creditsCount": "{count, plural, one {# credit} other {# credits}}",
+      "freeTrialAvailable": "Free trial available"
     }
   },
   "auth": {
@@ -105,6 +110,7 @@
       "viewCredits": "View credits",
       "emptyTitle": "No menus yet",
       "emptyDescription": "Upload a file or paste your menu text — AI will recognize categories, dishes, and prices in seconds.",
+      "emptyPreviewTemplateFallback": "Template",
       "paginationAria": "Pagination"
     },
     "credits": {
@@ -301,7 +307,6 @@
     "generateQr": "Generate QR code",
     "downloadQr": "Download QR",
     "qrAlt": "QR code linking to the menu",
-    "qrRequiresPublish": "Publish your menu as a Web Menu above first — the QR code links to that public page.",
     "downloadFilesTitle": "Download files",
     "downloadPdf": "Download PDF",
     "downloadPng": "Download PNG",

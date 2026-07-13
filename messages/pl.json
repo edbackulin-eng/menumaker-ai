@@ -42,6 +42,11 @@
     "userMenu": {
       "profile": "Profil",
       "logout": "Wyloguj się"
+    },
+    "sidebar": {
+      "newMenu": "Nowe menu",
+      "creditsCount": "{count, plural, one {# kredyt} few {# kredyty} many {# kredytów} other {# kredytu}}",
+      "freeTrialAvailable": "Dostępny bezpłatny okres próbny"
     }
   },
   "auth": {
@@ -105,6 +110,7 @@
       "viewCredits": "Zobacz kredyty",
       "emptyTitle": "Nie masz jeszcze żadnego menu",
       "emptyDescription": "Wgraj plik lub wklej tekst menu — AI rozpozna kategorie, dania i ceny w kilka sekund.",
+      "emptyPreviewTemplateFallback": "Szablon",
       "paginationAria": "Paginacja"
     },
     "credits": {
@@ -301,7 +307,6 @@
     "generateQr": "Wygeneruj kod QR",
     "downloadQr": "Pobierz kod QR",
     "qrAlt": "Kod QR prowadzący do menu",
-    "qrRequiresPublish": "Najpierw opublikuj menu jako Web Menu powyżej — kod QR prowadzi do tej publicznej strony.",
     "downloadFilesTitle": "Pobierz pliki",
     "downloadPdf": "Pobierz PDF",
     "downloadPng": "Pobierz PNG",

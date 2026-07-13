@@ -42,6 +42,11 @@
     "userMenu": {
       "profile": "Профіль",
       "logout": "Вийти"
+    },
+    "sidebar": {
+      "newMenu": "Нове меню",
+      "creditsCount": "{count, plural, one {# кредит} few {# кредити} many {# кредитів} other {# кредита}}",
+      "freeTrialAvailable": "Безкоштовна спроба доступна"
     }
   },
   "auth": {
@@ -105,6 +110,7 @@
       "viewCredits": "Переглянути кредити",
       "emptyTitle": "Ще немає жодного меню",
       "emptyDescription": "Завантажте файл або вставте текст меню — AI розпізнає категорії, страви й ціни за лічені секунди.",
+      "emptyPreviewTemplateFallback": "Шаблон",
       "paginationAria": "Пагінація"
     },
     "credits": {
@@ -301,7 +307,6 @@
     "generateQr": "Згенерувати QR-код",
     "downloadQr": "Завантажити QR",
     "qrAlt": "QR-код на меню",
-    "qrRequiresPublish": "Спочатку опублікуйте меню як Web Menu вище — QR-код веде на цю публічну сторінку.",
     "downloadFilesTitle": "Завантажити файли",
     "downloadPdf": "Завантажити PDF",
     "downloadPng": "Завантажити PNG",

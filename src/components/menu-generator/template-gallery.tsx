@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { useState } from "react";
 
+import { getAccentColorHex } from "@/config/menu-style";
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi } from "@/lib/api-client/menus";
 import type { ResolvedMenuStyle } from "@/lib/utils/resolve-menu-style";
@@ -35,6 +36,17 @@ export interface TemplateGalleryProps {
 const PREVIEW_SOURCE_WIDTH = 720;
 const PREVIEW_SCALE = 0.34;
 
+// A template's page-background gradient is often a light pastel (Coffee
+// Shop's cream, Restaurant's off-white, ...) — genuinely different colors
+// from each other, but too close to the surrounding page's own white to
+// read as visually distinct once scaled down to a ~150px-tall card (PO
+// feedback: 9 of 12 cards looked interchangeable, only the 3 dark
+// templates stood out). A 2px border in the template's own accent color
+// gives every card a guaranteed, immediately-legible identifier that
+// doesn't depend on how saturated that particular template's background
+// happens to be.
+const CARD_BORDER_WIDTH = 2;
+
 export function TemplateGallery({ menuId, templates, content }: TemplateGalleryProps) {
   const t = useTranslations("menuGenerator.template");
   const router = useRouter();
@@ -62,18 +74,20 @@ export function TemplateGallery({ menuId, templates, content }: TemplateGalleryP
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {templates.map((template) => {
           const isSelected = selectedId === template.id;
+          const accentHex = getAccentColorHex(template.style.accentColorId);
           return (
             <button
               key={template.id}
               type="button"
               onClick={() => setSelectedId(template.id)}
               disabled={isSubmitting}
+              style={{ borderColor: accentHex, borderWidth: CARD_BORDER_WIDTH }}
               className={cn(
-                "border-border duration-fast group flex flex-col overflow-hidden rounded-lg border text-start transition-colors",
+                "duration-fast group flex flex-col overflow-hidden rounded-lg border text-start transition-colors",
                 isSelected && "ring-accent-400 ring-2 ring-offset-2",
               )}
             >
-              <div className="bg-surface-secondary relative h-32 overflow-hidden">
+              <div className="bg-surface-secondary relative h-36 overflow-hidden">
                 {hasPreviewableContent ? (
                   <div
                     className="pointer-events-none absolute top-0 left-0 origin-top-left"

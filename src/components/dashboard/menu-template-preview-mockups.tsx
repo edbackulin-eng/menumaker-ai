@@ -1,59 +1,75 @@
-import { getAccentColorHex, type AccentColorId, type FontId } from "@/config/menu-style";
-import {
-  FONT_ID_TO_CSS_VARIABLE,
-  MENU_EDITOR_FONT_VARIABLES_CLASSNAME,
-} from "@/lib/fonts/menu-fonts";
-import { pickReadableTextColor } from "@/lib/utils/color-contrast";
+import { getAccentColorHex } from "@/config/menu-style";
+import { MENU_EDITOR_FONT_VARIABLES_CLASSNAME } from "@/lib/fonts/menu-fonts";
+import type { ResolvedMenuStyle } from "@/lib/utils/resolve-menu-style";
+import type { MenuContent } from "@/services/ai/schemas/menu-content";
+import { MenuStaticView } from "@/components/menu-render/menu-static-view";
 
-interface MockupSpec {
-  accentColorId: AccentColorId;
-  fontId: FontId;
+export interface TemplatePreviewSpec {
+  name: string;
+  style: ResolvedMenuStyle;
 }
 
-// Three deliberately distinct style pairings (not three shades of the same
-// look) — this is a taste of the range of `menu_templates.config` output,
-// not a specific template. Purely decorative bars, not real dish names: the
-// point is "different visual styles exist," which doesn't need real text to
-// land, and sidesteps inventing locale-specific sample content for a UI
-// element that renders identically in all 5 interface languages.
-const MOCKUPS: MockupSpec[] = [
-  { accentColorId: "charcoal", fontId: "playfair-display" },
-  { accentColorId: "sunset-orange", fontId: "oswald" },
-  { accentColorId: "ocean-blue", fontId: "inter" },
-];
+export interface MenuTemplatePreviewMockupsProps {
+  templates: TemplatePreviewSpec[];
+}
 
-function MockupCard({ accentColorId, fontId }: MockupSpec) {
-  const accentHex = getAccentColorHex(accentColorId);
-  const accentTextHex = pickReadableTextColor(accentHex);
-  const fontFamily = FONT_ID_TO_CSS_VARIABLE[fontId];
+// English, generic, and short on purpose — this shows a first-time visitor
+// what their *own* menu will look like once they have one, in any of the 5
+// interface languages, without inventing per-locale sample dish names for a
+// purely decorative demo.
+const SAMPLE_CONTENT: MenuContent = {
+  currency: "$",
+  categories: [
+    {
+      id: "sample-category",
+      name: "Chef's specials",
+      items: [
+        {
+          id: "sample-item-1",
+          name: "Grilled salmon",
+          price: 24,
+          description: "Lemon butter sauce",
+        },
+        { id: "sample-item-2", name: "Truffle pasta", price: 18 },
+      ],
+    },
+  ],
+};
+
+const PREVIEW_SOURCE_WIDTH = 420;
+const PREVIEW_SCALE = 0.42;
+const CARD_BORDER_WIDTH = 2;
+
+function MockupCard({ name, style }: TemplatePreviewSpec) {
+  const accentHex = getAccentColorHex(style.accentColorId);
 
   return (
-    <div className="border-border bg-surface w-20 shrink-0 overflow-hidden rounded-md border shadow-sm sm:w-24">
-      <div
-        className="flex h-7 items-center px-2"
-        style={{ backgroundColor: accentHex, color: accentTextHex, fontFamily }}
-      >
-        <div className="h-1 w-1/2 rounded-full bg-current opacity-90" />
+    <div
+      style={{ borderColor: accentHex, borderWidth: CARD_BORDER_WIDTH }}
+      className="bg-surface w-32 shrink-0 overflow-hidden rounded-lg border sm:w-36"
+    >
+      <div className="bg-surface-secondary relative h-24 overflow-hidden sm:h-28">
+        <div
+          className="pointer-events-none absolute top-0 left-0 origin-top-left"
+          style={{ width: PREVIEW_SOURCE_WIDTH, transform: `scale(${PREVIEW_SCALE})` }}
+          aria-hidden="true"
+        >
+          <MenuStaticView content={SAMPLE_CONTENT} style={{ ...style, columns: 1 }} />
+        </div>
       </div>
-      <div className="flex flex-col gap-1.5 p-2">
-        {[0.9, 0.6, 0.75].map((width, i) => (
-          <div
-            key={i}
-            className="bg-border h-1 rounded-full"
-            style={{ width: `${width * 100}%` }}
-          />
-        ))}
-      </div>
+      <p className="text-caption text-foreground-secondary truncate px-2 py-1.5 text-center">
+        {name}
+      </p>
     </div>
   );
 }
 
-/** Shown in the "no menus yet" empty state — see EmptyState's `preview` prop. */
-export function MenuTemplatePreviewMockups() {
+/** Shown in the "no menus yet" empty state — real template renders (same MenuStaticView every other preview in the app uses), not abstract placeholder bars, so a first-time visitor sees actual product quality instead of a gray sketch of it. */
+export function MenuTemplatePreviewMockups({ templates }: MenuTemplatePreviewMockupsProps) {
   return (
     <div className={`flex items-end justify-center gap-3 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
-      {MOCKUPS.map((spec, i) => (
-        <MockupCard key={i} {...spec} />
+      {templates.map((template) => (
+        <MockupCard key={template.name} {...template} />
       ))}
     </div>
   );

@@ -42,6 +42,11 @@
     "userMenu": {
       "profile": "Perfil",
       "logout": "Cerrar sesión"
+    },
+    "sidebar": {
+      "newMenu": "Nueva carta",
+      "creditsCount": "{count, plural, one {# crédito} other {# créditos}}",
+      "freeTrialAvailable": "Prueba gratuita disponible"
     }
   },
   "auth": {
@@ -105,6 +110,7 @@
       "viewCredits": "Ver créditos",
       "emptyTitle": "Aún no tienes ninguna carta",
       "emptyDescription": "Sube un archivo o pega el texto de tu carta — la IA reconocerá categorías, platos y precios en segundos.",
+      "emptyPreviewTemplateFallback": "Plantilla",
       "paginationAria": "Paginación"
     },
     "credits": {
@@ -301,7 +307,6 @@
     "generateQr": "Generar código QR",
     "downloadQr": "Descargar QR",
     "qrAlt": "Código QR que enlaza con la carta",
-    "qrRequiresPublish": "Publica tu carta como Web Menu arriba primero — el código QR enlaza con esa página pública.",
     "downloadFilesTitle": "Descargar archivos",
     "downloadPdf": "Descargar PDF",
     "downloadPng": "Descargar PNG",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { IdCard, Image as ImageIcon, Lock } from "lucide-react";
 
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { redirect } from "@/i18n/navigation";
@@ -37,7 +38,10 @@ export default async function ProfilePage({ params }: PageProps) {
       <div className="mt-6 flex flex-col gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>{t("avatarCardTitle")}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <ImageIcon className="text-accent-600 size-4" aria-hidden="true" />
+              {t("avatarCardTitle")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <AvatarUpload initialAvatarUrl={user.avatar_url} name={user.full_name ?? user.email} />
@@ -46,7 +50,10 @@ export default async function ProfilePage({ params }: PageProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("detailsCardTitle")}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <IdCard className="text-accent-600 size-4" aria-hidden="true" />
+              {t("detailsCardTitle")}
+            </CardTitle>
             <CardDescription>{user.email}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
@@ -57,7 +64,10 @@ export default async function ProfilePage({ params }: PageProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("passwordCardTitle")}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="text-accent-600 size-4" aria-hidden="true" />
+              {t("passwordCardTitle")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ChangePasswordForm />

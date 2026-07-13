@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { CheckCircle2, CircleDashed } from "lucide-react";
+import { CheckCircle2, CircleDashed, Coins, Gift } from "lucide-react";
 
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
@@ -49,7 +49,10 @@ export default async function CreditsPage({ params }: PageProps) {
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>{t("balanceTitle")}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Coins className="text-accent-600 size-4" aria-hidden="true" />
+              {t("balanceTitle")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-h1 text-foreground">{summary.balance}</p>
@@ -59,7 +62,10 @@ export default async function CreditsPage({ params }: PageProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("freeTrialTitle")}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Gift className="text-accent-600 size-4" aria-hidden="true" />
+              {t("freeTrialTitle")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-2">
             {freeMenuAvailable ? (

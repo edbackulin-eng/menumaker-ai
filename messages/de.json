@@ -42,6 +42,11 @@
     "userMenu": {
       "profile": "Profil",
       "logout": "Abmelden"
+    },
+    "sidebar": {
+      "newMenu": "Neue Speisekarte",
+      "creditsCount": "{count, plural, one {# Guthabenpunkt} other {# Guthabenpunkte}}",
+      "freeTrialAvailable": "Kostenlose Testphase verfügbar"
     }
   },
   "auth": {
@@ -105,6 +110,7 @@
       "viewCredits": "Guthaben ansehen",
       "emptyTitle": "Noch keine Speisekarten",
       "emptyDescription": "Laden Sie eine Datei hoch oder fügen Sie Ihren Menütext ein — die KI erkennt Kategorien, Gerichte und Preise in Sekunden.",
+      "emptyPreviewTemplateFallback": "Vorlage",
       "paginationAria": "Seitennavigation"
     },
     "credits": {
@@ -301,7 +307,6 @@
     "generateQr": "QR-Code generieren",
     "downloadQr": "QR-Code herunterladen",
     "qrAlt": "QR-Code, der zur Speisekarte führt",
-    "qrRequiresPublish": "Veröffentlichen Sie Ihre Speisekarte zuerst oben als Web Menu — der QR-Code führt zu dieser öffentlichen Seite.",
     "downloadFilesTitle": "Dateien herunterladen",
     "downloadPdf": "PDF herunterladen",
     "downloadPng": "PNG herunterladen",

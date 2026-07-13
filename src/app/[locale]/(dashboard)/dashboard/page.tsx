@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { resolveEffectiveStyle, resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
 import { styleOverridesSchema } from "@/lib/validations/menu-style";
 import { assertMenuCreationEligible } from "@/services/menu-generator/menu-creation-credit";
+import type { Json } from "@/types/database.types";
 import { Link, redirect } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Container } from "@/components/shared/container";
@@ -14,6 +15,19 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { MenuCard } from "@/components/dashboard/menu-card";
 import { MenuTemplatePreviewMockups } from "@/components/dashboard/menu-template-preview-mockups";
+
+/** Interface-locale name lookup (not the content-locale lookup used once a menu exists — see template/page.tsx's own version of this) — this empty state has no menu yet, so the interface language is the only locale signal available. */
+function localizedTemplateName(name: Json, locale: string, fallback: string): string {
+  if (name && typeof name === "object" && !Array.isArray(name)) {
+    const record = name as Record<string, Json>;
+    const value = record[locale] ?? record.en;
+    if (typeof value === "string") return value;
+  }
+  return fallback;
+}
+
+/** A deliberately spread trio for the empty-state preview — light/warm, dark/formal, light/cool — not three shades of the same look. */
+const EMPTY_STATE_PREVIEW_SLUGS = ["coffee-shop", "luxury", "modern"];
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("dashboard.myMenus");
@@ -49,7 +63,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
       .range(from, to),
-    supabase.from("menu_templates").select("id, config"),
+    supabase.from("menu_templates").select("id, slug, name, config"),
     assertMenuCreationEligible(user.id)
       .then(() => true)
       .catch(() => false),
@@ -58,6 +72,15 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
   const templateConfigById = new Map(
     (templates ?? []).map((template) => [template.id, template.config as Record<string, unknown>]),
   );
+
+  const defaultTemplateName = t("emptyPreviewTemplateFallback");
+  const emptyStatePreviewTemplates = EMPTY_STATE_PREVIEW_SLUGS.map((slug) => {
+    const template = (templates ?? []).find((candidate) => candidate.slug === slug);
+    return {
+      name: localizedTemplateName(template?.name ?? null, locale, defaultTemplateName),
+      style: resolveTemplateDefaults(template?.config as Record<string, unknown> | null),
+    };
+  });
 
   const total = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -89,7 +112,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
       {(menus ?? []).length === 0 ? (
         <EmptyState
           className="mt-8"
-          preview={<MenuTemplatePreviewMockups />}
+          preview={<MenuTemplatePreviewMockups templates={emptyStatePreviewTemplates} />}
           title={t("emptyTitle")}
           description={t("emptyDescription")}
           action={

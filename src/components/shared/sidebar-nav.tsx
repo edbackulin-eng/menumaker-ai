@@ -21,6 +21,8 @@ export interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
     "aria-current"?: "page" | undefined;
     children?: React.ReactNode;
   }>;
+  /** Rendered above the nav items — e.g. DashboardSidebar's credits badge + "New menu" quick action. Kept as a slot rather than baked into this shared component so the design-system demo page's sidebar stays a plain nav list. */
+  header?: React.ReactNode;
 }
 
 /**
@@ -32,6 +34,7 @@ export function SidebarNav({
   items,
   ariaLabel = "Main navigation",
   linkComponent: LinkComponent = NextLink,
+  header,
   className,
   ...props
 }: SidebarNavProps) {
@@ -44,6 +47,7 @@ export function SidebarNav({
       )}
       {...props}
     >
+      {header}
       {items.map((item) => {
         const Icon = item.icon;
         return (
@@ -52,10 +56,10 @@ export function SidebarNav({
             href={item.href}
             aria-current={item.active ? "page" : undefined}
             className={cn(
-              "text-body-sm duration-fast flex h-9 items-center gap-2.5 rounded-sm px-3 font-medium transition-colors",
+              "text-body-sm duration-fast flex h-9 items-center gap-2.5 rounded-sm border-s-[3px] px-3 font-medium transition-colors",
               item.active
-                ? "bg-accent-50 text-accent-800"
-                : "text-foreground-secondary hover:bg-surface-secondary hover:text-foreground",
+                ? "bg-accent-50 border-s-accent-600 text-accent-800 ps-[calc(0.75rem-3px)]"
+                : "text-foreground-secondary hover:bg-surface-secondary hover:text-foreground border-s-transparent",
             )}
           >
             {Icon && <Icon className="size-4" aria-hidden="true" />}
