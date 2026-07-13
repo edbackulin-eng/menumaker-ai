@@ -16,6 +16,11 @@ export interface MenuItemContentProps {
  * *around* this (the `<li>`, drag handle, dnd-kit positioning) is specific
  * to whichever context renders it; this is the part that must look
  * identical everywhere, so it's the single place that owns it.
+ *
+ * Text color reads from `--menu-page-fg`/`--menu-page-fg-secondary` (set by
+ * the top-level MenuStaticView/MenuLivePreview from the template's resolved
+ * page background — Stage 13), not a hardcoded neutral — a template with a
+ * dark `background` still needs its item text to stay legible.
  */
 export const MenuItemContent = memo(function MenuItemContent({
   item,
@@ -28,14 +33,18 @@ export const MenuItemContent = memo(function MenuItemContent({
         <span
           data-testid="item-name"
           className="text-body font-medium"
-          style={{ fontFamily: "var(--menu-font)", opacity: dimmed ? 0.5 : 1 }}
+          style={{
+            fontFamily: "var(--menu-font)",
+            color: "var(--menu-page-fg)",
+            opacity: dimmed ? 0.5 : 1,
+          }}
         >
           {item.name}
         </span>
         {item.price !== undefined && (
           <span
             className="text-body shrink-0 font-semibold"
-            style={{ fontFamily: "var(--menu-font)" }}
+            style={{ fontFamily: "var(--menu-font)", color: "var(--menu-page-fg)" }}
           >
             {item.price} {currency ?? ""}
           </span>
@@ -43,8 +52,8 @@ export const MenuItemContent = memo(function MenuItemContent({
       </div>
       {item.description && (
         <p
-          className="text-caption text-foreground-secondary mt-0.5"
-          style={{ fontFamily: "var(--menu-font)" }}
+          className="text-caption mt-0.5"
+          style={{ fontFamily: "var(--menu-font)", color: "var(--menu-page-fg-secondary)" }}
         >
           {item.description}
         </p>

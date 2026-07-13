@@ -3,6 +3,11 @@ import { ImageResponse } from "next/og";
 
 import { getAccentColorHex } from "@/config/menu-style";
 import { pickReadableTextColor } from "@/lib/utils/color-contrast";
+import {
+  backgroundToCssValue,
+  CORNER_RADIUS_PX,
+  resolvePageForeground,
+} from "@/lib/utils/resolve-menu-style";
 import { distributeIntoColumns, EXPORT_TOKENS } from "@/lib/export/design-tokens";
 import { loadPngFontBuffers } from "@/lib/export/fonts";
 import type { ExportableMenu } from "@/services/export/load-menu";
@@ -15,6 +20,9 @@ const MIN_HEIGHT = 900;
 // menu's estimate exceeded a previously-set 4200px cap). Only guards
 // against a truly pathological content size blowing up render time/memory.
 const MAX_HEIGHT = 20000;
+
+const BODY_FONT_FAMILY = "MenuBodyFont";
+const HEADING_FONT_FAMILY = "MenuHeadingFont";
 
 /** Satori needs an explicit canvas size upfront (no intrinsic content-based sizing) — approximated from category/item counts rather than measured, so it's generous rather than exact. */
 function estimateCanvasHeight(menu: ExportableMenu): number {
@@ -30,17 +38,49 @@ function estimateCanvasHeight(menu: ExportableMenu): number {
  * Not the same JSX as MenuStaticView — Satori only understands a
  * constrained flexbox-only subset of CSS with inline styles, no Tailwind
  * classes, no CSS custom properties, no multi-column layout. Same data
- * source and same style-resolution logic (accent/font/columns), different
- * rendering primitives out of necessity — see docs/menu-export.md for the
- * full reasoning (also covers the PDF path, which has the same split).
+ * source and same style-resolution logic (accent/font/columns/background/
+ * category-header treatment), different rendering primitives out of
+ * necessity — see docs/menu-templates-design.md for the full reasoning
+ * (also covers the PDF path, which has the same split).
+ *
+ * Satori's CSS support (verified directly before relying on it here) does
+ * cover `linear-gradient`/`radial-gradient` backgrounds, per-corner
+ * `border-radius`, `box-shadow`, `text-transform`, and `letter-spacing` —
+ * so, unlike the PDF path, this renderer reproduces all 6 Stage 13 style
+ * fields exactly rather than gracefully degrading any of them.
  */
 export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
-  const accentHex = getAccentColorHex(menu.style.accentColorId);
+  const { style } = menu;
+  const accentHex = getAccentColorHex(style.accentColorId);
   const accentTextHex = pickReadableTextColor(accentHex);
-  const columnGroups = distributeIntoColumns(menu.content.categories, menu.style.columns);
-  const fontBuffers = await loadPngFontBuffers(menu.style.fontId);
-  const fontFamily = "MenuFont";
+  const pageForeground = resolvePageForeground(style.background);
+  const columnGroups = distributeIntoColumns(menu.content.categories, style.columns);
+  const radiusPx = CORNER_RADIUS_PX[style.cornerRadius];
+  const backgroundCss = backgroundToCssValue(style.background);
+  const opaqueCard = !style.background;
   const height = estimateCanvasHeight(menu);
+
+  const sameFont = style.headingFontId === style.fontId;
+  const [bodyFontBuffers, headingFontBuffers] = await Promise.all([
+    loadPngFontBuffers(style.fontId),
+    sameFont ? Promise.resolve(null) : loadPngFontBuffers(style.headingFontId),
+  ]);
+
+  // Satori (unlike a real DOM style object) processes every key present on
+  // the style object, undefined value or not — several of its internal
+  // css-to-react-native property transforms call `.trim()` on the raw value
+  // with no null guard, so a literal `undefined` here throws instead of
+  // being treated as "unset" (reproduced directly: this is what
+  // `boxShadow`/`backgroundColor`/`letterSpacing` below guard against via
+  // conditional spread rather than a ternary-to-undefined).
+  const headingTextStyle: React.CSSProperties = {
+    display: "flex",
+    fontFamily: HEADING_FONT_FAMILY,
+    fontSize: 22,
+    fontWeight: 700,
+    textTransform: style.categoryNameTransform === "uppercase" ? "uppercase" : "none",
+    ...(style.categoryNameTransform === "uppercase" ? { letterSpacing: "0.05em" } : {}),
+  };
 
   const element = (
     <div
@@ -51,15 +91,17 @@ export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
         height: "100%",
         backgroundColor: EXPORT_TOKENS.background,
         padding: 48,
-        fontFamily,
+        fontFamily: BODY_FONT_FAMILY,
+        ...backgroundCss,
       }}
     >
       <div
         style={{
           display: "flex",
+          fontFamily: HEADING_FONT_FAMILY,
           fontSize: 42,
           fontWeight: 700,
-          color: EXPORT_TOKENS.foreground,
+          color: pageForeground.primary,
           marginBottom: 32,
         }}
       >
@@ -77,24 +119,50 @@ export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  backgroundColor: EXPORT_TOKENS.surface,
-                  borderRadius: 8,
-                  border: `1px solid ${EXPORT_TOKENS.border}`,
+                  backgroundColor: opaqueCard ? EXPORT_TOKENS.surface : "transparent",
+                  borderRadius: radiusPx,
+                  border: `1px solid ${opaqueCard ? EXPORT_TOKENS.border : pageForeground.divider}`,
+                  ...(style.cardShadow ? { boxShadow: "0 4px 16px rgba(0,0,0,0.12)" } : {}),
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    backgroundColor: accentHex,
-                    color: accentTextHex,
-                    padding: "10px 16px",
-                    fontSize: 22,
-                    fontWeight: 700,
-                    borderRadius: "8px 8px 0 0",
-                  }}
-                >
-                  {category.name}
-                </div>
+                {style.categoryHeaderStyle === "solid-bar" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      backgroundColor: accentHex,
+                      color: accentTextHex,
+                      padding: "10px 16px",
+                      borderRadius: `${radiusPx}px ${radiusPx}px 0 0`,
+                    }}
+                  >
+                    <div style={headingTextStyle}>{category.name}</div>
+                  </div>
+                )}
+                {style.categoryHeaderStyle === "underline" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      padding: "16px 16px 10px",
+                      borderBottom: `2px solid ${accentHex}`,
+                    }}
+                  >
+                    <div style={{ ...headingTextStyle, color: accentHex }}>{category.name}</div>
+                  </div>
+                )}
+                {style.categoryHeaderStyle === "boxed-outline" && (
+                  <div style={{ display: "flex", padding: "16px 16px 8px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        padding: "6px 14px",
+                        border: `1.5px solid ${accentHex}`,
+                        borderRadius: Math.max(radiusPx - 2, 0),
+                      }}
+                    >
+                      <div style={{ ...headingTextStyle, color: accentHex }}>{category.name}</div>
+                    </div>
+                  </div>
+                )}
                 <div style={{ display: "flex", flexDirection: "column", padding: "4px 16px" }}>
                   {category.items.map((item) => (
                     <div
@@ -102,7 +170,7 @@ export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        borderBottom: `1px solid ${EXPORT_TOKENS.border}`,
+                        borderBottom: `1px solid ${opaqueCard ? EXPORT_TOKENS.border : pageForeground.divider}`,
                         padding: "10px 0",
                       }}
                     >
@@ -118,7 +186,7 @@ export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
                             display: "flex",
                             fontSize: 17,
                             fontWeight: 500,
-                            color: EXPORT_TOKENS.foreground,
+                            color: pageForeground.primary,
                           }}
                         >
                           {item.name}
@@ -129,7 +197,7 @@ export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
                               display: "flex",
                               fontSize: 17,
                               fontWeight: 700,
-                              color: EXPORT_TOKENS.foreground,
+                              color: pageForeground.primary,
                             }}
                           >
                             {item.price} {menu.content.currency ?? ""}
@@ -141,7 +209,7 @@ export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
                           style={{
                             display: "flex",
                             fontSize: 14,
-                            color: EXPORT_TOKENS.foregroundSecondary,
+                            color: pageForeground.secondary,
                             marginTop: 2,
                           }}
                         >
@@ -163,8 +231,20 @@ export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
     width: CANVAS_WIDTH,
     height,
     fonts: [
-      { name: fontFamily, data: fontBuffers.cyrillic, weight: 400, style: "normal" },
-      { name: fontFamily, data: fontBuffers.latin, weight: 400, style: "normal" },
+      { name: BODY_FONT_FAMILY, data: bodyFontBuffers.cyrillic, weight: 400, style: "normal" },
+      { name: BODY_FONT_FAMILY, data: bodyFontBuffers.latin, weight: 400, style: "normal" },
+      {
+        name: HEADING_FONT_FAMILY,
+        data: headingFontBuffers?.cyrillic ?? bodyFontBuffers.cyrillic,
+        weight: 700,
+        style: "normal",
+      },
+      {
+        name: HEADING_FONT_FAMILY,
+        data: headingFontBuffers?.latin ?? bodyFontBuffers.latin,
+        weight: 700,
+        style: "normal",
+      },
     ],
   });
 

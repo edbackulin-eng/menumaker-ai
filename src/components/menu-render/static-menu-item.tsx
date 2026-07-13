@@ -16,7 +16,8 @@ export const StaticMenuItem = memo(function StaticMenuItem({
   return (
     <li
       data-testid="item-row"
-      className="border-border/60 flex items-start gap-2 border-b py-2 last:border-b-0"
+      className="flex items-start gap-2 border-b py-2 last:border-b-0"
+      style={{ borderColor: "var(--menu-divider)" }}
     >
       <MenuItemContent item={item} currency={currency} />
     </li>

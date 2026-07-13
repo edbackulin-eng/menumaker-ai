@@ -14,10 +14,10 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { AccentColorId, FontId, LayoutColumns } from "@/config/menu-style";
 import { menusApi } from "@/lib/api-client/menus";
 import { categoryAwareKeyboardCoordinates } from "@/lib/dnd/category-aware-keyboard-coordinates";
 import { applyStyleOrder } from "@/lib/utils/menu-content-order";
+import { resolveEffectiveStyle, type ResolvedMenuStyle } from "@/lib/utils/resolve-menu-style";
 import type { StyleOverridesInput } from "@/lib/validations/menu-style";
 import type { MenuContent } from "@/services/ai/schemas/menu-content";
 import { useRouter } from "@/i18n/navigation";
@@ -31,7 +31,7 @@ export interface MenuStyleEditorProps {
   menuId: string;
   content: MenuContent;
   initialStyleOverrides: StyleOverridesInput;
-  templateDefaults: { accentColorId: AccentColorId; fontId: FontId; columns: LayoutColumns };
+  templateDefaults: ResolvedMenuStyle;
 }
 
 type SaveStatus = "idle" | "pending" | "saving" | "saved" | "error";
@@ -49,9 +49,10 @@ export function MenuStyleEditor({
   const [isContinuing, setIsContinuing] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const effectiveAccentColorId = styleOverrides.accentColorId ?? templateDefaults.accentColorId;
-  const effectiveFontId = styleOverrides.fontId ?? templateDefaults.fontId;
-  const effectiveColumns = styleOverrides.columns ?? templateDefaults.columns;
+  const effectiveStyle = useMemo(
+    () => resolveEffectiveStyle(templateDefaults, styleOverrides),
+    [templateDefaults, styleOverrides],
+  );
 
   // Only recomputed when order actually changes, not on every color/font
   // tweak — deliberately depends on the two order fields only, not the
@@ -159,17 +160,12 @@ export function MenuStyleEditor({
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="flex flex-col gap-6 pb-20 lg:flex-row lg:pb-0">
         <div className="min-w-0 flex-1">
-          <MenuLivePreview
-            orderedContent={orderedContent}
-            accentColorId={effectiveAccentColorId}
-            fontId={effectiveFontId}
-            columns={effectiveColumns}
-          />
+          <MenuLivePreview orderedContent={orderedContent} style={effectiveStyle} />
         </div>
         <EditorControlsPanel
-          accentColorId={effectiveAccentColorId}
-          fontId={effectiveFontId}
-          columns={effectiveColumns}
+          accentColorId={effectiveStyle.accentColorId}
+          fontId={effectiveStyle.fontId}
+          columns={effectiveStyle.columns}
           onAccentColorChange={(accentColorId) => updateStyle({ accentColorId })}
           onFontChange={(fontId) => updateStyle({ fontId })}
           onColumnsChange={(columns) => updateStyle({ columns })}

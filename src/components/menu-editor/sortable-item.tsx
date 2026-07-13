@@ -36,8 +36,12 @@ export const SortableItem = memo(function SortableItem({
       ref={setNodeRef}
       data-testid="item-row"
       data-item-id={item.id}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
-      className="border-border/60 flex items-start gap-2 border-b py-2 last:border-b-0"
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        borderColor: "var(--menu-divider)",
+      }}
+      className="flex items-start gap-2 border-b py-2 last:border-b-0"
       aria-roledescription="перетягувана страва"
     >
       <button

@@ -80,12 +80,7 @@ export function TemplateGallery({ menuId, templates, content }: TemplateGalleryP
                     style={{ width: PREVIEW_SOURCE_WIDTH, transform: `scale(${PREVIEW_SCALE})` }}
                     aria-hidden="true"
                   >
-                    <MenuStaticView
-                      content={content}
-                      accentColorId={template.style.accentColorId}
-                      fontId={template.style.fontId}
-                      columns={template.style.columns}
-                    />
+                    <MenuStaticView content={content} style={{ ...template.style, columns: 1 }} />
                   </div>
                 ) : (
                   <div className="bg-surface-secondary absolute inset-0" />

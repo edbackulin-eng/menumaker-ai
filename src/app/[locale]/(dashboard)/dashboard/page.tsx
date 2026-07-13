@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Plus } from "lucide-react";
 
-import { CURATED_FONTS, isAccentColorId, isFontId } from "@/config/menu-style";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
+import { resolveEffectiveStyle, resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
 import { styleOverridesSchema } from "@/lib/validations/menu-style";
 import { assertMenuCreationEligible } from "@/services/menu-generator/menu-creation-credit";
 import { Link, redirect } from "@/i18n/navigation";
@@ -110,29 +110,10 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
               const parsedStyle = styleOverridesSchema.safeParse(menu.style_overrides ?? {});
               const styleOverrides = parsedStyle.success ? parsedStyle.data : {};
 
-              const defaultAccentColorId =
-                typeof config?.defaultAccentColorId === "string" &&
-                isAccentColorId(config.defaultAccentColorId)
-                  ? config.defaultAccentColorId
-                  : "charcoal";
-              const defaultFontId =
-                typeof config?.defaultFontId === "string" && isFontId(config.defaultFontId)
-                  ? config.defaultFontId
-                  : "inter";
+              const templateDefaults = resolveTemplateDefaults(config);
+              const style = resolveEffectiveStyle(templateDefaults, styleOverrides);
 
-              const accentColorId = styleOverrides.accentColorId ?? defaultAccentColorId;
-              const fontId = styleOverrides.fontId ?? defaultFontId;
-              const fontLabel = CURATED_FONTS.find((font) => font.id === fontId)?.label ?? "Inter";
-
-              return (
-                <MenuCard
-                  key={menu.id}
-                  menu={menu}
-                  accentColorId={accentColorId}
-                  fontId={fontId}
-                  fontLabel={fontLabel}
-                />
-              );
+              return <MenuCard key={menu.id} menu={menu} style={style} />;
             })}
           </div>
 

@@ -107,12 +107,7 @@ export default async function PublicMenuPage({ params }: PageProps) {
           unchanged, for consistency with the editor).
         */}
         <div className="max-sm:*:!columns-1">
-          <MenuStaticView
-            content={orderedContent}
-            accentColorId={effectiveStyle.accentColorId}
-            fontId={effectiveStyle.fontId}
-            columns={effectiveStyle.columns}
-          />
+          <MenuStaticView content={orderedContent} style={effectiveStyle} />
         </div>
       </div>
     </div>

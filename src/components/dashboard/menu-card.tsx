@@ -4,10 +4,11 @@ import { useFormatter, useTranslations } from "next-intl";
 import { Copy, ExternalLink, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
-import { getAccentColorHex, type AccentColorId, type FontId } from "@/config/menu-style";
+import { CURATED_FONTS, getAccentColorHex } from "@/config/menu-style";
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi, type Menu } from "@/lib/api-client/menus";
 import { pickReadableTextColor } from "@/lib/utils/color-contrast";
+import type { ResolvedMenuStyle } from "@/lib/utils/resolve-menu-style";
 import { menuContentSchema } from "@/services/ai/schemas/menu-content";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -31,9 +32,7 @@ import { MenuStaticView } from "@/components/menu-render/menu-static-view";
 
 export interface MenuCardProps {
   menu: Menu;
-  accentColorId: AccentColorId;
-  fontId: FontId;
-  fontLabel: string;
+  style: ResolvedMenuStyle;
 }
 
 // Rendered at a fixed, generously-wide size and scaled down via CSS
@@ -65,7 +64,7 @@ function PreviewPlaceholder({
   );
 }
 
-export function MenuCard({ menu, accentColorId, fontId, fontLabel }: MenuCardProps) {
+export function MenuCard({ menu, style }: MenuCardProps) {
   const t = useTranslations("dashboard.menuCard");
   const tButtons = useTranslations("common.buttons");
   const tStatus = useTranslations("dashboard.statusBadge");
@@ -76,8 +75,9 @@ export function MenuCard({ menu, accentColorId, fontId, fontLabel }: MenuCardPro
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const accentHex = getAccentColorHex(accentColorId);
+  const accentHex = getAccentColorHex(style.accentColorId);
   const accentTextHex = pickReadableTextColor(accentHex);
+  const fontLabel = CURATED_FONTS.find((font) => font.id === style.fontId)?.label ?? "Inter";
   const canEdit = menu.status === "draft" || menu.status === "completed";
   const canDuplicate = menu.status === "completed";
 
@@ -124,12 +124,7 @@ export function MenuCard({ menu, accentColorId, fontId, fontLabel }: MenuCardPro
             style={{ width: PREVIEW_SOURCE_WIDTH, transform: `scale(${PREVIEW_SCALE})` }}
             aria-hidden="true"
           >
-            <MenuStaticView
-              content={parsedContent.data}
-              accentColorId={accentColorId}
-              fontId={fontId}
-              columns={1}
-            />
+            <MenuStaticView content={parsedContent.data} style={{ ...style, columns: 1 }} />
           </div>
         ) : (
           <PreviewPlaceholder accentHex={accentHex} accentTextHex={accentTextHex} />
