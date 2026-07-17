@@ -24,6 +24,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { EditorControlsPanel } from "@/components/menu-editor/editor-controls-panel";
 import { MenuLivePreview } from "@/components/menu-editor/menu-live-preview";
+import { useReportWizardDirty } from "@/components/menu-generator/wizard-exit";
 
 const AUTOSAVE_DEBOUNCE_MS = 3000;
 
@@ -48,6 +49,14 @@ export function MenuStyleEditor({
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [isContinuing, setIsContinuing] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // A style change autosaves after a debounce; between the change and the
+  // flush there's an unpersisted edit. "pending" (debounce running),
+  // "saving" (request in flight) and "error" (last save failed) are the
+  // states where exiting would drop something. "idle"/"saved" are clean.
+  useReportWizardDirty(
+    saveStatus === "pending" || saveStatus === "saving" || saveStatus === "error",
+  );
 
   const effectiveStyle = useMemo(
     () => resolveEffectiveStyle(templateDefaults, styleOverrides),

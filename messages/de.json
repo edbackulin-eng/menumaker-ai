@@ -304,6 +304,13 @@
       "metaTitle": "Speisekarte fertig — MenuMaker AI",
       "title": "Ihre Speisekarte ist fertig!",
       "summary": "„{title}“ wurde erfolgreich erstellt: {categoryCount, plural, one {# Kategorie} other {# Kategorien}}, {itemCount, plural, one {# Gericht} other {# Gerichte}}. Veröffentlichen Sie sie als Web Menu oder laden Sie die fertigen Dateien unten herunter."
+    },
+    "exit": {
+      "toDashboard": "Zum Dashboard",
+      "confirmTitle": "Ohne Speichern verlassen",
+      "confirmDescription": "Ihre Änderungen in diesem Schritt sind noch nicht gespeichert. Wenn Sie jetzt gehen, gehen sie verloren.",
+      "stay": "Bleiben",
+      "leave": "Verlassen"
     }
   },
   "export": {

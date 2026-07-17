@@ -12,6 +12,7 @@ import { redirect } from "@/i18n/navigation";
 import { Container } from "@/components/shared/container";
 import { PageHeader } from "@/components/shared/page-header";
 import { MenuStyleEditor } from "@/components/menu-editor/menu-style-editor";
+import { WizardExitButton, WizardExitProvider } from "@/components/menu-generator/wizard-exit";
 import { WizardSteps } from "@/components/menu-generator/wizard-steps";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -69,16 +70,19 @@ export default async function MenuEditorPage({ params }: PageProps) {
 
   return (
     <Container size="xl" className={`py-8 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
-      <PageHeader title={menu.title} description={t("subtitle")} />
-      <div className="mt-6 mb-8">
-        <WizardSteps current="editor" />
-      </div>
-      <MenuStyleEditor
-        menuId={menu.id}
-        content={content}
-        initialStyleOverrides={initialStyleOverrides}
-        templateDefaults={templateDefaults}
-      />
+      <WizardExitProvider>
+        <WizardExitButton />
+        <PageHeader title={menu.title} description={t("subtitle")} />
+        <div className="mt-6 mb-8">
+          <WizardSteps current="editor" />
+        </div>
+        <MenuStyleEditor
+          menuId={menu.id}
+          content={content}
+          initialStyleOverrides={initialStyleOverrides}
+          templateDefaults={templateDefaults}
+        />
+      </WizardExitProvider>
     </Container>
   );
 }

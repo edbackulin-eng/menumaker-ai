@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Container } from "@/components/shared/container";
 import { PageHeader } from "@/components/shared/page-header";
 import { ImportForm } from "@/components/menu-generator/import-form";
+import { WizardExitButton, WizardExitProvider } from "@/components/menu-generator/wizard-exit";
 import { WizardSteps } from "@/components/menu-generator/wizard-steps";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
@@ -32,15 +33,18 @@ export default async function NewMenuPage({ params }: PageProps) {
 
   return (
     <Container size="md" className="py-8">
-      <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="mt-6 mb-8">
-        <WizardSteps current="import" />
-      </div>
-      <Card>
-        <CardContent className="pt-6">
-          <ImportForm />
-        </CardContent>
-      </Card>
+      <WizardExitProvider>
+        <WizardExitButton />
+        <PageHeader title={t("title")} description={t("subtitle")} />
+        <div className="mt-6 mb-8">
+          <WizardSteps current="import" />
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <ImportForm />
+          </CardContent>
+        </Card>
+      </WizardExitProvider>
     </Container>
   );
 }

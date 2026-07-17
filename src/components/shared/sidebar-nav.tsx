@@ -21,6 +21,7 @@ export interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
     href: string;
     className?: string;
     "aria-current"?: "page" | undefined;
+    "data-testid"?: string;
     children?: React.ReactNode;
   }>;
   /** Rendered above the nav items — e.g. DashboardSidebar's logo + "New menu" quick action. Kept as a slot rather than baked into this shared component so the design-system demo page's sidebar stays a plain nav list. */
@@ -59,6 +60,7 @@ export function SidebarNav({
           <LinkComponent
             key={item.href}
             href={item.href}
+            data-testid="sidebar-nav-item"
             aria-current={item.active ? "page" : undefined}
             className={cn(
               // 8px/10px padding, 8px radius, 10px gap — the mockup's exact

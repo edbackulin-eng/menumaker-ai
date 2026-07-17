@@ -304,6 +304,13 @@
       "metaTitle": "Menu ready — MenuMaker AI",
       "title": "Your menu is ready!",
       "summary": "\"{title}\" was created successfully: {categoryCount, plural, one {# category} other {# categories}}, {itemCount, plural, one {# dish} other {# dishes}}. Publish it as a Web Menu or download the finished files below."
+    },
+    "exit": {
+      "toDashboard": "Exit to dashboard",
+      "confirmTitle": "Leave without saving",
+      "confirmDescription": "Your changes on this step aren’t saved yet. If you leave now, they’ll be lost.",
+      "stay": "Stay",
+      "leave": "Leave"
     }
   },
   "export": {

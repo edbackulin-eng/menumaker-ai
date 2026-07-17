@@ -123,7 +123,10 @@ export function MenuCard({ menu, style, templateName }: MenuCardProps) {
       data-menu-id={menu.id}
       className="border-border bg-surface hover:border-border-strong duration-fast flex flex-col overflow-hidden rounded-lg border transition-colors"
     >
-      <div className="bg-surface-secondary relative h-[78px] overflow-hidden">
+      <div
+        data-testid="menu-card-preview"
+        className="bg-surface-secondary relative h-[78px] overflow-hidden"
+      >
         {hasPreviewableContent ? (
           <div
             className="pointer-events-none absolute top-0 left-0 origin-top-left"
@@ -191,7 +194,10 @@ export function MenuCard({ menu, style, templateName }: MenuCardProps) {
           relative time ("2h ago") is what you actually want to know when
           scanning a list. `format.relativeTime` is locale-aware via next-intl.
         */}
-        <p className="text-foreground-secondary mt-0.5 truncate text-[11px] leading-4">
+        <p
+          data-testid="menu-card-meta"
+          className="text-foreground-secondary mt-0.5 truncate text-[11px] leading-4"
+        >
           {templateName} · {t("updatedPrefix")}{" "}
           {format.relativeTime(new Date(menu.updated_at), now)}
         </p>

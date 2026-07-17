@@ -83,7 +83,13 @@
   --color-foreground-secondary: var(--color-neutral-300);
   --color-foreground-tertiary: var(--color-neutral-400);
   --color-border: var(--color-neutral-700);
-  --color-border-strong: var(--color-neutral-600);
+  /* #63636b, not neutral-600 (#3a3a42): the "Top up" button's border is the
+     only thing distinguishing it as a control, so it must clear the WCAG
+     1.4.11 non-text 3:1 threshold on its own — 3.12:1 on --color-surface,
+     3.26:1 on --color-sidebar. neutral-600 (1.65:1) fails that. Kept as its
+     own value rather than lightening neutral-600, which is also the ordinary
+     hover-border and shouldn't jump this far. */
+  --color-border-strong: #63636b;
   --color-ring: var(--color-accent-500);
   /* Scrim behind modals — near-black, not a tinted neutral: on a #0a0a0b
      page a neutral-with-alpha scrim is nearly invisible. */

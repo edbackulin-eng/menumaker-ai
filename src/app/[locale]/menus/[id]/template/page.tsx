@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/shared/container";
 import { PageHeader } from "@/components/shared/page-header";
 import { TemplateGallery } from "@/components/menu-generator/template-gallery";
+import { WizardExitButton } from "@/components/menu-generator/wizard-exit";
 import { WizardSteps } from "@/components/menu-generator/wizard-steps";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
@@ -84,6 +85,7 @@ export default async function MenuTemplatePage({ params }: PageProps) {
 
   return (
     <Container size="lg" className="py-8">
+      <WizardExitButton />
       <PageHeader title={menu.title} description={t("subtitle")} />
       <div className="mt-6 mb-8">
         <WizardSteps current="template" />

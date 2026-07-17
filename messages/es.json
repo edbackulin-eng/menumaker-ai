@@ -304,6 +304,13 @@
       "metaTitle": "Carta lista — MenuMaker AI",
       "title": "¡Tu carta está lista!",
       "summary": "«{title}» se creó correctamente: {categoryCount, plural, one {# categoría} other {# categorías}}, {itemCount, plural, one {# plato} other {# platos}}. Publícala como Web Menu o descarga los archivos finales a continuación."
+    },
+    "exit": {
+      "toDashboard": "Salir al panel",
+      "confirmTitle": "Salir sin guardar",
+      "confirmDescription": "Tus cambios en este paso aún no están guardados. Si sales ahora, se perderán.",
+      "stay": "Quedarme",
+      "leave": "Salir"
     }
   },
   "export": {

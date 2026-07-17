@@ -27,8 +27,8 @@ export function WizardSteps({ current }: WizardStepsProps) {
               aria-current={isCurrent ? "step" : undefined}
               className={cn(
                 "text-body-sm flex h-7 items-center gap-1.5 rounded-full px-3 font-medium",
-                isCurrent && "bg-accent-400 text-white",
-                isDone && "bg-accent-50 text-accent-800",
+                isCurrent && "bg-accent-600 text-white",
+                isDone && "bg-accent-950 text-accent-300",
                 !isCurrent && !isDone && "bg-surface-secondary text-foreground-secondary",
               )}
             >

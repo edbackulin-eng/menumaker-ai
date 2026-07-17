@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { FileDropzone } from "@/components/menu-generator/file-dropzone";
+import { useReportWizardDirty } from "@/components/menu-generator/wizard-exit";
 
 const ACCEPTED_FILE_TYPES =
   "application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -25,6 +26,13 @@ export function ImportForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<{ message: string; isInsufficientCredits: boolean } | null>(
     null,
+  );
+
+  // Typed title / pasted text / chosen file are client-only until submit —
+  // exiting loses them. While submitting, the submit itself is the exit, so
+  // no need to also warn.
+  useReportWizardDirty(
+    !isSubmitting && (title.trim() !== "" || text.trim() !== "" || file !== null),
   );
 
   async function handleSubmit(event: React.FormEvent) {

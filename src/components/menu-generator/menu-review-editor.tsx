@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { EmptyState } from "@/components/shared/empty-state";
+import { useReportWizardDirty } from "@/components/menu-generator/wizard-exit";
 
 export interface MenuReviewEditorProps {
   menuId: string;
@@ -34,6 +35,13 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
   const [content, setContent] = useState<MenuContent>(initialContent);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // The recognized content is already persisted (from import); these are
+  // refinements that only reach the DB on "confirm". Anything typed here and
+  // not confirmed is lost on exit — but a pristine, untouched review isn't
+  // (JSON compare against the initial content is exact here: same object
+  // shape, no key reordering). While submitting, confirm is the exit.
+  useReportWizardDirty(!isSubmitting && JSON.stringify(content) !== JSON.stringify(initialContent));
 
   function updateCategory(index: number, patch: Partial<MenuContent["categories"][number]>) {
     setContent((prev) => ({

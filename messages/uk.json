@@ -304,6 +304,13 @@
       "metaTitle": "Меню готове — MenuMaker AI",
       "title": "Меню готове!",
       "summary": "Меню «{title}» успішно створено: {categoryCount, plural, one {# категорія} few {# категорії} many {# категорій} other {# категорій}}, {itemCount, plural, one {# страва} few {# страви} many {# страв} other {# страв}}. Опублікуйте його як Web Menu або завантажте готові файли нижче."
+    },
+    "exit": {
+      "toDashboard": "Вийти на дашборд",
+      "confirmTitle": "Вийти без збереження",
+      "confirmDescription": "Зміни на цьому кроці ще не збережено. Якщо вийти зараз, їх буде втрачено.",
+      "stay": "Залишитись",
+      "leave": "Вийти"
     }
   },
   "export": {

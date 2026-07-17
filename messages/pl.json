@@ -304,6 +304,13 @@
       "metaTitle": "Menu gotowe — MenuMaker AI",
       "title": "Twoje menu jest gotowe!",
       "summary": "Menu „{title}” zostało pomyślnie utworzone: {categoryCount, plural, one {# kategoria} few {# kategorie} many {# kategorii} other {# kategorii}}, {itemCount, plural, one {# danie} few {# dania} many {# dań} other {# dań}}. Opublikuj je jako Web Menu lub pobierz gotowe pliki poniżej."
+    },
+    "exit": {
+      "toDashboard": "Wyjdź do panelu",
+      "confirmTitle": "Wyjść bez zapisywania",
+      "confirmDescription": "Zmiany na tym kroku nie są jeszcze zapisane. Jeśli teraz wyjdziesz, zostaną utracone.",
+      "stay": "Zostań",
+      "leave": "Wyjdź"
     }
   },
   "export": {

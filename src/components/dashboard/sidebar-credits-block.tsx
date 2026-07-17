@@ -28,7 +28,11 @@ export function SidebarCreditsBlock({ block }: SidebarCreditsBlockProps) {
       : t("creditsValue", { left: block.value, total: block.total });
 
   return (
-    <div className="border-border bg-surface mt-auto rounded-[10px] border p-3">
+    <div
+      data-testid="sidebar-credits-block"
+      data-mode={block.mode}
+      className="border-border bg-surface mt-auto rounded-[10px] border p-3"
+    >
       <div className="mb-2 flex items-baseline justify-between gap-2">
         <span className="text-caption text-foreground-secondary">{label}</span>
         <span className="text-caption text-foreground font-medium">{value}</span>
