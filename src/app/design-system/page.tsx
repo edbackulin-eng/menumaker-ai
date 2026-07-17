@@ -81,12 +81,26 @@ function Section({
   );
 }
 
-function Swatch({ name, hex, className }: { name: string; hex: string; className: string }) {
+/**
+ * Reads the swatch's real value out of the rendered element rather than
+ * taking it as a prop. Hardcoded hex labels here drifted from globals.css
+ * the moment the palette changed (they still advertised the old blue accent
+ * after the Stage 14 dark swap), and they duplicated a value the token layer
+ * already owns — the rule is one hex, one place.
+ */
+function Swatch({ name, className }: { name: string; className: string }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [value, setValue] = React.useState("");
+
+  React.useEffect(() => {
+    if (ref.current) setValue(getComputedStyle(ref.current).backgroundColor);
+  }, []);
+
   return (
     <div className="flex flex-col gap-1.5">
-      <div className={`border-border h-16 w-full rounded-md border ${className}`} />
+      <div ref={ref} className={`border-border h-16 w-full rounded-md border ${className}`} />
       <p className="text-body-sm text-foreground font-medium">{name}</p>
-      <p className="text-caption text-foreground-tertiary">{hex}</p>
+      <p className="text-caption text-foreground-tertiary">{value}</p>
     </div>
   );
 }
@@ -166,27 +180,27 @@ export default function DesignSystemPage() {
         />
 
         <Section title="Кольори" description="Акцентна, нейтральна та семантичні палітри.">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-7">
-            <Swatch name="accent-50" hex="#E6F1FB" className="bg-accent-50" />
-            <Swatch name="accent-100" hex="#B5D4F4" className="bg-accent-100" />
-            <Swatch name="accent-200" hex="#85B7EB" className="bg-accent-200" />
-            <Swatch name="accent-400" hex="#378ADD" className="bg-accent-400" />
-            <Swatch name="accent-600" hex="#185FA5" className="bg-accent-600" />
-            <Swatch name="accent-800" hex="#0C447C" className="bg-accent-800" />
-            <Swatch name="accent-900" hex="#042C53" className="bg-accent-900" />
-          </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-6">
-            <Swatch name="neutral-50" hex="#FAFAFA" className="bg-neutral-50" />
-            <Swatch name="neutral-200" hex="#E5E5E5" className="bg-neutral-200" />
-            <Swatch name="neutral-400" hex="#A3A3A3" className="bg-neutral-400" />
-            <Swatch name="neutral-600" hex="#525252" className="bg-neutral-600" />
-            <Swatch name="neutral-800" hex="#262626" className="bg-neutral-800" />
-            <Swatch name="neutral-900" hex="#171717" className="bg-neutral-900" />
+            <Swatch name="accent-200" className="bg-accent-200" />
+            <Swatch name="accent-300" className="bg-accent-300" />
+            <Swatch name="accent-400 (text/icons)" className="bg-accent-400" />
+            <Swatch name="accent-500 (brand fill)" className="bg-accent-500" />
+            <Swatch name="accent-600 (button, AA)" className="bg-accent-600" />
+            <Swatch name="accent-900" className="bg-accent-900" />
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-7">
+            <Swatch name="neutral-0" className="bg-neutral-0" />
+            <Swatch name="neutral-300 (2nd text)" className="bg-neutral-300" />
+            <Swatch name="neutral-400 (muted)" className="bg-neutral-400" />
+            <Swatch name="neutral-600 (border+)" className="bg-neutral-600" />
+            <Swatch name="neutral-700 (border)" className="bg-neutral-700" />
+            <Swatch name="neutral-850 (card)" className="bg-neutral-850" />
+            <Swatch name="neutral-950 (page)" className="bg-neutral-950" />
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <Swatch name="success-400" hex="#2FA968" className="bg-success-400" />
-            <Swatch name="error-400" hex="#E5484D" className="bg-error-400" />
-            <Swatch name="warning-400" hex="#E8A93B" className="bg-warning-400" />
+            <Swatch name="success-400" className="bg-success-400" />
+            <Swatch name="error-400" className="bg-error-400" />
+            <Swatch name="warning-400" className="bg-warning-400" />
           </div>
         </Section>
 

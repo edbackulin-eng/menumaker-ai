@@ -15,7 +15,10 @@ export const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Portal>
-    <DialogPrimitive.Overlay className="data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 bg-neutral-900/40" />
+    {/* `bg-overlay` (near-black) rather than a tinted neutral with alpha: on
+        a #0a0a0b page a neutral scrim is nearly invisible and the dialog
+        stops reading as a layer above the content. */}
+    <DialogPrimitive.Overlay className="data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out bg-overlay fixed inset-0 z-50" />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(

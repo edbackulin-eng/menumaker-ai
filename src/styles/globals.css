@@ -2,69 +2,96 @@
 @config "../../tailwind.config.ts";
 
 /*
- * Design tokens — MenuMaker AI main UI (marketing/dashboard/admin), not the
- * generated-menu templates (those get their own tokens in the Menu
- * Generator stage).
+ * Design tokens — MenuMaker AI application UI (marketing/dashboard/admin).
+ *
+ * NOT the generated menus. A menu is a printed artifact belonging to a
+ * restaurant, not a surface of our site: it stays light regardless of what
+ * this file says. Its tokens are a separate, deliberately independent layer
+ * — see `--menu-*` in src/components/menu-render/* (literal hex, never
+ * `var(--color-*)`) and EXPORT_TOKENS in src/lib/export/design-tokens.ts.
+ * If a `--color-*` token ever reaches the menu render tree, menus go dark
+ * and the artifact is ruined. There is a grep guard for this in
+ * docs/design-tokens.md.
  *
  * Two layers, on purpose:
  *   1. Primitive scales (--color-accent-*, --color-neutral-*, status colors)
- *      — the raw palette, exposed as Tailwind classes like `bg-accent-400`.
+ *      — the raw palette, exposed as Tailwind classes like `bg-accent-500`.
  *   2. Semantic aliases (--color-background, --color-foreground, ...) that
  *      *reference* the primitives. Components should reach for these
- *      (`bg-surface`, `text-foreground-secondary`) rather than primitives
- *      directly wherever possible. When dark mode is implemented, only this
- *      alias layer needs a `.dark { ... }` override block — component code
- *      never has to change.
+ *      (`bg-surface`, `text-foreground-secondary`) rather than primitives.
  *
- * Light mode only for now (no `.dark` overrides yet), per Stage 3 scope.
+ * Dark only. This is a replacement of the previous light theme, not a
+ * second mode — there is no `.dark` block and no theme toggle by product
+ * decision. Every hex below appears exactly once in the codebase.
  */
 :root {
-  /* --- Accent (brand blue) --- */
-  --color-accent-50: #e6f1fb;
-  --color-accent-100: #b5d4f4;
-  --color-accent-200: #85b7eb;
-  --color-accent-400: #378add;
-  --color-accent-600: #185fa5;
-  --color-accent-800: #0c447c;
-  --color-accent-900: #042c53;
+  /* --- Accent (indigo) --- */
+  --color-accent-50: #eef2ff;
+  --color-accent-100: #e0e7ff;
+  --color-accent-200: #c7d2fe;
+  --color-accent-300: #a5b4fc;
+  /* Light accent — accent-colored *text* and icons on dark surfaces.
+     6.22:1 on --color-surface, passes WCAG AA. */
+  --color-accent-400: #818cf8;
+  /* Brand indigo — non-text fills only (logo tile, progress fill, rings).
+     4.47:1 against white text, so it must not sit under small label text;
+     the 3:1 non-text threshold it clears comfortably. */
+  --color-accent-500: #6366f1;
+  /* Button fill. Deliberately 0.03 darker than the brand indigo so white
+     14px labels clear WCAG AA (4.97:1 vs #6366f1's failing 4.47:1) — see
+     docs/design-tokens.md for the measurement. */
+  --color-accent-600: #5b5ee9;
+  --color-accent-700: #4338ca;
+  --color-accent-800: #3730a3;
+  --color-accent-900: #312e81;
+  --color-accent-950: #1e1b4b;
 
-  /* --- Neutral (text/surfaces/borders) --- */
+  /* --- Neutral (text/surfaces/borders) — ascending number = darker --- */
   --color-neutral-0: #ffffff;
-  --color-neutral-50: #fafafa;
-  --color-neutral-100: #f5f5f5;
-  --color-neutral-200: #e5e5e5;
-  --color-neutral-300: #d4d4d4;
-  --color-neutral-400: #a3a3a3;
-  --color-neutral-500: #737373;
-  --color-neutral-600: #525252;
-  --color-neutral-700: #404040;
-  --color-neutral-800: #262626;
-  --color-neutral-900: #171717;
-  --color-neutral-950: #0a0a0a;
+  --color-neutral-50: #f4f4f5;
+  --color-neutral-100: #d4d4d8;
+  --color-neutral-200: #a1a1aa;
+  --color-neutral-300: #8b8b90;
+  --color-neutral-400: #7d7d84;
+  --color-neutral-500: #5a5a62;
+  --color-neutral-600: #3a3a42;
+  --color-neutral-700: #232327;
+  --color-neutral-800: #1a1a20;
+  --color-neutral-850: #131316;
+  --color-neutral-900: #0d0d0f;
+  --color-neutral-950: #0a0a0b;
 
-  /* --- Semantic status colors (muted, not neon) --- */
-  --color-success-50: #eaf7ef;
-  --color-success-400: #2fa968;
-  --color-success-600: #1f8752;
+  /* --- Semantic status colors (tuned for dark surfaces) --- */
+  --color-success-50: #0c2c1c;
+  --color-success-400: #34d399;
+  --color-success-600: #6ee7b7;
 
-  --color-error-50: #fdeded;
-  --color-error-400: #e5484d;
-  --color-error-600: #c22a30;
+  --color-error-50: #351317;
+  --color-error-400: #f87171;
+  --color-error-600: #fca5a5;
 
-  --color-warning-50: #fef6e7;
-  --color-warning-400: #e8a93b;
-  --color-warning-600: #b9791e;
+  --color-warning-50: #33240a;
+  --color-warning-400: #f59e0b;
+  --color-warning-600: #fcd34d;
 
   /* --- Semantic aliases (what components should use) --- */
-  --color-background: var(--color-neutral-50);
-  --color-surface: var(--color-neutral-0);
-  --color-surface-secondary: var(--color-neutral-100);
-  --color-foreground: var(--color-neutral-900);
-  --color-foreground-secondary: var(--color-neutral-600);
+  --color-background: var(--color-neutral-950);
+  --color-surface: var(--color-neutral-850);
+  --color-surface-secondary: var(--color-neutral-800);
+  --color-sidebar: var(--color-neutral-900);
+  --color-foreground: var(--color-neutral-0);
+  --color-foreground-secondary: var(--color-neutral-300);
   --color-foreground-tertiary: var(--color-neutral-400);
-  --color-border: var(--color-neutral-200);
-  --color-border-strong: var(--color-neutral-300);
-  --color-ring: var(--color-accent-400);
+  --color-border: var(--color-neutral-700);
+  --color-border-strong: var(--color-neutral-600);
+  --color-ring: var(--color-accent-500);
+  /* Scrim behind modals — near-black, not a tinted neutral: on a #0a0a0b
+     page a neutral-with-alpha scrim is nearly invisible. */
+  --color-overlay: rgb(0 0 0 / 0.7);
+
+  /* --- Promo surface (deliberately distinct from --color-surface) --- */
+  --color-promo: #16162b;
+  --color-promo-border: #2e2e50;
 
   /* --- Typography scale (modular ~1.25, base 16px) --- */
   --font-size-caption: 0.75rem; /* 12px */

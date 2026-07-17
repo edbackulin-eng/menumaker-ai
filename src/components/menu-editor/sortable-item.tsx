@@ -49,7 +49,12 @@ export const SortableItem = memo(function SortableItem({
         {...attributes}
         {...listeners}
         aria-label={`Перетягнути «${item.name}» для зміни порядку`}
-        className="text-foreground-tertiary hover:text-foreground-secondary mt-0.5 flex size-6 shrink-0 cursor-grab touch-none items-center justify-center active:cursor-grabbing"
+        // Editor affordance, but it sits *on* the light menu card — so it
+        // reads the menu's own foreground token, not the app's
+        // `text-foreground-tertiary`, which is tuned for dark surfaces and
+        // would wash out here.
+        style={{ color: "var(--menu-page-fg-secondary)" }}
+        className="mt-0.5 flex size-6 shrink-0 cursor-grab touch-none items-center justify-center opacity-70 hover:opacity-100 active:cursor-grabbing"
       >
         <GripVertical className="size-4" aria-hidden="true" />
       </button>

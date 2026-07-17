@@ -38,12 +38,15 @@ export function Tooltip({
             align={align}
             sideOffset={6}
             className={cn(
-              "text-caption z-50 rounded-sm bg-neutral-900 px-2.5 py-1.5 text-white shadow-md",
+              // Lighter than the page, not darker: a tooltip has to read as
+              // floating *above* the surface. neutral-900 was the old
+              // light-theme choice and is now nearly the page color itself.
+              "text-caption border-border z-50 rounded-sm border bg-neutral-700 px-2.5 py-1.5 text-white shadow-md",
               "data-[state=delayed-open]:animate-fade-in",
             )}
           >
             {content}
-            <TooltipPrimitive.Arrow className="fill-neutral-900" />
+            <TooltipPrimitive.Arrow className="fill-neutral-700" />
           </TooltipPrimitive.Content>
         </TooltipPrimitive.Portal>
       </TooltipPrimitive.Root>

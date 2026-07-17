@@ -16,11 +16,16 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-accent-400 text-white hover:bg-accent-600 active:bg-accent-800",
+        // accent-600 (not the brand accent-500) is the fill here on purpose:
+        // white 14px labels need 4.5:1 and accent-500 only reaches 4.47:1.
+        // See docs/design-tokens.md.
+        primary: "bg-accent-600 text-white hover:bg-accent-500 active:bg-accent-700",
         secondary:
-          "border border-border bg-surface text-foreground hover:bg-surface-secondary active:bg-neutral-200",
-        ghost: "text-foreground hover:bg-surface-secondary active:bg-neutral-200",
-        destructive: "bg-error-400 text-white hover:bg-error-600 active:bg-error-600",
+          "border border-border bg-surface text-foreground hover:bg-surface-secondary active:bg-neutral-700",
+        ghost: "text-foreground hover:bg-surface-secondary active:bg-neutral-700",
+        // error-400 is the lighter red of the dark palette; black text on it
+        // beats white for contrast.
+        destructive: "bg-error-400 text-neutral-950 hover:bg-error-600 active:bg-error-600",
       },
       size: {
         sm: "h-8 px-3 text-body-sm",

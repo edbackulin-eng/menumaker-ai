@@ -4,7 +4,12 @@ import { notFound } from "next/navigation";
 import { MENU_EDITOR_FONT_VARIABLES_CLASSNAME } from "@/lib/fonts/menu-fonts";
 import { createClient } from "@/lib/supabase/server";
 import { applyStyleOrder } from "@/lib/utils/menu-content-order";
-import { resolveEffectiveStyle, resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
+import {
+  MENU_SURFACE,
+  resolveEffectiveStyle,
+  resolveTemplateDefaults,
+  resolvePageForeground,
+} from "@/lib/utils/resolve-menu-style";
 import { styleOverridesSchema } from "@/lib/validations/menu-style";
 import { menuContentSchema } from "@/services/ai/schemas/menu-content";
 import { MenuStaticView } from "@/components/menu-render/menu-static-view";
@@ -94,10 +99,28 @@ export default async function PublicMenuPage({ params }: PageProps) {
   const effectiveStyle = resolveEffectiveStyle(templateDefaults, styleOverrides);
   const orderedContent = applyStyleOrder(content, styleOverrides);
 
+  // This page is the restaurant's own artifact shown to its customers at a
+  // table, not a page of our product — it deliberately does NOT follow the
+  // application's dark theme. Hence literal menu tokens here rather than
+  // `bg-background` / `text-foreground`, which went dark in Stage 14.
+  //
+  // `null` (not the menu's own background) is deliberate: this title sits
+  // *outside* the menu card, on the neutral page canvas, so it needs the
+  // canvas's foreground — #171717, exactly what `text-foreground` resolved
+  // to before. Passing the template's background here would paint the title
+  // white for the dark templates (Luxury/Dark/Bar) and make it vanish
+  // against the light canvas.
+  const canvasForeground = resolvePageForeground(null);
+
   return (
-    <div className={`bg-background min-h-full py-6 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
+    <div
+      style={{ backgroundColor: MENU_SURFACE.pageBackground }}
+      className={`min-h-full py-6 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}
+    >
       <div className="mx-auto max-w-2xl px-4">
-        <h1 className="text-h4 text-foreground mb-4">{menu.title}</h1>
+        <h1 className="text-h4 mb-4" style={{ color: canvasForeground.primary }}>
+          {menu.title}
+        </h1>
         {/*
           A visitor here is very likely on a phone (QR code at a table) —
           the editor's own multi-column layout (up to 3) is a desktop-preview

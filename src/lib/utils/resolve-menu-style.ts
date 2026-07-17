@@ -148,6 +148,36 @@ export function backgroundToCssValue(background: TemplateBackground | null): Rea
   return { backgroundImage: `radial-gradient(circle, ${stops})` };
 }
 
+/**
+ * The menu's own light surfaces, as literal hex — deliberately NOT
+ * `var(--color-surface)` / `bg-background` / `border-border`.
+ *
+ * A generated menu is a printed artifact belonging to a restaurant, not a
+ * surface of our site: it stays light no matter what the application theme
+ * does. Before this existed, the menu render tree reached for the app's
+ * semantic tokens, so flipping the app to dark (Stage 14) turned every
+ * menu card near-black — in the editor preview, on the public QR page, and
+ * in the template gallery alike.
+ *
+ * Values are the pre-dark-theme neutrals, chosen so the rendered menu is
+ * byte-for-byte what it was before the theme swap. They intentionally match
+ * EXPORT_TOKENS (src/lib/export/design-tokens.ts), which is the same
+ * palette for the Satori/react-pdf renderers that can't read CSS variables
+ * at all.
+ *
+ * Rule: nothing under src/components/menu-render/ may reference a
+ * `--color-*` token or an app Tailwind color class. See
+ * docs/design-tokens.md for the grep that enforces this.
+ */
+export const MENU_SURFACE = {
+  /** Page canvas behind the menu, when the template sets no background of its own. */
+  pageBackground: "#fafafa",
+  /** Category card fill, when the template sets no background of its own. */
+  card: "#ffffff",
+  /** Card border / hairlines. */
+  border: "#e5e5e5",
+} as const;
+
 export interface PageForeground {
   /** Body/heading text color. */
   primary: string;

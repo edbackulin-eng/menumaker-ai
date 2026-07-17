@@ -52,7 +52,7 @@ export function ActivityChart({ data }: ActivityChartProps) {
         <Line
           type="monotone"
           dataKey="new_users"
-          stroke="#378add"
+          stroke="var(--color-accent-400)"
           strokeWidth={2}
           dot={false}
           activeDot={{ r: 4 }}

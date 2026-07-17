@@ -16,10 +16,14 @@ const config: Config = {
           50: "var(--color-accent-50)",
           100: "var(--color-accent-100)",
           200: "var(--color-accent-200)",
+          300: "var(--color-accent-300)",
           400: "var(--color-accent-400)",
+          500: "var(--color-accent-500)",
           600: "var(--color-accent-600)",
+          700: "var(--color-accent-700)",
           800: "var(--color-accent-800)",
           900: "var(--color-accent-900)",
+          950: "var(--color-accent-950)",
         },
         neutral: {
           0: "var(--color-neutral-0)",
@@ -32,6 +36,7 @@ const config: Config = {
           600: "var(--color-neutral-600)",
           700: "var(--color-neutral-700)",
           800: "var(--color-neutral-800)",
+          850: "var(--color-neutral-850)",
           900: "var(--color-neutral-900)",
           950: "var(--color-neutral-950)",
         },
@@ -54,6 +59,12 @@ const config: Config = {
         surface: {
           DEFAULT: "var(--color-surface)",
           secondary: "var(--color-surface-secondary)",
+        },
+        sidebar: "var(--color-sidebar)",
+        overlay: "var(--color-overlay)",
+        promo: {
+          DEFAULT: "var(--color-promo)",
+          border: "var(--color-promo-border)",
         },
         foreground: {
           DEFAULT: "var(--color-foreground)",

@@ -8,6 +8,7 @@ import { pickReadableTextColor } from "@/lib/utils/color-contrast";
 import { FONT_ID_TO_CSS_VARIABLE } from "@/lib/fonts/menu-fonts";
 import {
   backgroundToCssValue,
+  MENU_SURFACE,
   resolvePageForeground,
   type ResolvedMenuStyle,
 } from "@/lib/utils/resolve-menu-style";
@@ -50,14 +51,20 @@ export const MenuLivePreview = memo(function MenuLivePreview({
           "--menu-page-fg": pageForeground.primary,
           "--menu-page-fg-secondary": pageForeground.secondary,
           "--menu-divider": pageForeground.divider,
+          "--menu-surface": MENU_SURFACE.card,
+          "--menu-border": MENU_SURFACE.border,
           fontFamily: "var(--menu-font)",
           color: "var(--menu-page-fg)",
           columns: style.columns,
           columnGap: "1rem",
+          // Literal menu token, not `bg-background` — see MenuStaticView's
+          // equivalent comment. The editor chrome around this preview is
+          // dark; the menu inside it stays light, on purpose.
+          backgroundColor: MENU_SURFACE.pageBackground,
           ...backgroundToCssValue(style.background),
         } as React.CSSProperties
       }
-      className={style.background ? "rounded-lg border p-4" : "bg-background rounded-lg border p-4"}
+      className="rounded-lg border p-4"
     >
       <SortableContext items={categoryIds} strategy={verticalListSortingStrategy}>
         {orderedContent.categories.map((category) => (

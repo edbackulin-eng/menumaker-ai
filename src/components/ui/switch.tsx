@@ -22,7 +22,10 @@ export const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitive.R
         id={switchId}
         aria-describedby={descriptionId}
         className={cn(
-          "peer duration-fast relative inline-flex h-5 w-9 shrink-0 items-center rounded-full bg-neutral-300 transition-colors",
+          // neutral-600 for the unchecked track: on a dark surface the old
+          // light-theme neutral-300 read as an *active* control rather than
+          // an off one.
+          "peer duration-fast relative inline-flex h-5 w-9 shrink-0 items-center rounded-full bg-neutral-600 transition-colors",
           "focus-visible:ring-ring/30 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
           "data-[state=checked]:bg-accent-400",
           "disabled:cursor-not-allowed disabled:opacity-50",

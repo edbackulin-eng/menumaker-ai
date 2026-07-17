@@ -3,6 +3,7 @@ import { pickReadableTextColor } from "@/lib/utils/color-contrast";
 import { FONT_ID_TO_CSS_VARIABLE } from "@/lib/fonts/menu-fonts";
 import {
   backgroundToCssValue,
+  MENU_SURFACE,
   resolvePageForeground,
   type ResolvedMenuStyle,
 } from "@/lib/utils/resolve-menu-style";
@@ -40,14 +41,26 @@ export function MenuStaticView({ content, style }: MenuStaticViewProps) {
           "--menu-page-fg": pageForeground.primary,
           "--menu-page-fg-secondary": pageForeground.secondary,
           "--menu-divider": pageForeground.divider,
+          "--menu-surface": MENU_SURFACE.card,
+          "--menu-border": MENU_SURFACE.border,
           fontFamily: "var(--menu-font)",
           color: "var(--menu-page-fg)",
           columns: style.columns,
           columnGap: "1rem",
+          // Literal menu token, never `bg-background`: that is an application
+          // token and went dark in Stage 14, which would drag the menu
+          // artifact with it. Same #fafafa the app token used to resolve to,
+          // so the rendered menu is unchanged. See MENU_SURFACE's doc comment.
+          //
+          // The bare `border` class below is left alone on purpose: in
+          // Tailwind v4 it resolves to `currentColor`, i.e. `--menu-page-fg`
+          // — already menu-scoped, no app token involved. Pinning it to a
+          // fixed hex here would visibly restyle every menu.
+          backgroundColor: MENU_SURFACE.pageBackground,
           ...backgroundToCssValue(style.background),
         } as React.CSSProperties
       }
-      className={style.background ? "rounded-lg border p-4" : "bg-background rounded-lg border p-4"}
+      className="rounded-lg border p-4"
     >
       {content.categories.map((category) => (
         <StaticCategory

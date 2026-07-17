@@ -58,9 +58,15 @@ export function MenuCategoryShell({
         breakInside: "avoid",
         borderRadius: radiusPx,
         boxShadow: shadow ? "0 4px 16px rgba(0,0,0,0.12)" : undefined,
-        backgroundColor: opaqueCard ? "var(--color-surface)" : "transparent",
+        // Menu-scoped tokens, set by MenuStaticView/MenuLivePreview from
+        // MENU_SURFACE. Previously `var(--color-surface)` + a `border-border`
+        // class — application tokens, which turned every menu card near-black
+        // the moment the app went dark in Stage 14. Same resolved values as
+        // before (#ffffff / #e5e5e5), so the menu itself is unchanged.
+        backgroundColor: opaqueCard ? "var(--menu-surface)" : "transparent",
+        borderColor: "var(--menu-border)",
       }}
-      className="border-border mb-4 overflow-hidden border"
+      className="mb-4 overflow-hidden border"
     >
       {headerStyle === "solid-bar" && (
         <div
