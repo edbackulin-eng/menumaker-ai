@@ -65,6 +65,7 @@ const config: Config = {
         promo: {
           DEFAULT: "var(--color-promo)",
           border: "var(--color-promo-border)",
+          foreground: "var(--color-promo-foreground)",
         },
         foreground: {
           DEFAULT: "var(--color-foreground)",

@@ -113,10 +113,17 @@
       "createFirst": "Create your first menu",
       "freeTrialExhausted": "You've used your free trial and don't have enough credits to create a new menu.",
       "viewCredits": "View credits",
-      "emptyTitle": "No menus yet",
-      "emptyDescription": "Upload a file or paste your menu text — AI will recognize categories, dishes, and prices in seconds.",
+      "emptyTitle": "Start your first menu",
+      "emptyDescription": "Upload a PDF, Word or Excel file — AI reads the categories, dishes and prices, then you pick a style.",
       "emptyPreviewTemplateFallback": "Template",
-      "paginationAria": "Pagination"
+      "paginationAria": "Pagination",
+      "searchPlaceholder": "Search menus",
+      "searchAria": "Search menus by name",
+      "freeMenusLeft": "{count, plural, =0 {no free menus left} one {# free menu left} other {# free menus left}}",
+      "noSearchResults": "No menus match “{query}”",
+      "promoTitle": "Create a menu in 30 seconds",
+      "promoSubtitle": "Upload a PDF, Word or Excel file — AI does the rest.",
+      "promoCta": "Start now"
     },
     "credits": {
       "metaTitle": "Credits — MenuMaker AI",

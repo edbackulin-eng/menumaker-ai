@@ -61,8 +61,13 @@ export function SidebarNav({
             href={item.href}
             aria-current={item.active ? "page" : undefined}
             className={cn(
-              // py-2 (not py-4): density is the point of this sidebar.
-              "text-body-sm duration-fast flex items-center gap-2.5 rounded-md px-3 py-2 font-medium transition-colors",
+              // 8px/10px padding, 8px radius, 10px gap — the mockup's exact
+              // density. Deliberately tight; roomier padding was the
+              // "everything feels empty" complaint.
+              // 13px is off the modular type scale (body-sm is 14px) — the
+              // mockup's exact value, and the scale has no rung for it.
+              "duration-fast flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] leading-5 font-medium transition-colors",
+              "focus-visible:ring-ring focus-visible:ring-offset-sidebar focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
               item.active
                 ? "bg-surface-secondary text-foreground"
                 : "text-foreground-secondary hover:bg-surface-secondary hover:text-foreground",

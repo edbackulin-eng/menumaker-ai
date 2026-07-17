@@ -113,10 +113,17 @@
       "createFirst": "Utwórz pierwsze menu",
       "freeTrialExhausted": "Wykorzystano bezpłatny okres próbny, a saldo kredytów nie wystarcza na utworzenie nowego menu.",
       "viewCredits": "Zobacz kredyty",
-      "emptyTitle": "Nie masz jeszcze żadnego menu",
-      "emptyDescription": "Wgraj plik lub wklej tekst menu — AI rozpozna kategorie, dania i ceny w kilka sekund.",
+      "emptyTitle": "Utwórz pierwsze menu",
+      "emptyDescription": "Wgraj plik PDF, Word lub Excel — AI rozpozna kategorie, dania i ceny, a Ty wybierzesz styl.",
       "emptyPreviewTemplateFallback": "Szablon",
-      "paginationAria": "Paginacja"
+      "paginationAria": "Paginacja",
+      "searchPlaceholder": "Szukaj menu",
+      "searchAria": "Szukaj menu po nazwie",
+      "freeMenusLeft": "{count, plural, =0 {brak darmowych menu} one {# darmowe menu pozostało} few {# darmowe menu pozostały} many {# darmowych menu pozostało} other {# darmowego menu pozostało}}",
+      "noSearchResults": "Brak menu dla „{query}”",
+      "promoTitle": "Utwórz menu w 30 sekund",
+      "promoSubtitle": "Wgraj plik PDF, Word lub Excel — resztę zrobi AI.",
+      "promoCta": "Zacznij teraz"
     },
     "credits": {
       "metaTitle": "Kredyty — MenuMaker AI",

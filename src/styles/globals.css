@@ -89,9 +89,14 @@
      page a neutral-with-alpha scrim is nearly invisible. */
   --color-overlay: rgb(0 0 0 / 0.7);
 
-  /* --- Promo surface (deliberately distinct from --color-surface) --- */
+  /* --- Promo surface (deliberately distinct from --color-surface) ---
+     Its own foreground too: --color-foreground-secondary (#8b8b90) is a
+     neutral tuned for neutral cards and goes muddy on this violet-tinted
+     fill, so the promo carries a violet-tinted secondary of its own.
+     7.39:1 on --color-promo, passes WCAG AA. */
   --color-promo: #16162b;
   --color-promo-border: #2e2e50;
+  --color-promo-foreground: #a5a5c0;
 
   /* --- Typography scale (modular ~1.25, base 16px) --- */
   --font-size-caption: 0.75rem; /* 12px */

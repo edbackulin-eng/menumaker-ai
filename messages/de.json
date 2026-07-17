@@ -113,10 +113,17 @@
       "createFirst": "Erste Speisekarte erstellen",
       "freeTrialExhausted": "Ihre kostenlose Testphase ist aufgebraucht und Ihr Guthaben reicht nicht für eine neue Speisekarte.",
       "viewCredits": "Guthaben ansehen",
-      "emptyTitle": "Noch keine Speisekarten",
-      "emptyDescription": "Laden Sie eine Datei hoch oder fügen Sie Ihren Menütext ein — die KI erkennt Kategorien, Gerichte und Preise in Sekunden.",
+      "emptyTitle": "Erstellen Sie Ihre erste Speisekarte",
+      "emptyDescription": "Laden Sie eine PDF-, Word- oder Excel-Datei hoch — die KI erkennt Kategorien, Gerichte und Preise, den Stil wählen Sie.",
       "emptyPreviewTemplateFallback": "Vorlage",
-      "paginationAria": "Seitennavigation"
+      "paginationAria": "Seitennavigation",
+      "searchPlaceholder": "Speisekarten suchen",
+      "searchAria": "Speisekarten nach Namen suchen",
+      "freeMenusLeft": "{count, plural, =0 {keine Gratis-Speisekarte übrig} one {# Gratis-Speisekarte übrig} other {# Gratis-Speisekarten übrig}}",
+      "noSearchResults": "Keine Speisekarte passt zu „{query}“",
+      "promoTitle": "Speisekarte in 30 Sekunden erstellen",
+      "promoSubtitle": "Laden Sie eine PDF-, Word- oder Excel-Datei hoch — den Rest macht die KI.",
+      "promoCta": "Jetzt starten"
     },
     "credits": {
       "metaTitle": "Guthaben — MenuMaker AI",

@@ -1,10 +1,10 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import { Copy, ExternalLink, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
-import { CURATED_FONTS, getAccentColorHex } from "@/config/menu-style";
+import { getAccentColorHex } from "@/config/menu-style";
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi, type Menu } from "@/lib/api-client/menus";
 import { pickReadableTextColor } from "@/lib/utils/color-contrast";
@@ -33,6 +33,8 @@ import { MenuStaticView } from "@/components/menu-render/menu-static-view";
 export interface MenuCardProps {
   menu: Menu;
   style: ResolvedMenuStyle;
+  /** Shown in the card's meta line ("Modern · updated 2h ago"). Resolved server-side against the menu's content locale. */
+  templateName: string;
 }
 
 // Rendered at a fixed, generously-wide size and scaled down via CSS
@@ -64,11 +66,16 @@ function PreviewPlaceholder({
   );
 }
 
-export function MenuCard({ menu, style }: MenuCardProps) {
+export function MenuCard({ menu, style, templateName }: MenuCardProps) {
   const t = useTranslations("dashboard.menuCard");
   const tButtons = useTranslations("common.buttons");
   const tStatus = useTranslations("dashboard.statusBadge");
   const format = useFormatter();
+  // `relativeTime` needs an explicit reference point; without one next-intl
+  // throws ENVIRONMENT_FALLBACK and the meta line renders empty. `useNow()`
+  // supplies a value that's stable between server and client render, so this
+  // doesn't cause a hydration mismatch the way `new Date()` inline would.
+  const now = useNow();
   const router = useRouter();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDuplicating, setIsDuplicating] = useState(false);
@@ -77,7 +84,6 @@ export function MenuCard({ menu, style }: MenuCardProps) {
 
   const accentHex = getAccentColorHex(style.accentColorId);
   const accentTextHex = pickReadableTextColor(accentHex);
-  const fontLabel = CURATED_FONTS.find((font) => font.id === style.fontId)?.label ?? "Inter";
   const canEdit = menu.status === "draft" || menu.status === "completed";
   const canDuplicate = menu.status === "completed";
 
@@ -115,9 +121,9 @@ export function MenuCard({ menu, style }: MenuCardProps) {
     <div
       data-testid="menu-card"
       data-menu-id={menu.id}
-      className="border-border bg-surface flex flex-col overflow-hidden rounded-lg border"
+      className="border-border bg-surface hover:border-border-strong duration-fast flex flex-col overflow-hidden rounded-lg border transition-colors"
     >
-      <div className="bg-surface-secondary relative h-36 overflow-hidden">
+      <div className="bg-surface-secondary relative h-[78px] overflow-hidden">
         {hasPreviewableContent ? (
           <div
             className="pointer-events-none absolute top-0 left-0 origin-top-left"
@@ -131,11 +137,11 @@ export function MenuCard({ menu, style }: MenuCardProps) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col p-2.5">
         <div className="flex items-start justify-between gap-2">
           <p
             data-testid="menu-card-title"
-            className="text-body truncate font-medium"
+            className="truncate text-[13px] leading-5 font-medium"
             title={menu.title}
           >
             {menu.title}
@@ -179,19 +185,22 @@ export function MenuCard({ menu, style }: MenuCardProps) {
           </DropdownMenu>
         </div>
 
-        <div className="flex items-center justify-between gap-2">
-          <MenuStatusBadge status={menu.status} label={tStatus(menu.status)} />
-          <span className="text-caption text-foreground-tertiary">{fontLabel}</span>
-        </div>
-
-        <p className="text-caption text-foreground-tertiary mt-auto">
-          {t("updatedPrefix")}{" "}
-          {format.dateTime(new Date(menu.updated_at), {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
+        {/*
+          "{template} · updated {relative}" per the mockup — the template name
+          says more about what the card *is* than the old font label did, and a
+          relative time ("2h ago") is what you actually want to know when
+          scanning a list. `format.relativeTime` is locale-aware via next-intl.
+        */}
+        <p className="text-foreground-secondary mt-0.5 truncate text-[11px] leading-4">
+          {templateName} · {t("updatedPrefix")}{" "}
+          {format.relativeTime(new Date(menu.updated_at), now)}
         </p>
+
+        {menu.status !== "completed" && (
+          <div className="mt-1.5">
+            <MenuStatusBadge status={menu.status} label={tStatus(menu.status)} />
+          </div>
+        )}
 
         {error && <p className="text-caption text-error-600">{error}</p>}
       </div>

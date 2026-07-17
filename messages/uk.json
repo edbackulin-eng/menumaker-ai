@@ -113,10 +113,17 @@
       "createFirst": "Створити перше меню",
       "freeTrialExhausted": "Безкоштовну спробу вичерпано, і на балансі немає кредитів для створення нового меню.",
       "viewCredits": "Переглянути кредити",
-      "emptyTitle": "Ще немає жодного меню",
-      "emptyDescription": "Завантажте файл або вставте текст меню — AI розпізнає категорії, страви й ціни за лічені секунди.",
+      "emptyTitle": "Створіть перше меню",
+      "emptyDescription": "Завантажте PDF, Word чи Excel — AI розпізнає категорії, страви й ціни, а ви оберете стиль.",
       "emptyPreviewTemplateFallback": "Шаблон",
-      "paginationAria": "Пагінація"
+      "paginationAria": "Пагінація",
+      "searchPlaceholder": "Пошук меню",
+      "searchAria": "Пошук меню за назвою",
+      "freeMenusLeft": "{count, plural, =0 {безкоштовних меню не лишилось} one {# безкоштовне меню лишилось} few {# безкоштовні меню лишилось} many {# безкоштовних меню лишилось} other {# безкоштовного меню лишилось}}",
+      "noSearchResults": "Немає меню за запитом «{query}»",
+      "promoTitle": "Створіть меню за 30 секунд",
+      "promoSubtitle": "Завантажте PDF, Word чи Excel — решту зробить AI.",
+      "promoCta": "Почати"
     },
     "credits": {
       "metaTitle": "Кредити — MenuMaker AI",
