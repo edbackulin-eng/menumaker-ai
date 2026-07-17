@@ -44,9 +44,14 @@
       "logout": "Wyloguj się"
     },
     "sidebar": {
-      "newMenu": "Nowe menu",
-      "creditsCount": "{count, plural, one {# kredyt} few {# kredyty} many {# kredytów} other {# kredytu}}",
-      "freeTrialAvailable": "Dostępny bezpłatny okres próbny"
+      "newMenu": "Nowe menu"
+    },
+    "credits": {
+      "freeMenuTitle": "Darmowe menu",
+      "freeMenuValue": "{left} z {total} pozostało",
+      "creditsTitle": "Pozostałe kredyty",
+      "creditsValue": "{left} / {total}",
+      "topUp": "Doładuj"
     }
   },
   "auth": {

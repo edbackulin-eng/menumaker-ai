@@ -44,9 +44,14 @@
       "logout": "Вийти"
     },
     "sidebar": {
-      "newMenu": "Нове меню",
-      "creditsCount": "{count, plural, one {# кредит} few {# кредити} many {# кредитів} other {# кредита}}",
-      "freeTrialAvailable": "Безкоштовна спроба доступна"
+      "newMenu": "Нове меню"
+    },
+    "credits": {
+      "freeMenuTitle": "Безкоштовне меню",
+      "freeMenuValue": "{left} з {total} лишилось",
+      "creditsTitle": "Лишилось кредитів",
+      "creditsValue": "{left} / {total}",
+      "topUp": "Поповнити"
     }
   },
   "auth": {

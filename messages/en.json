@@ -44,9 +44,14 @@
       "logout": "Log out"
     },
     "sidebar": {
-      "newMenu": "New menu",
-      "creditsCount": "{count, plural, one {# credit} other {# credits}}",
-      "freeTrialAvailable": "Free trial available"
+      "newMenu": "New menu"
+    },
+    "credits": {
+      "freeMenuTitle": "Free menu",
+      "freeMenuValue": "{left} of {total} left",
+      "creditsTitle": "Credits left",
+      "creditsValue": "{left} / {total}",
+      "topUp": "Top up"
     }
   },
   "auth": {

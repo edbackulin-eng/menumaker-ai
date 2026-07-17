@@ -44,9 +44,14 @@
       "logout": "Abmelden"
     },
     "sidebar": {
-      "newMenu": "Neue Speisekarte",
-      "creditsCount": "{count, plural, one {# Guthabenpunkt} other {# Guthabenpunkte}}",
-      "freeTrialAvailable": "Kostenlose Testphase verfügbar"
+      "newMenu": "Neue Speisekarte"
+    },
+    "credits": {
+      "freeMenuTitle": "Gratis-Speisekarte",
+      "freeMenuValue": "{left} von {total} übrig",
+      "creditsTitle": "Guthaben übrig",
+      "creditsValue": "{left} / {total}",
+      "topUp": "Aufladen"
     }
   },
   "auth": {

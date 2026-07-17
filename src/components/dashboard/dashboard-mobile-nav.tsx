@@ -39,7 +39,10 @@ export function DashboardMobileNav() {
                 : "text-foreground-tertiary hover:text-foreground-secondary",
             )}
           >
-            {Icon && <Icon className="size-5" aria-hidden="true" />}
+            {/* Same fixed per-destination colour as the desktop sidebar. */}
+            {Icon && (
+              <Icon className="size-5" style={{ color: item.iconColor }} aria-hidden="true" />
+            )}
             {t(`items.${item.labelKey}`)}
           </Link>
         );

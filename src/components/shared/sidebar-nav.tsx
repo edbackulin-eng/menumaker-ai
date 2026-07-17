@@ -9,6 +9,8 @@ export interface SidebarNavItem {
   href: string;
   icon?: LucideIcon;
   active?: boolean;
+  /** Literal hex for the icon. Each nav destination owns a fixed colour so the sidebar reads as a set of distinct places rather than a monochrome list — see DASHBOARD_NAV_ITEMS. */
+  iconColor?: string;
 }
 
 export interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
@@ -21,8 +23,10 @@ export interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
     "aria-current"?: "page" | undefined;
     children?: React.ReactNode;
   }>;
-  /** Rendered above the nav items — e.g. DashboardSidebar's credits badge + "New menu" quick action. Kept as a slot rather than baked into this shared component so the design-system demo page's sidebar stays a plain nav list. */
+  /** Rendered above the nav items — e.g. DashboardSidebar's logo + "New menu" quick action. Kept as a slot rather than baked into this shared component so the design-system demo page's sidebar stays a plain nav list. */
   header?: React.ReactNode;
+  /** Rendered below the nav items, pushed to the bottom (the slot owns its own `mt-auto`) — e.g. DashboardSidebar's credits block. */
+  footer?: React.ReactNode;
 }
 
 /**
@@ -35,6 +39,7 @@ export function SidebarNav({
   ariaLabel = "Main navigation",
   linkComponent: LinkComponent = NextLink,
   header,
+  footer,
   className,
   ...props
 }: SidebarNavProps) {
@@ -56,17 +61,27 @@ export function SidebarNav({
             href={item.href}
             aria-current={item.active ? "page" : undefined}
             className={cn(
-              "text-body-sm duration-fast flex h-9 items-center gap-2.5 rounded-sm border-s-[3px] px-3 font-medium transition-colors",
+              // py-2 (not py-4): density is the point of this sidebar.
+              "text-body-sm duration-fast flex items-center gap-2.5 rounded-md px-3 py-2 font-medium transition-colors",
               item.active
-                ? "bg-accent-50 border-s-accent-600 text-accent-800 ps-[calc(0.75rem-3px)]"
-                : "text-foreground-secondary hover:bg-surface-secondary hover:text-foreground border-s-transparent",
+                ? "bg-surface-secondary text-foreground"
+                : "text-foreground-secondary hover:bg-surface-secondary hover:text-foreground",
             )}
           >
-            {Icon && <Icon className="size-4" aria-hidden="true" />}
+            {/* The icon keeps its colour whether or not the item is active —
+                only the label and the row background respond to selection. */}
+            {Icon && (
+              <Icon
+                className="size-4 shrink-0"
+                style={{ color: item.iconColor }}
+                aria-hidden="true"
+              />
+            )}
             {item.label}
           </LinkComponent>
         );
       })}
+      {footer}
     </nav>
   );
 }

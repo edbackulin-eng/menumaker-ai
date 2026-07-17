@@ -44,9 +44,14 @@
       "logout": "Cerrar sesión"
     },
     "sidebar": {
-      "newMenu": "Nueva carta",
-      "creditsCount": "{count, plural, one {# crédito} other {# créditos}}",
-      "freeTrialAvailable": "Prueba gratuita disponible"
+      "newMenu": "Nueva carta"
+    },
+    "credits": {
+      "freeMenuTitle": "Carta gratuita",
+      "freeMenuValue": "{left} de {total} restante",
+      "creditsTitle": "Créditos restantes",
+      "creditsValue": "{left} / {total}",
+      "topUp": "Recargar"
     }
   },
   "auth": {
