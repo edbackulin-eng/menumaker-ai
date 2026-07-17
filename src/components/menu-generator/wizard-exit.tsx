@@ -77,17 +77,25 @@ export function WizardExitButton() {
   const t = useTranslations("menuGenerator.exit");
   const router = useRouter();
   const ctx = useContext(WizardDirtyContext);
+  if (!ctx) {
+    // A hard error, not a silent fallback: the button used to work outside a
+    // provider by defaulting isDirty to false, which meant a step that later
+    // grew a dirty state (e.g. Template gaining preset selection in Stage 3)
+    // would lose its unsaved-work guard with no warning. Every wizard step
+    // wraps its content in WizardExitProvider; forgetting to is a bug to
+    // surface at dev time, not ship.
+    throw new Error("WizardExitButton must be rendered inside a WizardExitProvider");
+  }
   const [confirmOpen, setConfirmOpen] = useState(false);
   // Mirror the ref into state only so this button re-renders when dirtiness
   // flips — the actual guard reads the ref, which is always current.
   const [, force] = useState(0);
 
   useEffect(() => {
-    if (!ctx) return;
     return ctx.subscribe(() => force((n) => n + 1));
   }, [ctx]);
 
-  const isDirty = ctx?.isDirtyRef.current ?? false;
+  const isDirty = ctx.isDirtyRef.current;
 
   useEffect(() => {
     if (!isDirty) return;

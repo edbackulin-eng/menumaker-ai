@@ -8,7 +8,7 @@ import { redirect } from "@/i18n/navigation";
 import { Container } from "@/components/shared/container";
 import { PageHeader } from "@/components/shared/page-header";
 import { ExportPanel } from "@/components/menu-export/export-panel";
-import { WizardExitButton } from "@/components/menu-generator/wizard-exit";
+import { WizardExitButton, WizardExitProvider } from "@/components/menu-generator/wizard-exit";
 import { WizardSteps } from "@/components/menu-generator/wizard-steps";
 import { MenuStaticView } from "@/components/menu-render/menu-static-view";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
@@ -75,23 +75,25 @@ export default async function MenuResultPage({ params }: PageProps) {
 
   return (
     <Container size="md" className="py-8">
-      <WizardExitButton />
-      <PageHeader title={t("title")} description={menu.title} />
-      <div className="mt-6 mb-8">
-        <WizardSteps current="result" />
-      </div>
-      <p className="text-body text-foreground-secondary mb-6">
-        {t("summary", { title: menu.title, categoryCount, itemCount })}
-      </p>
-      <div className={`mb-8 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
-        <MenuStaticView content={orderedContent} style={effectiveStyle} />
-      </div>
-      <ExportPanel
-        menuId={menu.id}
-        appUrl={publicEnv.NEXT_PUBLIC_APP_URL}
-        initialIsPublic={menu.is_public}
-        initialPublicSlug={menu.public_slug}
-      />
+      <WizardExitProvider>
+        <WizardExitButton />
+        <PageHeader title={t("title")} description={menu.title} />
+        <div className="mt-6 mb-8">
+          <WizardSteps current="result" />
+        </div>
+        <p className="text-body text-foreground-secondary mb-6">
+          {t("summary", { title: menu.title, categoryCount, itemCount })}
+        </p>
+        <div className={`mb-8 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
+          <MenuStaticView content={orderedContent} style={effectiveStyle} />
+        </div>
+        <ExportPanel
+          menuId={menu.id}
+          appUrl={publicEnv.NEXT_PUBLIC_APP_URL}
+          initialIsPublic={menu.is_public}
+          initialPublicSlug={menu.public_slug}
+        />
+      </WizardExitProvider>
     </Container>
   );
 }
