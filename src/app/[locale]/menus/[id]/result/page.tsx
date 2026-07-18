@@ -85,7 +85,10 @@ export default async function MenuResultPage({ params }: PageProps) {
           {t("summary", { title: menu.title, categoryCount, itemCount })}
         </p>
         <div className={`mb-8 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
-          <MenuStaticView content={orderedContent} style={effectiveStyle} />
+          {/* No QR here: this preview belongs to an editing flow, and the
+              menu may not be published yet. The banner engine simply omits
+              the footer's QR block when it has nothing to point at. */}
+          <MenuStaticView content={orderedContent} style={effectiveStyle} menuTitle={menu.title} />
         </div>
         <ExportPanel
           menuId={menu.id}

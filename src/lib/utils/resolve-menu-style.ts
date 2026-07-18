@@ -14,6 +14,26 @@ export type CategoryHeaderStyle = "solid-bar" | "underline" | "boxed-outline";
 export type CornerRadius = "sharp" | "rounded" | "soft";
 export type CategoryNameTransform = "none" | "uppercase";
 
+/**
+ * Which render tree draws the menu (Stage 2 final).
+ *
+ * Everything else in ResolvedMenuStyle is a *value* the one shared render
+ * tree interpolates (a color, a font, a column count). A layout engine is a
+ * different tree entirely: Modern's banner, dot leaders, per-row 60×60
+ * photo, badges and footer are structural, and no amount of config on the
+ * classic components could produce them.
+ *
+ * `classic` is the tree every template used before this existed and stays
+ * the default for anything that doesn't opt in — all 12 pre-existing
+ * templates render byte-identically, same guarantee the Stage 13 fields
+ * were given.
+ *
+ * Stage 3 adds its remaining engines as further members of this union plus
+ * one component-trio each (DOM / Satori / react-pdf); the branch points are
+ * the three renderers' entry components and nothing else.
+ */
+export type MenuLayoutEngine = "classic" | "banner-two-column";
+
 export interface TemplateBackground {
   type: "solid" | "linear-gradient" | "radial-gradient";
   /** 1 color for solid, 2-3 hex values for a gradient. */
@@ -26,6 +46,10 @@ export interface ResolvedMenuStyle {
   accentColorId: AccentColorId;
   fontId: FontId;
   columns: LayoutColumns;
+  /** Which render tree draws this menu — see MenuLayoutEngine. */
+  layoutEngine: MenuLayoutEngine;
+  /** Engine-specific: whether the Modern row renders `item.badges`. Config-gated so noisy AI badge output can be hidden without a migration or a schema change. */
+  showBadges: boolean;
   /** Stage 13 (menu template visual redesign): category-heading font, distinct from the body font — a real typographic pair, not one font used everywhere. Defaults to `fontId` when a template doesn't set one. */
   headingFontId: FontId;
   /** `null` = no override; renderers fall back to their own ambient/neutral background (identical to pre-Stage-13 behavior). */
@@ -45,6 +69,12 @@ function isCornerRadius(value: unknown): value is CornerRadius {
 
 function isCategoryHeaderStyle(value: unknown): value is CategoryHeaderStyle {
   return typeof value === "string" && CATEGORY_HEADER_STYLES.includes(value as CategoryHeaderStyle);
+}
+
+const LAYOUT_ENGINES: MenuLayoutEngine[] = ["classic", "banner-two-column"];
+
+function isLayoutEngine(value: unknown): value is MenuLayoutEngine {
+  return typeof value === "string" && LAYOUT_ENGINES.includes(value as MenuLayoutEngine);
 }
 
 function parseBackground(value: unknown): TemplateBackground | null {
@@ -98,6 +128,10 @@ export function resolveTemplateDefaults(
     accentColorId,
     fontId,
     columns,
+    // Anything that doesn't explicitly opt in keeps the pre-Stage-2-final
+    // render tree, so the 12 existing templates are untouched.
+    layoutEngine: isLayoutEngine(config.layoutEngine) ? config.layoutEngine : "classic",
+    showBadges: config.showBadges === true,
     headingFontId,
     background: parseBackground(config.background),
     categoryHeaderStyle: isCategoryHeaderStyle(config.categoryHeaderStyle)

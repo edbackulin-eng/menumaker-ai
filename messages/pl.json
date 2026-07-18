@@ -271,7 +271,20 @@
       "atLeastOneItemError": "Dodaj co najmniej jedno danie przed zatwierdzeniem.",
       "confirmGenericError": "Nie udało się zatwierdzić menu. Spróbuj ponownie.",
       "recognizedCount": "Rozpoznane dania: {count}",
-      "confirm": "Zatwierdź i kontynuuj"
+      "confirm": "Zatwierdź i kontynuuj",
+      "photoAlt": "Zdjęcie dania",
+      "searchPhoto": "Znajdź zdjęcie",
+      "searchingPhoto": "Szukamy…",
+      "uploadPhoto": "Prześlij własne",
+      "uploadingPhoto": "Przesyłanie…",
+      "photoSearchError": "Nie udało się znaleźć zdjęcia dla tego dania.",
+      "photoSelectError": "Nie udało się zapisać wybranego zdjęcia.",
+      "photoUploadError": "Nie udało się przesłać zdjęcia.",
+      "photoPickerTitle": "Wybierz zdjęcie dania",
+      "photoPickerLoading": "Szukamy propozycji…",
+      "photoPickerEmpty": "Nie znaleziono niczego dla tego dania.",
+      "showMorePhotos": "Pokaż więcej",
+      "photoAttributionPrefix": "Zdjęcia dostarczone przez"
     },
     "template": {
       "metaTitle": "Wybierz szablon — MenuMaker AI",
@@ -341,6 +354,11 @@
       "errorPdf": "Nie udało się pobrać pliku PDF.",
       "errorPng": "Nie udało się pobrać obrazu.",
       "errorQr": "Nie udało się wygenerować kodu QR."
+    }
+  },
+  "menuRender": {
+    "modern": {
+      "qrLabel": "Zeskanuj po\npełne menu"
     }
   }
 }

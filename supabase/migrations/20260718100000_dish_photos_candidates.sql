@@ -1,0 +1,21 @@
+-- Stage 2 (photo picker grid): a second, still-shared and still-neutral
+-- cache layer on top of dish_photos' existing single-default columns.
+--
+-- The grid needs up to ~15 candidates per dish so "Показати ще" can page
+-- through 5 at a time client-side with zero extra requests — but caching
+-- 15 rows per query (one per candidate) would 15x the table and, worse,
+-- would give every candidate equal claim to being "the" cached default,
+-- undermining the existing photo_url/thumb_url columns' role. Storing the
+-- whole candidate list as one JSONB blob alongside the existing single
+-- default keeps both concerns intact: photo_url/thumb_url stay the
+-- lightweight, unambiguous default (first Pexels result, read by anything
+-- that just wants "a" photo); candidates is the richer payload only the
+-- picker grid reads, and only when a user explicitly opens it.
+--
+-- Still populated exclusively from Pexels' own response, same as every
+-- other column here — a user's pick from the grid never writes here (see
+-- menus.content.photoUrl, updateItemPhotoUrl). This is what makes the
+-- second cache layer safe to add: it's more of the same "neutral shared
+-- default" data, not a new place personal choices could leak into.
+alter table public.dish_photos
+  add column candidates jsonb;

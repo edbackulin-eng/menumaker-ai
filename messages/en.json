@@ -271,7 +271,20 @@
       "atLeastOneItemError": "Add at least one dish before confirming.",
       "confirmGenericError": "Couldn't confirm the menu. Please try again.",
       "recognizedCount": "Dishes recognized: {count}",
-      "confirm": "Confirm and continue"
+      "confirm": "Confirm and continue",
+      "photoAlt": "Dish photo",
+      "searchPhoto": "Find photo",
+      "searchingPhoto": "Searching…",
+      "uploadPhoto": "Upload your own",
+      "uploadingPhoto": "Uploading…",
+      "photoSearchError": "Couldn't find a photo for this dish.",
+      "photoSelectError": "Couldn't save the selected photo.",
+      "photoUploadError": "Couldn't upload the photo.",
+      "photoPickerTitle": "Choose a dish photo",
+      "photoPickerLoading": "Searching for options…",
+      "photoPickerEmpty": "Nothing found for this dish.",
+      "showMorePhotos": "Show more",
+      "photoAttributionPrefix": "Photos provided by"
     },
     "template": {
       "metaTitle": "Choose a template — MenuMaker AI",
@@ -341,6 +354,11 @@
       "errorPdf": "Couldn't download the PDF.",
       "errorPng": "Couldn't download the image.",
       "errorQr": "Couldn't generate the QR code."
+    }
+  },
+  "menuRender": {
+    "modern": {
+      "qrLabel": "Scan for\nfull menu"
     }
   }
 }

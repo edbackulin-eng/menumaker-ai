@@ -2,11 +2,13 @@
 
 import { useTranslations } from "next-intl";
 import { Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { ApiClientError } from "@/lib/api-client/api-client-error";
 import { menusApi } from "@/lib/api-client/menus";
+import { ALLOWED_PHOTO_MIME_TYPES } from "@/config/photos";
 import type { MenuContent } from "@/services/ai/schemas/menu-content";
+import type { PhotoSearchResult } from "@/services/photos/types";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -14,10 +16,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useReportWizardDirty } from "@/components/menu-generator/wizard-exit";
+import { DishPhotoImage } from "@/components/menu-render/dish-photo-image";
+import { PhotoPickerDialog } from "@/components/menu-generator/photo-picker-dialog";
 
 export interface MenuReviewEditorProps {
   menuId: string;
   initialContent: MenuContent;
+}
+
+interface PickerTarget {
+  categoryIndex: number;
+  itemIndex: number;
+  itemId: string;
 }
 
 function emptyItem() {
@@ -35,6 +45,15 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
   const [content, setContent] = useState<MenuContent>(initialContent);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadingItemId, setUploadingItemId] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<Record<string, string>>({});
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const [pickerTarget, setPickerTarget] = useState<PickerTarget | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerLoading, setPickerLoading] = useState(false);
+  const [pickerSelecting, setPickerSelecting] = useState(false);
+  const [pickerCandidates, setPickerCandidates] = useState<PhotoSearchResult[]>([]);
 
   // The recognized content is already persisted (from import); these are
   // refinements that only reach the DB on "confirm". Anything typed here and
@@ -84,6 +103,65 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
             },
       ),
     }));
+  }
+
+  async function handleOpenPicker(categoryIndex: number, itemIndex: number, itemId: string) {
+    setPhotoError((prev) => ({ ...prev, [itemId]: "" }));
+    setPickerTarget({ categoryIndex, itemIndex, itemId });
+    setPickerCandidates([]);
+    setPickerOpen(true);
+    setPickerLoading(true);
+    try {
+      const { candidates } = await menusApi.searchItemPhotoCandidates(menuId, itemId);
+      setPickerCandidates(candidates);
+    } catch (err) {
+      setPhotoError((prev) => ({
+        ...prev,
+        [itemId]: err instanceof ApiClientError ? err.message : t("photoSearchError"),
+      }));
+      setPickerOpen(false);
+    } finally {
+      setPickerLoading(false);
+    }
+  }
+
+  async function handleSelectPhoto(candidate: PhotoSearchResult) {
+    if (!pickerTarget) return;
+    const { categoryIndex, itemIndex, itemId } = pickerTarget;
+    setPickerSelecting(true);
+    try {
+      await menusApi.selectItemPhoto(menuId, itemId, candidate.photoUrl);
+      updateItem(categoryIndex, itemIndex, { photoUrl: candidate.photoUrl });
+      setPickerOpen(false);
+    } catch (err) {
+      setPhotoError((prev) => ({
+        ...prev,
+        [itemId]: err instanceof ApiClientError ? err.message : t("photoSelectError"),
+      }));
+    } finally {
+      setPickerSelecting(false);
+    }
+  }
+
+  async function handleUploadPhoto(
+    categoryIndex: number,
+    itemIndex: number,
+    itemId: string,
+    file: File,
+  ) {
+    setPhotoError((prev) => ({ ...prev, [itemId]: "" }));
+    setUploadingItemId(itemId);
+    try {
+      const { photoUrl } = await menusApi.uploadItemPhoto(menuId, itemId, file);
+      updateItem(categoryIndex, itemIndex, { photoUrl });
+    } catch (err) {
+      setPhotoError((prev) => ({
+        ...prev,
+        [itemId]: err instanceof ApiClientError ? err.message : t("photoUploadError"),
+      }));
+    } finally {
+      setUploadingItemId(null);
+    }
   }
 
   function removeItem(categoryIndex: number, itemIndex: number) {
@@ -222,6 +300,63 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
                   rows={2}
                   className="sm:col-span-3"
                 />
+                <div className="flex items-center gap-3 sm:col-span-3">
+                  <DishPhotoImage
+                    src={item.photoUrl}
+                    alt={t("photoAlt")}
+                    categoryName={category.name}
+                    className="size-14 shrink-0 rounded-md"
+                  />
+                  <div className="flex flex-1 flex-col gap-1">
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleOpenPicker(categoryIndex, itemIndex, item.id)}
+                        isLoading={pickerLoading && pickerTarget?.itemId === item.id}
+                        disabled={uploadingItemId === item.id}
+                        data-testid="search-photo-button"
+                      >
+                        {t("searchPhoto")}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => fileInputRefs.current[item.id]?.click()}
+                        isLoading={uploadingItemId === item.id}
+                        disabled={
+                          (pickerLoading && pickerTarget?.itemId === item.id) ||
+                          uploadingItemId === item.id
+                        }
+                        data-testid="upload-photo-button"
+                      >
+                        {t("uploadPhoto")}
+                      </Button>
+                      <input
+                        ref={(el) => {
+                          fileInputRefs.current[item.id] = el;
+                        }}
+                        type="file"
+                        accept={ALLOWED_PHOTO_MIME_TYPES.join(",")}
+                        className="hidden"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          event.target.value = "";
+                          if (file) {
+                            void handleUploadPhoto(categoryIndex, itemIndex, item.id, file);
+                          }
+                        }}
+                      />
+                    </div>
+                    {photoError[item.id] && (
+                      <p className="text-caption text-error-600" data-testid="photo-error">
+                        {photoError[item.id]}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
             <Button
@@ -255,6 +390,21 @@ export function MenuReviewEditor({ menuId, initialContent }: MenuReviewEditorPro
           {t("confirm")}
         </Button>
       </div>
+
+      <PhotoPickerDialog
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        candidates={pickerCandidates}
+        loading={pickerLoading}
+        selecting={pickerSelecting}
+        selectedPhotoUrl={
+          pickerTarget
+            ? content.categories[pickerTarget.categoryIndex]?.items[pickerTarget.itemIndex]
+                ?.photoUrl
+            : undefined
+        }
+        onSelect={handleSelectPhoto}
+      />
     </div>
   );
 }

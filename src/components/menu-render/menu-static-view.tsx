@@ -9,10 +9,22 @@ import {
 } from "@/lib/utils/resolve-menu-style";
 import type { MenuContent } from "@/services/ai/schemas/menu-content";
 import { StaticCategory } from "@/components/menu-render/static-category";
+import { ModernMenuView } from "@/components/menu-render/modern/modern-menu-view";
 
 export interface MenuStaticViewProps {
   content: MenuContent;
   style: ResolvedMenuStyle;
+  /**
+   * Fallback for the banner when `content.venue.name` is unset — normally
+   * the menu's own title. Only the `banner-two-column` engine reads it;
+   * previews that have no title (template gallery, empty state) may omit
+   * it, and the banner then renders its rule alone.
+   */
+  menuTitle?: string;
+  /** Pre-rendered QR for the footer. Only meaningful for engines that have a footer, and only when the menu is published. */
+  qrDataUri?: string;
+  /** Footer QR caption, localized in the menu's content locale. */
+  qrLabel?: string;
 }
 
 /**
@@ -24,7 +36,28 @@ export interface MenuStaticViewProps {
  * dnd-kit's `useSortable()` requires a DndContext ancestor this page
  * deliberately doesn't have.
  */
-export function MenuStaticView({ content, style }: MenuStaticViewProps) {
+export function MenuStaticView({
+  content,
+  style,
+  menuTitle,
+  qrDataUri,
+  qrLabel,
+}: MenuStaticViewProps) {
+  // The one branch point between layout engines in the DOM renderer (the
+  // Satori and react-pdf renderers each have exactly one of their own).
+  // Stage 3's remaining engines add cases here and nothing else.
+  if (style.layoutEngine === "banner-two-column") {
+    return (
+      <ModernMenuView
+        content={content}
+        style={style}
+        fallbackVenueName={menuTitle ?? ""}
+        {...(qrDataUri ? { qrDataUri } : {})}
+        qrLabel={qrLabel ?? ""}
+      />
+    );
+  }
+
   const accentHex = getAccentColorHex(style.accentColorId);
   const accentTextHex = pickReadableTextColor(accentHex);
   const pageForeground = resolvePageForeground(style.background);

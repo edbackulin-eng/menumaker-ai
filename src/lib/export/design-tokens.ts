@@ -23,3 +23,29 @@ export function distributeIntoColumns<T>(items: T[], columns: number): T[][] {
   });
   return result;
 }
+
+/**
+ * Splits a list into N groups sequentially — first chunk fills column 1,
+ * next fills column 2, "newspaper" order.
+ *
+ * This is what CSS multi-column actually does, and therefore what the DOM
+ * renderer produces. The round-robin version above interleaves instead
+ * (1→left, 2→right, 3→left), which reads differently: with categories
+ * [A,B,C], the browser shows A,B | C while round-robin shows A,C | B.
+ * That mismatch is tolerable for the classic engine, whose exports have
+ * always used round-robin, but the Modern template is specified as
+ * "identical across Web/PDF/PNG", so its exports use this instead.
+ *
+ * Chunk sizes are ceil-based, so with 3 items over 2 columns the left
+ * column gets 2 and the right gets 1 — matching how a browser balances a
+ * short multi-column block.
+ */
+export function distributeSequentially<T>(items: T[], columns: number): T[][] {
+  if (columns <= 1) return [items];
+  const perColumn = Math.ceil(items.length / columns);
+  const result: T[][] = [];
+  for (let i = 0; i < columns; i++) {
+    result.push(items.slice(i * perColumn, (i + 1) * perColumn));
+  }
+  return result;
+}

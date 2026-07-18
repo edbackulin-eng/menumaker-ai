@@ -1,6 +1,7 @@
 import { fetchJson, postFormData } from "@/lib/api-client/fetch-json";
 import type { StyleOverridesInput } from "@/lib/validations/menu-style";
 import type { MenuContent } from "@/services/ai/schemas/menu-content";
+import type { PhotoSearchResult } from "@/services/photos/types";
 import type { Tables } from "@/types/database.types";
 
 export type Menu = Tables<"menus">;
@@ -129,5 +130,28 @@ export const menusApi = {
     return fetchJson<{ url: string; targetUrl: string }>(`/api/menus/${id}/export/qr`, {
       method: "POST",
     });
+  },
+
+  searchItemPhotoCandidates(
+    menuId: string,
+    itemId: string,
+  ): Promise<{ candidates: PhotoSearchResult[] }> {
+    return fetchJson<{ candidates: PhotoSearchResult[] }>(
+      `/api/menus/${menuId}/items/${itemId}/photo/search`,
+      { method: "POST" },
+    );
+  },
+
+  selectItemPhoto(menuId: string, itemId: string, photoUrl: string): Promise<{ photoUrl: string }> {
+    return fetchJson<{ photoUrl: string }>(`/api/menus/${menuId}/items/${itemId}/photo/select`, {
+      method: "POST",
+      body: JSON.stringify({ photoUrl }),
+    });
+  },
+
+  uploadItemPhoto(menuId: string, itemId: string, file: File): Promise<{ photoUrl: string }> {
+    const form = new FormData();
+    form.set("file", file);
+    return postFormData<{ photoUrl: string }>(`/api/menus/${menuId}/items/${itemId}/photo`, form);
   },
 };

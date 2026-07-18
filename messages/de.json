@@ -271,7 +271,20 @@
       "atLeastOneItemError": "Fügen Sie mindestens ein Gericht hinzu, bevor Sie bestätigen.",
       "confirmGenericError": "Die Speisekarte konnte nicht bestätigt werden. Bitte versuchen Sie es erneut.",
       "recognizedCount": "Erkannte Gerichte: {count}",
-      "confirm": "Bestätigen und weiter"
+      "confirm": "Bestätigen und weiter",
+      "photoAlt": "Foto des Gerichts",
+      "searchPhoto": "Foto suchen",
+      "searchingPhoto": "Wird gesucht…",
+      "uploadPhoto": "Eigenes Foto hochladen",
+      "uploadingPhoto": "Wird hochgeladen…",
+      "photoSearchError": "Für dieses Gericht konnte kein Foto gefunden werden.",
+      "photoSelectError": "Das ausgewählte Foto konnte nicht gespeichert werden.",
+      "photoUploadError": "Das Foto konnte nicht hochgeladen werden.",
+      "photoPickerTitle": "Foto für das Gericht auswählen",
+      "photoPickerLoading": "Optionen werden gesucht…",
+      "photoPickerEmpty": "Für dieses Gericht wurde nichts gefunden.",
+      "showMorePhotos": "Mehr anzeigen",
+      "photoAttributionPrefix": "Fotos bereitgestellt von"
     },
     "template": {
       "metaTitle": "Vorlage wählen — MenuMaker AI",
@@ -341,6 +354,11 @@
       "errorPdf": "Das PDF konnte nicht heruntergeladen werden.",
       "errorPng": "Das Bild konnte nicht heruntergeladen werden.",
       "errorQr": "Der QR-Code konnte nicht generiert werden."
+    }
+  },
+  "menuRender": {
+    "modern": {
+      "qrLabel": "Scannen für\ndie ganze Karte"
     }
   }
 }

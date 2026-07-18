@@ -215,6 +215,54 @@ export type Database = {
           },
         ];
       };
+      dish_photos: {
+        Row: {
+          attribution_name: string | null;
+          attribution_url: string | null;
+          candidates: Json | null;
+          created_at: string;
+          external_id: string | null;
+          height: number | null;
+          id: string;
+          photo_url: string;
+          provider: string;
+          query_normalized: string;
+          thumb_url: string;
+          updated_at: string;
+          width: number | null;
+        };
+        Insert: {
+          attribution_name?: string | null;
+          attribution_url?: string | null;
+          candidates?: Json | null;
+          created_at?: string;
+          external_id?: string | null;
+          height?: number | null;
+          id?: string;
+          photo_url: string;
+          provider: string;
+          query_normalized: string;
+          thumb_url: string;
+          updated_at?: string;
+          width?: number | null;
+        };
+        Update: {
+          attribution_name?: string | null;
+          attribution_url?: string | null;
+          candidates?: Json | null;
+          created_at?: string;
+          external_id?: string | null;
+          height?: number | null;
+          id?: string;
+          photo_url?: string;
+          provider?: string;
+          query_normalized?: string;
+          thumb_url?: string;
+          updated_at?: string;
+          width?: number | null;
+        };
+        Relationships: [];
+      };
       menu_exports: {
         Row: {
           created_at: string;

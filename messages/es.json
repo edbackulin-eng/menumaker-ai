@@ -271,7 +271,20 @@
       "atLeastOneItemError": "Añade al menos un plato antes de confirmar.",
       "confirmGenericError": "No se pudo confirmar la carta. Inténtalo de nuevo.",
       "recognizedCount": "Platos reconocidos: {count}",
-      "confirm": "Confirmar y continuar"
+      "confirm": "Confirmar y continuar",
+      "photoAlt": "Foto del plato",
+      "searchPhoto": "Buscar foto",
+      "searchingPhoto": "Buscando…",
+      "uploadPhoto": "Subir tu propia foto",
+      "uploadingPhoto": "Subiendo…",
+      "photoSearchError": "No se pudo encontrar una foto para este plato.",
+      "photoSelectError": "No se pudo guardar la foto seleccionada.",
+      "photoUploadError": "No se pudo subir la foto.",
+      "photoPickerTitle": "Elige una foto del plato",
+      "photoPickerLoading": "Buscando opciones…",
+      "photoPickerEmpty": "No se encontró nada para este plato.",
+      "showMorePhotos": "Mostrar más",
+      "photoAttributionPrefix": "Fotos proporcionadas por"
     },
     "template": {
       "metaTitle": "Elige una plantilla — MenuMaker AI",
@@ -341,6 +354,11 @@
       "errorPdf": "No se pudo descargar el PDF.",
       "errorPng": "No se pudo descargar la imagen.",
       "errorQr": "No se pudo generar el código QR."
+    }
+  },
+  "menuRender": {
+    "modern": {
+      "qrLabel": "Escanea para\nla carta completa"
     }
   }
 }

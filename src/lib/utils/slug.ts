@@ -46,7 +46,8 @@ const CYRILLIC_TO_LATIN: Record<string, string> = {
   ё: "e",
 };
 
-function transliterate(text: string): string {
+/** Exported for reuse outside slug generation — e.g. the Stage 2 photo lookup service's fallback when a dish has no AI-provided searchQuery. */
+export function transliterate(text: string): string {
   return text
     .toLowerCase()
     .split("")

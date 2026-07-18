@@ -271,7 +271,20 @@
       "atLeastOneItemError": "Додайте хоча б одну страву перед підтвердженням.",
       "confirmGenericError": "Не вдалося підтвердити меню. Спробуйте ще раз.",
       "recognizedCount": "Розпізнано страв: {count}",
-      "confirm": "Підтвердити і продовжити"
+      "confirm": "Підтвердити і продовжити",
+      "photoAlt": "Фото страви",
+      "searchPhoto": "Знайти фото",
+      "searchingPhoto": "Шукаємо…",
+      "uploadPhoto": "Завантажити своє",
+      "uploadingPhoto": "Завантажуємо…",
+      "photoSearchError": "Не вдалося знайти фото для цієї страви.",
+      "photoSelectError": "Не вдалося зберегти обране фото.",
+      "photoUploadError": "Не вдалося завантажити фото.",
+      "photoPickerTitle": "Оберіть фото страви",
+      "photoPickerLoading": "Шукаємо варіанти…",
+      "photoPickerEmpty": "Нічого не знайдено для цієї страви.",
+      "showMorePhotos": "Показати ще",
+      "photoAttributionPrefix": "Фото надані"
     },
     "template": {
       "metaTitle": "Оберіть шаблон — MenuMaker AI",
@@ -341,6 +354,11 @@
       "errorPdf": "Не вдалося завантажити PDF.",
       "errorPng": "Не вдалося завантажити зображення.",
       "errorQr": "Не вдалося згенерувати QR-код."
+    }
+  },
+  "menuRender": {
+    "modern": {
+      "qrLabel": "Скануйте для\nповного меню"
     }
   }
 }

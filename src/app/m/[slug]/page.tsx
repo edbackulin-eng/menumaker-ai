@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { publicEnv } from "@/config/env";
+import { generateQrPng } from "@/lib/export/qr";
 import { MENU_EDITOR_FONT_VARIABLES_CLASSNAME } from "@/lib/fonts/menu-fonts";
 import { createClient } from "@/lib/supabase/server";
 import { applyStyleOrder } from "@/lib/utils/menu-content-order";
@@ -112,15 +115,35 @@ export default async function PublicMenuPage({ params }: PageProps) {
   // against the light canvas.
   const canvasForeground = resolvePageForeground(null);
 
+  // Engines with their own title banner already name the venue at 38px —
+  // repeating the menu title above it would be the same words twice.
+  const hasOwnBanner = effectiveStyle.layoutEngine === "banner-two-column";
+
+  // Localized in the *menu's* content locale, not the visitor's UI locale:
+  // this is the restaurant's printed artifact, and its footer should read
+  // in the same language as the dishes above it.
+  const t = await getTranslations({ locale: menu.locale, namespace: "menuRender.modern" });
+
+  // Points at this very page. Redundant to scan while already here, but the
+  // same render is what becomes the printed PDF/PNG, where it is the whole
+  // point — generating it here keeps one code path for all three outputs.
+  const qrDataUri = hasOwnBanner
+    ? `data:image/png;base64,${(
+        await generateQrPng(`${publicEnv.NEXT_PUBLIC_APP_URL}/m/${slug}`)
+      ).toString("base64")}`
+    : undefined;
+
   return (
     <div
       style={{ backgroundColor: MENU_SURFACE.pageBackground }}
       className={`min-h-full py-6 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}
     >
       <div className="mx-auto max-w-2xl px-4">
-        <h1 className="text-h4 mb-4" style={{ color: canvasForeground.primary }}>
-          {menu.title}
-        </h1>
+        {!hasOwnBanner && (
+          <h1 className="text-h4 mb-4" style={{ color: canvasForeground.primary }}>
+            {menu.title}
+          </h1>
+        )}
         {/*
           A visitor here is very likely on a phone (QR code at a table) —
           the editor's own multi-column layout (up to 3) is a desktop-preview
@@ -128,9 +151,19 @@ export default async function PublicMenuPage({ params }: PageProps) {
           below `sm` via an !important override rather than touching
           MenuStaticView's own `columns` inline style (kept prop-driven,
           unchanged, for consistency with the editor).
+
+          Modern collapses to one column via its own `columns-1 sm:columns-2`
+          classes, so this override is a no-op for it — left in place because
+          it still governs the classic engine.
         */}
         <div className="max-sm:*:!columns-1">
-          <MenuStaticView content={orderedContent} style={effectiveStyle} />
+          <MenuStaticView
+            content={orderedContent}
+            style={effectiveStyle}
+            menuTitle={menu.title}
+            {...(qrDataUri ? { qrDataUri } : {})}
+            qrLabel={t("qrLabel")}
+          />
         </div>
       </div>
     </div>

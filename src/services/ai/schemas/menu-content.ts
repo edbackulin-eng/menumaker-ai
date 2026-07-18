@@ -21,6 +21,32 @@ export const menuItemSchema = z.object({
   name: z.string().trim().min(1),
   description: z.string().trim().min(1).optional(),
   price: z.number().nonnegative().optional(),
+  /**
+   * Short English search query for dish-photo lookup (Stage 2), minted by
+   * analyzeMenu itself — the same call already reads name/description/
+   * category, so it has more context than a dictionary translation would.
+   * Optional: menus imported before Stage 2 have no such field, and the
+   * photo lookup service falls back to a transliterated/original name
+   * rather than sending an empty query to the photo provider.
+   */
+  searchQuery: z.string().trim().min(1).optional(),
+  /**
+   * Free-form tags (e.g. "Vegetarian", "Chef's pick") the AI infers from
+   * name/description. Rendering is gated by a template config flag, not by
+   * this schema, so a noisy model output can be hidden without a migration
+   * — see the Modern template's `showBadges` config.
+   */
+  badges: z.array(z.string().trim().min(1)).optional(),
+  /**
+   * Resolved photo URL for this dish (Stage 2) — either a Pexels result
+   * cached via findDishPhoto(), or a user-uploaded replacement in the
+   * `menu-photos` bucket. Never set by the AI (see menuItemAiOutputSchema
+   * below): only POST /api/menus/[id]/items/[itemId]/photo/search and
+   * .../photo (upload) ever write this field. Absent means "no photo
+   * resolved yet" — renderers show a category-colored placeholder
+   * (dish-photo-placeholder.tsx), not an error.
+   */
+  photoUrl: z.string().trim().min(1).optional(),
 });
 
 export const menuCategorySchema = z.object({
@@ -29,13 +55,37 @@ export const menuCategorySchema = z.object({
   items: z.array(menuItemSchema),
 });
 
+/**
+ * The restaurant this menu belongs to (Stage 2 final, Modern template).
+ * Lives here rather than as `menus` columns for the same reason the rest of
+ * this shape does — see this file's header: `menus.content` is deliberately
+ * schema-less at the DB layer so it can grow without a migration, exactly
+ * how `searchQuery`/`badges`/`photoUrl` were added.
+ *
+ * Every field is optional and every consumer must degrade gracefully: the
+ * Modern banner falls back to `menus.title` for the name (so there is
+ * always *something* to show) and simply omits the tagline/address/phone
+ * rows when they're absent, rather than rendering empty ones. Nothing in
+ * the app writes these yet — Stage 3 adds the form; until then a menu
+ * renders correctly with `venue` entirely missing.
+ */
+export const menuVenueSchema = z.object({
+  name: z.string().trim().min(1).optional(),
+  /** Spaced-caps superheading above the venue name, e.g. "Italian kitchen · since 2014". */
+  tagline: z.string().trim().min(1).optional(),
+  address: z.string().trim().min(1).optional(),
+  phone: z.string().trim().min(1).optional(),
+});
+
 export const menuContentSchema = z.object({
   currency: z.string().trim().min(1).max(8).optional(),
+  venue: menuVenueSchema.optional(),
   categories: z.array(menuCategorySchema),
 });
 
 export type MenuItem = z.infer<typeof menuItemSchema>;
 export type MenuCategory = z.infer<typeof menuCategorySchema>;
+export type MenuVenue = z.infer<typeof menuVenueSchema>;
 export type MenuContent = z.infer<typeof menuContentSchema>;
 
 /**
@@ -45,7 +95,7 @@ export type MenuContent = z.infer<typeof menuContentSchema>;
  * values; ids are assigned deterministically on our side instead, via
  * assignContentIds().
  */
-export const menuItemAiOutputSchema = menuItemSchema.omit({ id: true });
+export const menuItemAiOutputSchema = menuItemSchema.omit({ id: true, photoUrl: true });
 export const menuCategoryAiOutputSchema = z.object({
   name: z.string().trim().min(1),
   items: z.array(menuItemAiOutputSchema),
