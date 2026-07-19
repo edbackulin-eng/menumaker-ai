@@ -1,6 +1,7 @@
 import "server-only";
 
 import { renderClassicPng } from "@/lib/export/classic/render-classic-png";
+import { renderGridPng } from "@/lib/export/grid/render-grid-png";
 import { renderModernPng } from "@/lib/export/modern/render-modern-png";
 import type { MenuLayoutEngine } from "@/lib/utils/resolve-menu-style";
 import type { ExportableMenu } from "@/services/export/load-menu";
@@ -22,6 +23,7 @@ import type { ExportableMenu } from "@/services/export/load-menu";
 const PNG_ENGINE_REGISTRY: Record<MenuLayoutEngine, (menu: ExportableMenu) => Promise<Buffer>> = {
   classic: renderClassicPng,
   "banner-two-column": renderModernPng,
+  grid: renderGridPng,
 };
 
 /** The PNG export's single engine dispatch point. */

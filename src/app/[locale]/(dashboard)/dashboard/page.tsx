@@ -62,7 +62,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
       .range(from, to),
-    supabase.from("menu_templates").select("id, slug, name, config, engine"),
+    supabase.from("menu_templates").select("id, slug, name, config, engine, palette"),
     assertMenuCreationEligible(user.id)
       .then(() => true)
       .catch(() => false),
@@ -80,7 +80,11 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
   const templateStyleSourceById = new Map(
     (templates ?? []).map((template) => [
       template.id,
-      { config: template.config as Record<string, unknown>, engine: template.engine },
+      {
+        config: template.config as Record<string, unknown>,
+        engine: template.engine,
+        palette: template.palette as Record<string, unknown> | null,
+      },
     ]),
   );
 
@@ -89,10 +93,11 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
     const template = (templates ?? []).find((candidate) => candidate.slug === slug);
     return {
       name: localizedTemplateName(template?.name ?? null, locale, defaultTemplateName),
-      style: resolveTemplateDefaults(
-        template?.config as Record<string, unknown> | null,
-        template?.engine,
-      ),
+      style: resolveTemplateDefaults({
+        config: template?.config as Record<string, unknown> | null,
+        engine: template?.engine,
+        palette: template?.palette as Record<string, unknown> | null,
+      }),
     };
   });
 
@@ -114,10 +119,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
     const styleOverrides = parsedStyle.success ? parsedStyle.data : {};
     return {
       menu,
-      style: resolveEffectiveStyle(
-        resolveTemplateDefaults(styleSource?.config, styleSource?.engine),
-        styleOverrides,
-      ),
+      style: resolveEffectiveStyle(resolveTemplateDefaults(styleSource), styleOverrides),
       templateName: menu.template_id
         ? (templateNameById.get(menu.template_id) ?? defaultTemplateName)
         : defaultTemplateName,

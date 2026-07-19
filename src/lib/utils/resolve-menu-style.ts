@@ -37,7 +37,7 @@ export type CategoryNameTransform = "none" | "uppercase";
  * is the point: a half-added engine cannot silently fall through to
  * classic in one renderer while working in the other two.
  */
-export type MenuLayoutEngine = "classic" | "banner-two-column";
+export type MenuLayoutEngine = "classic" | "banner-two-column" | "grid";
 
 export interface TemplateBackground {
   type: "solid" | "linear-gradient" | "radial-gradient";
@@ -63,6 +63,19 @@ export interface ResolvedMenuStyle {
   cornerRadius: CornerRadius;
   categoryNameTransform: CategoryNameTransform;
   cardShadow: boolean;
+  /**
+   * The template's engine-specific color set, raw and unparsed.
+   *
+   * Deliberately left as an untyped bag here: each engine's palette has a
+   * different shape, and this module has no business knowing any of them —
+   * it would turn into a union that grows with every engine. The owning
+   * engine parses it against its own defaults (see parseGridPalette), so a
+   * missing or malformed palette degrades to that engine's built-in look
+   * rather than failing the render.
+   *
+   * `null` for every pre-Stage-3 template, which is why they are unaffected.
+   */
+  palette: Record<string, unknown> | null;
 }
 
 const CORNER_RADIUS_VALUES: CornerRadius[] = ["sharp", "rounded", "soft"];
@@ -76,10 +89,23 @@ function isCategoryHeaderStyle(value: unknown): value is CategoryHeaderStyle {
   return typeof value === "string" && CATEGORY_HEADER_STYLES.includes(value as CategoryHeaderStyle);
 }
 
-const LAYOUT_ENGINES: MenuLayoutEngine[] = ["classic", "banner-two-column"];
+// A `Record<MenuLayoutEngine, true>`, not a `MenuLayoutEngine[]`, on
+// purpose: this is the runtime guard every DB `engine` value passes
+// through, and an array literal typed as `MenuLayoutEngine[]` does NOT have
+// to be exhaustive — a list missing an engine is still assignable to the
+// type, so it compiles clean while silently sending that engine to the
+// classic fallback. A Record's keys must cover the whole union, so
+// omitting one here is a compile error. (This is exactly the bug that
+// shipped the first time `grid` was added: present in the type, absent
+// from the list, rendered as classic with no error anywhere.)
+const LAYOUT_ENGINE_SET: Record<MenuLayoutEngine, true> = {
+  classic: true,
+  "banner-two-column": true,
+  grid: true,
+};
 
 function isLayoutEngine(value: unknown): value is MenuLayoutEngine {
-  return typeof value === "string" && LAYOUT_ENGINES.includes(value as MenuLayoutEngine);
+  return typeof value === "string" && value in LAYOUT_ENGINE_SET;
 }
 
 function parseBackground(value: unknown): TemplateBackground | null {
@@ -109,11 +135,28 @@ function parseBackground(value: unknown): TemplateBackground | null {
  * "rounded"` (the hardcoded `rounded-md` every card already had),
  * `cardShadow: false` (cards never had a shadow before).
  */
+export interface TemplateStyleSource {
+  /** `menu_templates.config` — the classic engine's fields. */
+  config?: Record<string, unknown> | null;
+  /** `menu_templates.engine` — which render tree runs. */
+  engine?: string | null;
+  /** `menu_templates.palette` — the engine's color set, parsed by that engine. */
+  palette?: Record<string, unknown> | null;
+}
+
+/**
+ * Takes one object rather than positional arguments on purpose. Stage 3
+ * adds engines that each read another `menu_templates` column
+ * (`typography`, `photo_policy`), and a positional signature would have
+ * grown a new parameter per engine — the shape where call sites eventually
+ * pass arguments in the wrong order. Adding a field here changes no call
+ * site that doesn't need it.
+ */
 export function resolveTemplateDefaults(
-  templateConfig: Record<string, unknown> | null | undefined,
-  templateEngine: string | null | undefined,
+  source: TemplateStyleSource | null | undefined,
 ): ResolvedMenuStyle {
-  const config = templateConfig ?? {};
+  const config = source?.config ?? {};
+  const templateEngine = source?.engine;
   const accentColorId =
     typeof config.defaultAccentColorId === "string" && isAccentColorId(config.defaultAccentColorId)
       ? config.defaultAccentColorId
@@ -156,6 +199,7 @@ export function resolveTemplateDefaults(
     cornerRadius: isCornerRadius(config.cornerRadius) ? config.cornerRadius : "rounded",
     categoryNameTransform,
     cardShadow: config.cardShadow === true,
+    palette: source?.palette ?? null,
   };
 }
 

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { renderClassicPdf } from "@/lib/export/classic/render-classic-pdf";
+import { renderGridPdf } from "@/lib/export/grid/render-grid-pdf";
 import { renderModernPdf } from "@/lib/export/modern/render-modern-pdf";
 import type { MenuLayoutEngine } from "@/lib/utils/resolve-menu-style";
 import type { ExportableMenu } from "@/services/export/load-menu";
@@ -17,6 +18,7 @@ import type { ExportableMenu } from "@/services/export/load-menu";
 const PDF_ENGINE_REGISTRY: Record<MenuLayoutEngine, (menu: ExportableMenu) => Promise<Buffer>> = {
   classic: renderClassicPdf,
   "banner-two-column": renderModernPdf,
+  grid: renderGridPdf,
 };
 
 /** The PDF export's single engine dispatch point. */

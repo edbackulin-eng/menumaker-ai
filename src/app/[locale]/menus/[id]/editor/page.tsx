@@ -55,14 +55,15 @@ export default async function MenuEditorPage({ params }: PageProps) {
 
   const { data: template } = await supabase
     .from("menu_templates")
-    .select("config, engine")
+    .select("config, engine, palette")
     .eq("id", menu.template_id)
     .maybeSingle();
 
-  const templateDefaults = resolveTemplateDefaults(
-    template?.config as Record<string, unknown> | null,
-    template?.engine,
-  );
+  const templateDefaults = resolveTemplateDefaults({
+    config: template?.config as Record<string, unknown> | null,
+    engine: template?.engine,
+    palette: template?.palette as Record<string, unknown> | null,
+  });
 
   const parsedContent = menuContentSchema.safeParse(menu.content);
   const content = parsedContent.success ? parsedContent.data : { categories: [] };

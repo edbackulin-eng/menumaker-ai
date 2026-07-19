@@ -3,6 +3,7 @@ import type { ComponentType } from "react";
 import type { MenuLayoutEngine } from "@/lib/utils/resolve-menu-style";
 import type { MenuEngineViewProps } from "@/components/menu-render/engine-view-props";
 import { ClassicMenuView } from "@/components/menu-render/classic/classic-menu-view";
+import { GridMenuView } from "@/components/menu-render/grid/grid-menu-view";
 import { ModernMenuView } from "@/components/menu-render/modern/modern-menu-view";
 
 export type MenuStaticViewProps = MenuEngineViewProps;
@@ -27,6 +28,7 @@ export type MenuStaticViewProps = MenuEngineViewProps;
 const DOM_ENGINE_REGISTRY: Record<MenuLayoutEngine, ComponentType<MenuEngineViewProps>> = {
   classic: ClassicMenuView,
   "banner-two-column": ModernMenuView,
+  grid: GridMenuView,
 };
 
 /**
