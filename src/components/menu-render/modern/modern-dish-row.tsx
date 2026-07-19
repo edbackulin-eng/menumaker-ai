@@ -1,6 +1,7 @@
 import { DishPhotoImage } from "@/components/menu-render/dish-photo-image";
 import { ModernBadge } from "@/components/menu-render/modern/modern-badge";
 import { MODERN_PALETTE } from "@/components/menu-render/modern/modern-palette";
+import { dishPhotoUrlForEngine } from "@/lib/utils/dish-photo-url";
 import type { MenuItem } from "@/services/ai/schemas/menu-content";
 
 export interface ModernDishRowProps {
@@ -46,7 +47,9 @@ export function ModernDishRow({
           constant, and letting it compress on a long dish name would make
           rows visibly ragged down the column. */}
       <DishPhotoImage
-        src={item.photoUrl}
+        src={
+          item.photoUrl ? dishPhotoUrlForEngine(item.photoUrl, "banner-two-column") : item.photoUrl
+        }
         alt=""
         categoryName={categoryName}
         className="size-[60px] shrink-0 rounded-[8px]"

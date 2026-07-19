@@ -82,7 +82,7 @@ function registerModernPdfFonts(menu: ExportableMenu) {
 export async function renderModernPdf(menu: ExportableMenu): Promise<Buffer> {
   registerModernPdfFonts(menu);
   const [photos, qrDataUri] = await Promise.all([
-    fetchPhotoBytes(menu.content),
+    fetchPhotoBytes(menu.content, "banner-two-column"),
     buildQrDataUri(menu),
   ]);
   return renderToBuffer(

@@ -1,6 +1,8 @@
 import "server-only";
 
 import { logger } from "@/lib/logger";
+import { dishPhotoUrlForEngine } from "@/lib/utils/dish-photo-url";
+import type { MenuLayoutEngine } from "@/lib/utils/resolve-menu-style";
 import type { MenuContent } from "@/services/ai/schemas/menu-content";
 
 /** Only formats PDFKit can actually decode — an SVG or AVIF here crashes the PDF render outright. */
@@ -23,8 +25,17 @@ export type PhotoBytesByItemId = Map<string, string>;
  * renderer draws its category-colored placeholder instead. One dead image
  * must never fail the whole export; that is the difference between a menu
  * with one grey square and no menu at all.
+ *
+ * `engine` picks the crop size requested from Pexels before the bytes are
+ * fetched (see dishPhotoUrlForEngine) — the PDF embeds whatever bytes it
+ * downloads at their native resolution, so getting the size right here,
+ * not after the fact, is what keeps a Grid PDF's tile sharp without
+ * bloating a Modern PDF's 48pt thumbnail with pixels it will never show.
  */
-export async function fetchPhotoBytes(content: MenuContent): Promise<PhotoBytesByItemId> {
+export async function fetchPhotoBytes(
+  content: MenuContent,
+  engine: MenuLayoutEngine,
+): Promise<PhotoBytesByItemId> {
   const items = content.categories
     .flatMap((category) => category.items)
     .filter((item): item is typeof item & { photoUrl: string } => Boolean(item.photoUrl));
@@ -32,7 +43,7 @@ export async function fetchPhotoBytes(content: MenuContent): Promise<PhotoBytesB
   const entries = await Promise.all(
     items.map(async (item) => {
       try {
-        const response = await fetch(item.photoUrl, {
+        const response = await fetch(dishPhotoUrlForEngine(item.photoUrl, engine), {
           signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
         });
         if (!response.ok) {

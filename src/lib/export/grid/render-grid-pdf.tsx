@@ -237,7 +237,7 @@ export async function renderGridPdf(menu: ExportableMenu): Promise<Buffer> {
   const contactLine = [venue?.address, venue?.phone].filter(Boolean).join(" · ");
 
   const [photos, qrDataUri] = await Promise.all([
-    fetchPhotoBytes(menu.content),
+    fetchPhotoBytes(menu.content, "grid"),
     buildQrDataUri(menu),
   ]);
 

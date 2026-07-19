@@ -1,4 +1,5 @@
 import { getDishPlaceholderColor } from "@/lib/utils/dish-photo-placeholder";
+import { dishPhotoUrlForEngine } from "@/lib/utils/dish-photo-url";
 import type { GridPalette } from "@/components/menu-render/grid/grid-palette";
 import type { MenuItem } from "@/services/ai/schemas/menu-content";
 
@@ -55,7 +56,7 @@ export function GridDishCard({
       {item.photoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={item.photoUrl}
+          src={dishPhotoUrlForEngine(item.photoUrl, "grid")}
           alt=""
           style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", display: "block" }}
         />

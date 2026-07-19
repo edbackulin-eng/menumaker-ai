@@ -10,6 +10,7 @@ import { resolveCurrencyDisplay } from "@/config/menu-currency";
 import { loadPngFontBuffers } from "@/lib/export/fonts";
 import { chunkIntoRows, GRID_EXPORT_COLUMNS } from "@/lib/export/grid/grid-rows";
 import { getDishPlaceholderColor } from "@/lib/utils/dish-photo-placeholder";
+import { dishPhotoUrlForEngine } from "@/lib/utils/dish-photo-url";
 import type { MenuItem } from "@/services/ai/schemas/menu-content";
 import type { ExportableMenu } from "@/services/export/load-menu";
 
@@ -80,7 +81,7 @@ function dishCard(
         // Satori fetches remote images itself, so this path passes the URL
         // straight through — unlike the PDF path, which must embed bytes.
         <img
-          src={item.photoUrl}
+          src={dishPhotoUrlForEngine(item.photoUrl, "grid")}
           width={CARD_WIDTH}
           height={PHOTO_HEIGHT}
           style={{ width: CARD_WIDTH, height: PHOTO_HEIGHT, objectFit: "cover" }}

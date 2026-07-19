@@ -9,6 +9,7 @@ import { resolveCurrencyDisplay } from "@/config/menu-currency";
 import { distributeSequentially } from "@/lib/export/design-tokens";
 import { loadPngFontBuffers } from "@/lib/export/fonts";
 import { getDishPlaceholderColor } from "@/lib/utils/dish-photo-placeholder";
+import { dishPhotoUrlForEngine } from "@/lib/utils/dish-photo-url";
 import type { MenuItem } from "@/services/ai/schemas/menu-content";
 import type { ExportableMenu } from "@/services/export/load-menu";
 
@@ -77,7 +78,7 @@ function dishRow(
         // Satori fetches remote images itself, so the PNG path passes URLs
         // straight through — unlike the PDF path, which has to embed bytes.
         <img
-          src={item.photoUrl}
+          src={dishPhotoUrlForEngine(item.photoUrl, "banner-two-column")}
           width={110}
           height={110}
           style={{ width: 110, height: 110, borderRadius: 14, objectFit: "cover" }}
