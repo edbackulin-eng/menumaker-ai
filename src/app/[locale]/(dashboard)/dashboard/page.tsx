@@ -62,7 +62,7 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
       .range(from, to),
-    supabase.from("menu_templates").select("id, slug, name, config"),
+    supabase.from("menu_templates").select("id, slug, name, config, engine"),
     assertMenuCreationEligible(user.id)
       .then(() => true)
       .catch(() => false),
@@ -73,8 +73,15 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
     getDashboardSummary(supabase, user.id),
   ]);
 
-  const templateConfigById = new Map(
-    (templates ?? []).map((template) => [template.id, template.config as Record<string, unknown>]),
+  // Both halves of a template's style identity travel together: `config`
+  // (the classic engine's fields) and `engine` (which render tree runs).
+  // Keeping them in one entry means a caller cannot resolve one without the
+  // other and silently get the wrong tree.
+  const templateStyleSourceById = new Map(
+    (templates ?? []).map((template) => [
+      template.id,
+      { config: template.config as Record<string, unknown>, engine: template.engine },
+    ]),
   );
 
   const defaultTemplateName = t("emptyPreviewTemplateFallback");
@@ -82,7 +89,10 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
     const template = (templates ?? []).find((candidate) => candidate.slug === slug);
     return {
       name: localizedTemplateName(template?.name ?? null, locale, defaultTemplateName),
-      style: resolveTemplateDefaults(template?.config as Record<string, unknown> | null),
+      style: resolveTemplateDefaults(
+        template?.config as Record<string, unknown> | null,
+        template?.engine,
+      ),
     };
   });
 
@@ -97,12 +107,17 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
   );
 
   const items = (menus ?? []).map((menu) => {
-    const config = menu.template_id ? templateConfigById.get(menu.template_id) : undefined;
+    const styleSource = menu.template_id
+      ? templateStyleSourceById.get(menu.template_id)
+      : undefined;
     const parsedStyle = styleOverridesSchema.safeParse(menu.style_overrides ?? {});
     const styleOverrides = parsedStyle.success ? parsedStyle.data : {};
     return {
       menu,
-      style: resolveEffectiveStyle(resolveTemplateDefaults(config), styleOverrides),
+      style: resolveEffectiveStyle(
+        resolveTemplateDefaults(styleSource?.config, styleSource?.engine),
+        styleOverrides,
+      ),
       templateName: menu.template_id
         ? (templateNameById.get(menu.template_id) ?? defaultTemplateName)
         : defaultTemplateName,

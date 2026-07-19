@@ -4,18 +4,7 @@ import { ModernBanner } from "@/components/menu-render/modern/modern-banner";
 import { ModernCategory } from "@/components/menu-render/modern/modern-category";
 import { ModernFooter } from "@/components/menu-render/modern/modern-footer";
 import { MODERN_PALETTE } from "@/components/menu-render/modern/modern-palette";
-import type { ResolvedMenuStyle } from "@/lib/utils/resolve-menu-style";
-import type { MenuContent } from "@/services/ai/schemas/menu-content";
-
-export interface ModernMenuViewProps {
-  content: MenuContent;
-  style: ResolvedMenuStyle;
-  /** Used when `content.venue.name` is unset — the menu's own title, so the banner is never blank. */
-  fallbackVenueName: string;
-  qrDataUri?: string;
-  /** Localized in the *menu's* content locale, not the viewer's UI locale — this is the restaurant's artifact. */
-  qrLabel: string;
-}
+import type { MenuEngineViewProps } from "@/components/menu-render/engine-view-props";
 
 /**
  * The `banner-two-column` layout engine's DOM renderer — first of the four
@@ -36,10 +25,10 @@ export interface ModernMenuViewProps {
 export function ModernMenuView({
   content,
   style,
-  fallbackVenueName,
+  menuTitle,
   qrDataUri,
   qrLabel,
-}: ModernMenuViewProps) {
+}: MenuEngineViewProps) {
   const venue = content.venue;
   // Curated ids ("UAH") become their print form ("грн"); anything else —
   // including whatever analyzeMenu read off the source document — passes
@@ -63,7 +52,7 @@ export function ModernMenuView({
       className="rounded-lg"
     >
       <ModernBanner
-        venueName={venue?.name ?? fallbackVenueName}
+        venueName={venue?.name ?? menuTitle ?? ""}
         {...(venue?.tagline ? { tagline: venue.tagline } : {})}
       />
 
@@ -83,7 +72,7 @@ export function ModernMenuView({
         {...(venue?.address ? { address: venue.address } : {})}
         {...(venue?.phone ? { phone: venue.phone } : {})}
         {...(qrDataUri ? { qrDataUri } : {})}
-        qrLabel={qrLabel}
+        qrLabel={qrLabel ?? ""}
       />
     </div>
   );

@@ -55,7 +55,7 @@ export default async function MenuResultPage({ params }: PageProps) {
   const { data: template } = menu.template_id
     ? await supabase
         .from("menu_templates")
-        .select("config")
+        .select("config, engine")
         .eq("id", menu.template_id)
         .maybeSingle()
     : { data: null };
@@ -69,6 +69,7 @@ export default async function MenuResultPage({ params }: PageProps) {
   const styleOverrides = parsedStyleOverrides.success ? parsedStyleOverrides.data : {};
   const templateDefaults = resolveTemplateDefaults(
     template?.config as Record<string, unknown> | null,
+    template?.engine,
   );
   const effectiveStyle = resolveEffectiveStyle(templateDefaults, styleOverrides);
   const orderedContent = applyStyleOrder(content, styleOverrides);

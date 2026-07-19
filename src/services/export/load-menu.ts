@@ -57,7 +57,7 @@ export async function loadExportableMenu(
   const { data: template } = menu.template_id
     ? await supabase
         .from("menu_templates")
-        .select("config")
+        .select("config, engine")
         .eq("id", menu.template_id)
         .maybeSingle()
     : { data: null };
@@ -70,6 +70,7 @@ export async function loadExportableMenu(
 
   const templateDefaults = resolveTemplateDefaults(
     template?.config as Record<string, unknown> | null,
+    template?.engine,
   );
   const style = resolveEffectiveStyle(templateDefaults, styleOverrides);
   const orderedContent = applyStyleOrder(content, styleOverrides);

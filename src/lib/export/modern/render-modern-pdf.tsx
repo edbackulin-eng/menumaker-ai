@@ -2,16 +2,41 @@
    into a PDF document. It is not an HTML element and has no alt concept;
    the rule matches on the component name only. */
 import "server-only";
-import { Font, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import {
+  Document,
+  Font,
+  Image,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+  renderToBuffer,
+} from "@react-pdf/renderer";
 
+import { publicEnv } from "@/config/env";
 import { resolveCurrencyDisplay } from "@/config/menu-currency";
 import { MODERN_PALETTE } from "@/components/menu-render/modern/modern-palette";
 import { distributeSequentially } from "@/lib/export/design-tokens";
 import { getPdfFontPath } from "@/lib/export/fonts";
-import type { PhotoBytesByItemId } from "@/lib/export/modern/fetch-photo-bytes";
+import { fetchPhotoBytes, type PhotoBytesByItemId } from "@/lib/export/modern/fetch-photo-bytes";
+import { generateQrPng } from "@/lib/export/qr";
 import { getDishPlaceholderColor } from "@/lib/utils/dish-photo-placeholder";
 import type { MenuCategory, MenuItem } from "@/services/ai/schemas/menu-content";
 import type { ExportableMenu } from "@/services/export/load-menu";
+
+/**
+ * Footer caption for this engine's QR block. Not routed through next-intl:
+ * this renderer runs outside a request's locale context, and the string
+ * belongs to the *menu's* content language rather than any viewer's UI.
+ */
+const MODERN_PDF_QR_LABEL = "Scan for full menu";
+
+/** A menu that was never published has no public URL, and a QR pointing nowhere is worse than none. */
+async function buildQrDataUri(menu: ExportableMenu): Promise<string | undefined> {
+  if (!menu.publicSlug || !menu.isPublic) return undefined;
+  const png = await generateQrPng(`${publicEnv.NEXT_PUBLIC_APP_URL}/m/${menu.publicSlug}`);
+  return `data:image/png;base64,${png.toString("base64")}`;
+}
 
 const BODY_FONT_FAMILY = "ModernBodyFont";
 const HEADING_FONT_FAMILY = "ModernHeadingFont";
@@ -39,9 +64,37 @@ const COLUMN_WIDTH = (PAGE_WIDTH - HORIZONTAL_PADDING * 2 - COLUMN_GAP) / 2;
  * No gradients anywhere — react-pdf cannot render them, which is exactly
  * why MODERN_PALETTE is flat by design.
  */
-export function registerModernPdfFonts(menu: ExportableMenu) {
+function registerModernPdfFonts(menu: ExportableMenu) {
   Font.register({ family: BODY_FONT_FAMILY, src: getPdfFontPath(menu.style.fontId) });
   Font.register({ family: HEADING_FONT_FAMILY, src: getPdfFontPath(menu.style.headingFontId) });
+}
+
+/**
+ * This engine's PDF entry point, with the same `(menu) => Promise<Buffer>`
+ * signature every engine's PDF renderer has — that uniformity is what lets
+ * PDF_ENGINE_REGISTRY be a plain exhaustive Record instead of a switch that
+ * knows each engine's individual setup steps.
+ *
+ * Font registration is process-global in @react-pdf/renderer and must
+ * happen before the Document tree is built, so it lives here rather than at
+ * the dispatch point.
+ */
+export async function renderModernPdf(menu: ExportableMenu): Promise<Buffer> {
+  registerModernPdfFonts(menu);
+  const [photos, qrDataUri] = await Promise.all([
+    fetchPhotoBytes(menu.content),
+    buildQrDataUri(menu),
+  ]);
+  return renderToBuffer(
+    <Document title={menu.title}>
+      <ModernPdfPage
+        menu={menu}
+        photos={photos}
+        qrDataUri={qrDataUri}
+        qrLabel={MODERN_PDF_QR_LABEL}
+      />
+    </Document>,
+  );
 }
 
 const styles = StyleSheet.create({

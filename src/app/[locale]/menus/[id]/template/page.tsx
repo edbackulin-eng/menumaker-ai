@@ -67,7 +67,7 @@ export default async function MenuTemplatePage({ params }: PageProps) {
 
   const { data: templates } = await supabase
     .from("menu_templates")
-    .select("id, slug, name, category, config")
+    .select("id, slug, name, category, config, engine")
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
 
@@ -80,7 +80,10 @@ export default async function MenuTemplatePage({ params }: PageProps) {
     slug: template.slug,
     category: template.category,
     name: localizedTemplateName(template.name, menu.locale, defaultName),
-    style: resolveTemplateDefaults(template.config as Record<string, unknown> | null),
+    style: resolveTemplateDefaults(
+      template.config as Record<string, unknown> | null,
+      template.engine,
+    ),
   }));
 
   return (

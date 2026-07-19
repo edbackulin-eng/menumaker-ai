@@ -24,13 +24,18 @@ export type CategoryNameTransform = "none" | "uppercase";
  * classic components could produce them.
  *
  * `classic` is the tree every template used before this existed and stays
- * the default for anything that doesn't opt in — all 12 pre-existing
- * templates render byte-identically, same guarantee the Stage 13 fields
- * were given.
+ * the fallback for anything unrecognised — all 12 pre-Stage-3 templates
+ * render byte-identically, same guarantee the Stage 13 fields were given.
+ * It is also the only safe fallback target: it imposes no structural
+ * requirement on the content (no banner, no venue data, no photos), so it
+ * can render any menu, which is what makes it a valid answer to "this
+ * engine id means nothing to me".
  *
- * Stage 3 adds its remaining engines as further members of this union plus
- * one component-trio each (DOM / Satori / react-pdf); the branch points are
- * the three renderers' entry components and nothing else.
+ * Adding an engine (Stage 3: grid, classic-elegant, editorial) means adding
+ * a member here — which then produces a compile error in each of the three
+ * renderer registries until its component trio exists. That exhaustiveness
+ * is the point: a half-added engine cannot silently fall through to
+ * classic in one renderer while working in the other two.
  */
 export type MenuLayoutEngine = "classic" | "banner-two-column";
 
@@ -106,6 +111,7 @@ function parseBackground(value: unknown): TemplateBackground | null {
  */
 export function resolveTemplateDefaults(
   templateConfig: Record<string, unknown> | null | undefined,
+  templateEngine: string | null | undefined,
 ): ResolvedMenuStyle {
   const config = templateConfig ?? {};
   const accentColorId =
@@ -128,9 +134,19 @@ export function resolveTemplateDefaults(
     accentColorId,
     fontId,
     columns,
-    // Anything that doesn't explicitly opt in keeps the pre-Stage-2-final
-    // render tree, so the 12 existing templates are untouched.
-    layoutEngine: isLayoutEngine(config.layoutEngine) ? config.layoutEngine : "classic",
+    // Stage 3 promoted this out of the config blob into its own constrained
+    // column. The column wins; `config.layoutEngine` is still read as a
+    // fallback because the migration deliberately left that key in place —
+    // rolling the code back to a build that only knows the blob must not
+    // downgrade Modern to the classic tree, and neither must rolling
+    // forward before the backfill has been verified. Once the follow-up
+    // migration drops the key, this second branch becomes dead and goes
+    // with it.
+    layoutEngine: isLayoutEngine(templateEngine)
+      ? templateEngine
+      : isLayoutEngine(config.layoutEngine)
+        ? config.layoutEngine
+        : "classic",
     showBadges: config.showBadges === true,
     headingFontId,
     background: parseBackground(config.background),

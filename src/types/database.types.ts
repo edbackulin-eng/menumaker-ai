@@ -307,45 +307,61 @@ export type Database = {
       };
       menu_templates: {
         Row: {
+          business_types: string[];
           category: string;
           config: Json;
           created_at: string;
+          engine: string;
           id: string;
           is_active: boolean;
           name: Json;
+          palette: Json | null;
+          photo_policy: Json | null;
           preview_image_url: string | null;
           slug: string;
           sort_order: number;
+          typography: Json | null;
           updated_at: string;
         };
         Insert: {
+          business_types?: string[];
           category: string;
           config?: Json;
           created_at?: string;
+          engine?: string;
           id?: string;
           is_active?: boolean;
           name?: Json;
+          palette?: Json | null;
+          photo_policy?: Json | null;
           preview_image_url?: string | null;
           slug: string;
           sort_order?: number;
+          typography?: Json | null;
           updated_at?: string;
         };
         Update: {
+          business_types?: string[];
           category?: string;
           config?: Json;
           created_at?: string;
+          engine?: string;
           id?: string;
           is_active?: boolean;
           name?: Json;
+          palette?: Json | null;
+          photo_policy?: Json | null;
           preview_image_url?: string | null;
           slug?: string;
           sort_order?: number;
+          typography?: Json | null;
           updated_at?: string;
         };
         Relationships: [];
       };
       menus: {
         Row: {
+          business_type: string | null;
           content: Json;
           content_confirmed_at: string | null;
           created_at: string;
@@ -363,6 +379,7 @@ export type Database = {
           user_id: string;
         };
         Insert: {
+          business_type?: string | null;
           content?: Json;
           content_confirmed_at?: string | null;
           created_at?: string;
@@ -380,6 +397,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          business_type?: string | null;
           content?: Json;
           content_confirmed_at?: string | null;
           created_at?: string;
