@@ -14,6 +14,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { CURATED_CURRENCIES, type CurrencyId } from "@/config/menu-currency";
 import { menusApi } from "@/lib/api-client/menus";
 import { categoryAwareKeyboardCoordinates } from "@/lib/dnd/category-aware-keyboard-coordinates";
 import { applyStyleOrder } from "@/lib/utils/menu-content-order";
@@ -33,29 +34,49 @@ export interface MenuStyleEditorProps {
   content: MenuContent;
   initialStyleOverrides: StyleOverridesInput;
   templateDefaults: ResolvedMenuStyle;
+  initialCurrencyId: CurrencyId;
 }
 
 type SaveStatus = "idle" | "pending" | "saving" | "saved" | "error";
+
+function combineSaveStatus(a: SaveStatus, b: SaveStatus): SaveStatus {
+  if (a === "error" || b === "error") return "error";
+  if (a === "saving" || b === "saving") return "saving";
+  if (a === "pending" || b === "pending") return "pending";
+  if (a === "saved" || b === "saved") return "saved";
+  return "idle";
+}
 
 export function MenuStyleEditor({
   menuId,
   content,
   initialStyleOverrides,
   templateDefaults,
+  initialCurrencyId,
 }: MenuStyleEditorProps) {
   const t = useTranslations("menuGenerator.editor");
   const router = useRouter();
   const [styleOverrides, setStyleOverrides] = useState<StyleOverridesInput>(initialStyleOverrides);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [currencyId, setCurrencyId] = useState<CurrencyId>(initialCurrencyId);
+  const [currencySaveStatus, setCurrencySaveStatus] = useState<SaveStatus>("idle");
   const [isContinuing, setIsContinuing] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currencySaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // A style change autosaves after a debounce; between the change and the
   // flush there's an unpersisted edit. "pending" (debounce running),
   // "saving" (request in flight) and "error" (last save failed) are the
   // states where exiting would drop something. "idle"/"saved" are clean.
+  // Currency goes through a separate save path (menus.content, not
+  // style_overrides) but the same dirty-exit reasoning applies to it.
   useReportWizardDirty(
-    saveStatus === "pending" || saveStatus === "saving" || saveStatus === "error",
+    saveStatus === "pending" ||
+      saveStatus === "saving" ||
+      saveStatus === "error" ||
+      currencySaveStatus === "pending" ||
+      currencySaveStatus === "saving" ||
+      currencySaveStatus === "error",
   );
 
   const effectiveStyle = useMemo(
@@ -65,12 +86,15 @@ export function MenuStyleEditor({
 
   // Only recomputed when order actually changes, not on every color/font
   // tweak — deliberately depends on the two order fields only, not the
-  // whole styleOverrides object.
-  const orderedContent = useMemo(
-    () => applyStyleOrder(content, styleOverrides),
+  // whole styleOverrides object. Currency is overlaid from local state so
+  // picking a new one updates the live preview immediately — `content`
+  // itself isn't mutated, only what's saved to the backend.
+  const orderedContent = useMemo(() => {
+    const ordered = applyStyleOrder(content, styleOverrides);
+    const currencySymbol = CURATED_CURRENCIES.find((c) => c.id === currencyId)?.symbol;
+    return { ...ordered, currency: currencySymbol ?? currencyId };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [content, styleOverrides.categoryOrder, styleOverrides.itemOrder],
-  );
+  }, [content, styleOverrides.categoryOrder, styleOverrides.itemOrder, currencyId]);
 
   // Takes the style to save as a parameter rather than reading current
   // state via a ref — mutating a ref during render is a React error, and
@@ -106,9 +130,40 @@ export function MenuStyleEditor({
     [flushSave],
   );
 
+  const flushCurrencySave = useCallback(
+    async (id: CurrencyId) => {
+      if (currencySaveTimerRef.current) {
+        clearTimeout(currencySaveTimerRef.current);
+        currencySaveTimerRef.current = null;
+      }
+      setCurrencySaveStatus("saving");
+      try {
+        await menusApi.update(menuId, { content: { ...content, currency: id } });
+        setCurrencySaveStatus("saved");
+      } catch {
+        setCurrencySaveStatus("error");
+      }
+    },
+    [menuId, content],
+  );
+
+  const handleCurrencyChange = useCallback(
+    (id: CurrencyId) => {
+      setCurrencyId(id);
+      setCurrencySaveStatus("pending");
+      if (currencySaveTimerRef.current) clearTimeout(currencySaveTimerRef.current);
+      currencySaveTimerRef.current = setTimeout(
+        () => void flushCurrencySave(id),
+        AUTOSAVE_DEBOUNCE_MS,
+      );
+    },
+    [flushCurrencySave],
+  );
+
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      if (currencySaveTimerRef.current) clearTimeout(currencySaveTimerRef.current);
     };
   }, []);
 
@@ -161,7 +216,7 @@ export function MenuStyleEditor({
 
   async function handleContinue() {
     setIsContinuing(true);
-    await flushSave(styleOverrides);
+    await Promise.all([flushSave(styleOverrides), flushCurrencySave(currencyId)]);
     router.push(`/menus/${menuId}/result`);
   }
 
@@ -175,17 +230,26 @@ export function MenuStyleEditor({
           accentColorId={effectiveStyle.accentColorId}
           fontId={effectiveStyle.fontId}
           columns={effectiveStyle.columns}
+          currencyId={currencyId}
           onAccentColorChange={(accentColorId) => updateStyle({ accentColorId })}
           onFontChange={(fontId) => updateStyle({ fontId })}
           onColumnsChange={(columns) => updateStyle({ columns })}
+          onCurrencyChange={handleCurrencyChange}
           className="border-border bg-surface fixed inset-x-0 bottom-0 z-10 max-h-[45vh] overflow-y-auto rounded-t-lg border-t p-4 shadow-lg lg:static lg:max-h-none lg:w-72 lg:shrink-0 lg:overflow-visible lg:rounded-lg lg:border lg:p-4 lg:shadow-sm"
         />
       </div>
 
       <div className="mt-6 flex items-center justify-between">
-        <SaveStatusLabel status={saveStatus} />
+        <SaveStatusLabel status={combineSaveStatus(saveStatus, currencySaveStatus)} />
         <div className="flex gap-2">
-          <Button type="button" variant="secondary" onClick={() => void flushSave(styleOverrides)}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => {
+              void flushSave(styleOverrides);
+              void flushCurrencySave(currencyId);
+            }}
+          >
             {t("save")}
           </Button>
           <Button type="button" onClick={() => void handleContinue()} isLoading={isContinuing}>

@@ -304,6 +304,7 @@
       "contrastAdjusted": "(el color del texto se ajusta automáticamente)",
       "font": "Fuente",
       "columns": "Número de columnas",
+      "currency": "Moneda",
       "save": "Guardar",
       "continue": "Continuar",
       "saveStatus": {

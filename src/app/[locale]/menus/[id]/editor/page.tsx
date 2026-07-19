@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { defaultCurrencyForLocale, isCurrencyId } from "@/config/menu-currency";
 import { MENU_EDITOR_FONT_VARIABLES_CLASSNAME } from "@/lib/fonts/menu-fonts";
 import { createClient } from "@/lib/supabase/server";
 import { resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
@@ -68,6 +69,11 @@ export default async function MenuEditorPage({ params }: PageProps) {
   const parsedStyleOverrides = styleOverridesSchema.safeParse(menu.style_overrides ?? {});
   const initialStyleOverrides = parsedStyleOverrides.success ? parsedStyleOverrides.data : {};
 
+  const initialCurrencyId =
+    content.currency && isCurrencyId(content.currency)
+      ? content.currency
+      : defaultCurrencyForLocale(locale);
+
   return (
     <Container size="xl" className={`py-8 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}>
       <WizardExitProvider>
@@ -81,6 +87,7 @@ export default async function MenuEditorPage({ params }: PageProps) {
           content={content}
           initialStyleOverrides={initialStyleOverrides}
           templateDefaults={templateDefaults}
+          initialCurrencyId={initialCurrencyId}
         />
       </WizardExitProvider>
     </Container>

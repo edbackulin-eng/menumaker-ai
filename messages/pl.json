@@ -304,6 +304,7 @@
       "contrastAdjusted": "(kolor tekstu dobierany automatycznie)",
       "font": "Czcionka",
       "columns": "Liczba kolumn",
+      "currency": "Waluta",
       "save": "Zapisz",
       "continue": "Dalej",
       "saveStatus": {

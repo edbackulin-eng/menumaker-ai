@@ -11,6 +11,7 @@ import {
   type FontId,
   type LayoutColumns,
 } from "@/config/menu-style";
+import { CURATED_CURRENCIES, type CurrencyId } from "@/config/menu-currency";
 import { FONT_ID_TO_CSS_VARIABLE } from "@/lib/fonts/menu-fonts";
 import {
   contrastRatio,
@@ -23,9 +24,11 @@ export interface EditorControlsPanelProps {
   accentColorId: AccentColorId;
   fontId: FontId;
   columns: LayoutColumns;
+  currencyId: CurrencyId;
   onAccentColorChange: (id: AccentColorId) => void;
   onFontChange: (id: FontId) => void;
   onColumnsChange: (columns: LayoutColumns) => void;
+  onCurrencyChange: (id: CurrencyId) => void;
   className?: string;
 }
 
@@ -33,9 +36,11 @@ export function EditorControlsPanel({
   accentColorId,
   fontId,
   columns,
+  currencyId,
   onAccentColorChange,
   onFontChange,
   onColumnsChange,
+  onCurrencyChange,
   className,
 }: EditorControlsPanelProps) {
   const t = useTranslations("menuGenerator.editor");
@@ -101,6 +106,32 @@ export function EditorControlsPanel({
                 style={{ fontFamily: FONT_ID_TO_CSS_VARIABLE[font.id] }}
               >
                 {font.label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <h3 className="text-body-sm text-foreground font-medium">{t("currency")}</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {CURATED_CURRENCIES.map((currency) => {
+            const isSelected = currency.id === currencyId;
+            return (
+              <button
+                key={currency.id}
+                type="button"
+                onClick={() => onCurrencyChange(currency.id)}
+                aria-pressed={isSelected}
+                title={currency.label}
+                className={cn(
+                  "border-border duration-fast flex h-12 items-center justify-center rounded-md border px-1 text-center text-sm transition-colors",
+                  isSelected
+                    ? "border-accent-400 bg-accent-50 text-accent-800"
+                    : "hover:bg-surface-secondary",
+                )}
+              >
+                {currency.symbol}
               </button>
             );
           })}

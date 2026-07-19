@@ -304,6 +304,7 @@
       "contrastAdjusted": "(Textfarbe wird automatisch angepasst)",
       "font": "Schriftart",
       "columns": "Anzahl der Spalten",
+      "currency": "Währung",
       "save": "Speichern",
       "continue": "Weiter",
       "saveStatus": {
