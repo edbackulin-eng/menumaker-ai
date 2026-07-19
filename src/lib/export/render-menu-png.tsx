@@ -10,6 +10,7 @@ import {
 } from "@/lib/utils/resolve-menu-style";
 import { distributeIntoColumns, EXPORT_TOKENS } from "@/lib/export/design-tokens";
 import { loadPngFontBuffers } from "@/lib/export/fonts";
+import { renderModernPng } from "@/lib/export/modern/render-modern-png";
 import type { ExportableMenu } from "@/services/export/load-menu";
 
 const CANVAS_WIDTH = 1200;
@@ -51,6 +52,13 @@ function estimateCanvasHeight(menu: ExportableMenu): number {
  */
 export async function renderMenuPng(menu: ExportableMenu): Promise<Buffer> {
   const { style } = menu;
+
+  // The Satori renderer's single layout-engine branch — see the matching
+  // ones in menu-static-view.tsx (DOM) and render-menu-pdf.tsx.
+  if (style.layoutEngine === "banner-two-column") {
+    return renderModernPng(menu);
+  }
+
   const accentHex = getAccentColorHex(style.accentColorId);
   const accentTextHex = pickReadableTextColor(accentHex);
   const pageForeground = resolvePageForeground(style.background);

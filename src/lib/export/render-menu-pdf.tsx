@@ -20,7 +20,27 @@ import {
 import { EXPORT_TOKENS } from "@/lib/export/design-tokens";
 import { getPdfFontPath } from "@/lib/export/fonts";
 import { linearGradientToDataUri } from "@/lib/export/pdf-gradient";
+import { fetchPhotoBytes } from "@/lib/export/modern/fetch-photo-bytes";
+import { ModernPdfPage, registerModernPdfFonts } from "@/lib/export/modern/render-modern-pdf";
+import { generateQrPng } from "@/lib/export/qr";
+import { publicEnv } from "@/config/env";
 import type { ExportableMenu } from "@/services/export/load-menu";
+
+/**
+ * Footer caption for the Modern engine's QR block. Not routed through
+ * next-intl: this renderer runs outside a request's locale context, and
+ * the string belongs to the *menu's* content language rather than any
+ * viewer's UI — Stage 3 can key it off `menu.locale` once venue data has
+ * a form behind it.
+ */
+const MODERN_PDF_QR_LABEL = "Scan for full menu";
+
+/** A menu that was never published has no public URL, and a QR pointing nowhere is worse than none. */
+async function buildQrDataUri(menu: ExportableMenu): Promise<string | undefined> {
+  if (!menu.publicSlug || !menu.isPublic) return undefined;
+  const png = await generateQrPng(`${publicEnv.NEXT_PUBLIC_APP_URL}/m/${menu.publicSlug}`);
+  return `data:image/png;base64,${png.toString("base64")}`;
+}
 
 const BODY_FONT_FAMILY = "MenuBodyFont";
 const HEADING_FONT_FAMILY = "MenuHeadingFont";
@@ -81,6 +101,27 @@ const PAGE_HEIGHT = 841.89;
  */
 export async function renderMenuPdf(menu: ExportableMenu): Promise<Buffer> {
   const style: ResolvedMenuStyle = menu.style;
+
+  // The PDF renderer's single layout-engine branch (the DOM and Satori
+  // renderers each have exactly one of their own). Stage 3's remaining
+  // engines add cases here and nothing else.
+  if (style.layoutEngine === "banner-two-column") {
+    registerModernPdfFonts(menu);
+    const [photos, qrDataUri] = await Promise.all([
+      fetchPhotoBytes(menu.content),
+      buildQrDataUri(menu),
+    ]);
+    return renderToBuffer(
+      <Document title={menu.title}>
+        <ModernPdfPage
+          menu={menu}
+          photos={photos}
+          qrDataUri={qrDataUri}
+          qrLabel={MODERN_PDF_QR_LABEL}
+        />
+      </Document>,
+    );
+  }
 
   Font.register({ family: BODY_FONT_FAMILY, src: getPdfFontPath(style.fontId) });
   if (style.headingFontId !== style.fontId) {
