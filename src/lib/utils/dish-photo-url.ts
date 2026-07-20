@@ -50,6 +50,9 @@ const PEXELS_HOSTNAME = "images.pexels.com";
  *   PNG export. 800 covers a 2x-retina display of that with margin —
  *   this is the fix: `small` (130px) stretched across a ~380px box is
  *   what was blurry.
+ * - `editorial`: a full-width hero photo, the largest photo any engine
+ *   shows — up to the 1200px PNG canvas width. 1200 keeps it sharp at 1x
+ *   on that canvas and near-2x on a ~640px web column.
  */
 const DISH_PHOTO_CROP_SIZE: Record<MenuLayoutEngine, number> = {
   classic: 130,
@@ -59,6 +62,7 @@ const DISH_PHOTO_CROP_SIZE: Record<MenuLayoutEngine, number> = {
   // design), so nothing ever calls dishPhotoUrlForEngine with this engine
   // — the entry exists only to keep the Record total. Sized like classic.
   "classic-elegant": 130,
+  editorial: 1200,
 };
 
 /**

@@ -37,7 +37,8 @@ export type CategoryNameTransform = "none" | "uppercase";
  * is the point: a half-added engine cannot silently fall through to
  * classic in one renderer while working in the other two.
  */
-export type MenuLayoutEngine = "classic" | "banner-two-column" | "grid" | "classic-elegant";
+export type MenuLayoutEngine =
+  "classic" | "banner-two-column" | "grid" | "classic-elegant" | "editorial";
 
 export interface TemplateBackground {
   type: "solid" | "linear-gradient" | "radial-gradient";
@@ -103,6 +104,7 @@ const LAYOUT_ENGINE_SET: Record<MenuLayoutEngine, true> = {
   "banner-two-column": true,
   grid: true,
   "classic-elegant": true,
+  editorial: true,
 };
 
 function isLayoutEngine(value: unknown): value is MenuLayoutEngine {

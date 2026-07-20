@@ -2,6 +2,7 @@ import "server-only";
 
 import { renderBistroPng } from "@/lib/export/bistro/render-bistro-png";
 import { renderClassicPng } from "@/lib/export/classic/render-classic-png";
+import { renderEditorialPng } from "@/lib/export/editorial/render-editorial-png";
 import { renderGridPng } from "@/lib/export/grid/render-grid-png";
 import { renderModernPng } from "@/lib/export/modern/render-modern-png";
 import type { MenuLayoutEngine } from "@/lib/utils/resolve-menu-style";
@@ -26,6 +27,7 @@ const PNG_ENGINE_REGISTRY: Record<MenuLayoutEngine, (menu: ExportableMenu) => Pr
   "banner-two-column": renderModernPng,
   grid: renderGridPng,
   "classic-elegant": renderBistroPng,
+  editorial: renderEditorialPng,
 };
 
 /** The PNG export's single engine dispatch point. */
