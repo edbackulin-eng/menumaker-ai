@@ -292,6 +292,15 @@
       "defaultName": "Vorlage",
       "categoryCuisine": "Küche",
       "categoryStyle": "Stil",
+      "venueTypeLabel": "Art des Lokals",
+      "venueType": {
+        "restaurant": "Restaurant",
+        "cafe": "Café",
+        "coffeehouse": "Kaffeehaus",
+        "bar": "Bar",
+        "bakery": "Bäckerei"
+      },
+      "noTemplatesForType": "Noch keine Vorlagen für diese Lokalart.",
       "applyButton": "Vorlage übernehmen und zum Stil wechseln",
       "applyError": "Die Vorlage konnte nicht übernommen werden."
     },
@@ -305,6 +314,15 @@
       "font": "Schriftart",
       "columns": "Anzahl der Spalten",
       "currency": "Währung",
+      "venue": {
+        "heading": "Lokaldaten",
+        "note": "Werden in Vorlagen mit Kopf- oder Fußzeile angezeigt.",
+        "name": "Name des Lokals",
+        "tagline": "Unterzeile",
+        "taglinePlaceholder": "z. B. Italienische Küche · seit 2014",
+        "address": "Adresse",
+        "phone": "Telefon"
+      },
       "save": "Speichern",
       "continue": "Weiter",
       "saveStatus": {

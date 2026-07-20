@@ -29,6 +29,7 @@ export interface UpdateMenuInput {
   status?: Menu["status"];
   content?: Record<string, unknown>;
   locale?: string;
+  business_type?: string | null;
 }
 
 export interface ImportMenuInput {

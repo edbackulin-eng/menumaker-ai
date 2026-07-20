@@ -292,6 +292,15 @@
       "defaultName": "Szablon",
       "categoryCuisine": "Kuchnia",
       "categoryStyle": "Styl",
+      "venueTypeLabel": "Typ lokalu",
+      "venueType": {
+        "restaurant": "Restauracja",
+        "cafe": "Kawiarnia",
+        "coffeehouse": "Palarnia kawy",
+        "bar": "Bar",
+        "bakery": "Piekarnia"
+      },
+      "noTemplatesForType": "Brak szablonów dla tego typu lokalu.",
       "applyButton": "Zastosuj szablon i przejdź do stylu",
       "applyError": "Nie udało się zastosować szablonu."
     },
@@ -305,6 +314,15 @@
       "font": "Czcionka",
       "columns": "Liczba kolumn",
       "currency": "Waluta",
+      "venue": {
+        "heading": "Dane lokalu",
+        "note": "Widoczne w szablonach z nagłówkiem lub stopką.",
+        "name": "Nazwa lokalu",
+        "tagline": "Podtytuł",
+        "taglinePlaceholder": "np. Kuchnia włoska · od 2014",
+        "address": "Adres",
+        "phone": "Telefon"
+      },
       "save": "Zapisz",
       "continue": "Dalej",
       "saveStatus": {

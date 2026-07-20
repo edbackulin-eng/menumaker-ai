@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+import { BUSINESS_TYPES } from "@/config/business-type";
+
+const businessTypeIds = BUSINESS_TYPES.map((t) => t.id) as [string, ...string[]];
+
 export const menuIdParamSchema = z.object({
   id: z.string().uuid("Некоректний ідентифікатор меню."),
 });
@@ -28,6 +32,7 @@ export const updateMenuSchema = z
     status: z.enum(["draft", "processing", "completed", "failed"]).optional(),
     content: z.record(z.string(), z.unknown()).optional(),
     locale: z.string().trim().min(2).max(10).optional(),
+    business_type: z.enum(businessTypeIds).nullable().optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "Потрібно вказати хоча б одне поле для оновлення.",

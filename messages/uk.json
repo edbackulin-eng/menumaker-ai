@@ -292,6 +292,15 @@
       "defaultName": "Шаблон",
       "categoryCuisine": "Кухня",
       "categoryStyle": "Стиль",
+      "venueTypeLabel": "Тип закладу",
+      "venueType": {
+        "restaurant": "Ресторан",
+        "cafe": "Кафе",
+        "coffeehouse": "Кав'ярня",
+        "bar": "Бар",
+        "bakery": "Пекарня"
+      },
+      "noTemplatesForType": "Для цього типу закладу поки немає шаблонів.",
       "applyButton": "Застосувати шаблон і перейти до стилю",
       "applyError": "Не вдалося застосувати шаблон."
     },
@@ -305,6 +314,15 @@
       "font": "Шрифт",
       "columns": "Кількість колонок",
       "currency": "Валюта",
+      "venue": {
+        "heading": "Дані закладу",
+        "note": "Показуються в шаблонах із шапкою чи футером.",
+        "name": "Назва закладу",
+        "tagline": "Підзаголовок",
+        "taglinePlaceholder": "Напр. Італійська кухня · з 2014",
+        "address": "Адреса",
+        "phone": "Телефон"
+      },
       "save": "Зберегти",
       "continue": "Продовжити",
       "saveStatus": {

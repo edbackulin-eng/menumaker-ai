@@ -292,6 +292,15 @@
       "defaultName": "Template",
       "categoryCuisine": "Cuisine",
       "categoryStyle": "Style",
+      "venueTypeLabel": "Venue type",
+      "venueType": {
+        "restaurant": "Restaurant",
+        "cafe": "Café",
+        "coffeehouse": "Coffeehouse",
+        "bar": "Bar",
+        "bakery": "Bakery"
+      },
+      "noTemplatesForType": "No templates for this venue type yet.",
       "applyButton": "Apply template and continue to style",
       "applyError": "Couldn't apply the template."
     },
@@ -305,6 +314,15 @@
       "font": "Font",
       "columns": "Number of columns",
       "currency": "Currency",
+      "venue": {
+        "heading": "Venue details",
+        "note": "Shown in templates with a header or footer.",
+        "name": "Venue name",
+        "tagline": "Tagline",
+        "taglinePlaceholder": "e.g. Italian kitchen · since 2014",
+        "address": "Address",
+        "phone": "Phone"
+      },
       "save": "Save",
       "continue": "Continue",
       "saveStatus": {

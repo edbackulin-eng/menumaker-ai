@@ -292,6 +292,15 @@
       "defaultName": "Plantilla",
       "categoryCuisine": "Cocina",
       "categoryStyle": "Estilo",
+      "venueTypeLabel": "Tipo de local",
+      "venueType": {
+        "restaurant": "Restaurante",
+        "cafe": "Cafetería",
+        "coffeehouse": "Cafetería de especialidad",
+        "bar": "Bar",
+        "bakery": "Panadería"
+      },
+      "noTemplatesForType": "Aún no hay plantillas para este tipo de local.",
       "applyButton": "Aplicar plantilla y continuar al estilo",
       "applyError": "No se pudo aplicar la plantilla."
     },
@@ -305,6 +314,15 @@
       "font": "Fuente",
       "columns": "Número de columnas",
       "currency": "Moneda",
+      "venue": {
+        "heading": "Datos del local",
+        "note": "Se muestran en plantillas con encabezado o pie.",
+        "name": "Nombre del local",
+        "tagline": "Subtítulo",
+        "taglinePlaceholder": "p. ej. Cocina italiana · desde 2014",
+        "address": "Dirección",
+        "phone": "Teléfono"
+      },
       "save": "Guardar",
       "continue": "Continuar",
       "saveStatus": {

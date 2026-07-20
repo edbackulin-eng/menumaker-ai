@@ -25,6 +25,8 @@ import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { EditorControlsPanel } from "@/components/menu-editor/editor-controls-panel";
 import { MenuLivePreview } from "@/components/menu-editor/menu-live-preview";
+import { VenueDetailsForm } from "@/components/menu-editor/venue-details-form";
+import { useMenuContentAutosave } from "@/components/menu-editor/use-menu-content-autosave";
 import { useReportWizardDirty } from "@/components/menu-generator/wizard-exit";
 
 const AUTOSAVE_DEBOUNCE_MS = 3000;
@@ -58,25 +60,26 @@ export function MenuStyleEditor({
   const router = useRouter();
   const [styleOverrides, setStyleOverrides] = useState<StyleOverridesInput>(initialStyleOverrides);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
-  const [currencyId, setCurrencyId] = useState<CurrencyId>(initialCurrencyId);
-  const [currencySaveStatus, setCurrencySaveStatus] = useState<SaveStatus>("idle");
   const [isContinuing, setIsContinuing] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const currencySaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Currency + venue both live in `menus.content` and share one debounced
+  // save (see the hook's doc comment: a wholesale content PATCH means they
+  // must save together or clobber each other). style_overrides stays on its
+  // own save path below.
+  const contentAutosave = useMenuContentAutosave({ menuId, content, initialCurrencyId });
+  const { currencyId } = contentAutosave;
 
   // A style change autosaves after a debounce; between the change and the
   // flush there's an unpersisted edit. "pending" (debounce running),
   // "saving" (request in flight) and "error" (last save failed) are the
   // states where exiting would drop something. "idle"/"saved" are clean.
-  // Currency goes through a separate save path (menus.content, not
-  // style_overrides) but the same dirty-exit reasoning applies to it.
+  // The content autosave (currency/venue) has the same dirty-exit reasoning.
   useReportWizardDirty(
     saveStatus === "pending" ||
       saveStatus === "saving" ||
       saveStatus === "error" ||
-      currencySaveStatus === "pending" ||
-      currencySaveStatus === "saving" ||
-      currencySaveStatus === "error",
+      contentAutosave.isDirty,
   );
 
   const effectiveStyle = useMemo(
@@ -84,17 +87,29 @@ export function MenuStyleEditor({
     [templateDefaults, styleOverrides],
   );
 
-  // Only recomputed when order actually changes, not on every color/font
-  // tweak — deliberately depends on the two order fields only, not the
-  // whole styleOverrides object. Currency is overlaid from local state so
-  // picking a new one updates the live preview immediately — `content`
-  // itself isn't mutated, only what's saved to the backend.
+  // Currency and venue are overlaid from the content-autosave state so
+  // editing either updates the live preview immediately (the venue banner,
+  // the prices) — `content` itself isn't mutated, only what's saved.
+  const venueOverlay = useMemo(() => {
+    const v = contentAutosave.venue;
+    const trimmed = {
+      ...(v.name.trim() ? { name: v.name.trim() } : {}),
+      ...(v.tagline.trim() ? { tagline: v.tagline.trim() } : {}),
+      ...(v.address.trim() ? { address: v.address.trim() } : {}),
+      ...(v.phone.trim() ? { phone: v.phone.trim() } : {}),
+    };
+    return Object.keys(trimmed).length > 0 ? trimmed : undefined;
+  }, [contentAutosave.venue]);
+
+  // Only recomputed when order/currency/venue actually change, not on every
+  // color/font tweak — deliberately depends on the order fields only, not
+  // the whole styleOverrides object.
   const orderedContent = useMemo(() => {
     const ordered = applyStyleOrder(content, styleOverrides);
     const currencySymbol = CURATED_CURRENCIES.find((c) => c.id === currencyId)?.symbol;
-    return { ...ordered, currency: currencySymbol ?? currencyId };
+    return { ...ordered, currency: currencySymbol ?? currencyId, venue: venueOverlay };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, styleOverrides.categoryOrder, styleOverrides.itemOrder, currencyId]);
+  }, [content, styleOverrides.categoryOrder, styleOverrides.itemOrder, currencyId, venueOverlay]);
 
   // Takes the style to save as a parameter rather than reading current
   // state via a ref — mutating a ref during render is a React error, and
@@ -130,40 +145,9 @@ export function MenuStyleEditor({
     [flushSave],
   );
 
-  const flushCurrencySave = useCallback(
-    async (id: CurrencyId) => {
-      if (currencySaveTimerRef.current) {
-        clearTimeout(currencySaveTimerRef.current);
-        currencySaveTimerRef.current = null;
-      }
-      setCurrencySaveStatus("saving");
-      try {
-        await menusApi.update(menuId, { content: { ...content, currency: id } });
-        setCurrencySaveStatus("saved");
-      } catch {
-        setCurrencySaveStatus("error");
-      }
-    },
-    [menuId, content],
-  );
-
-  const handleCurrencyChange = useCallback(
-    (id: CurrencyId) => {
-      setCurrencyId(id);
-      setCurrencySaveStatus("pending");
-      if (currencySaveTimerRef.current) clearTimeout(currencySaveTimerRef.current);
-      currencySaveTimerRef.current = setTimeout(
-        () => void flushCurrencySave(id),
-        AUTOSAVE_DEBOUNCE_MS,
-      );
-    },
-    [flushCurrencySave],
-  );
-
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      if (currencySaveTimerRef.current) clearTimeout(currencySaveTimerRef.current);
     };
   }, []);
 
@@ -216,7 +200,7 @@ export function MenuStyleEditor({
 
   async function handleContinue() {
     setIsContinuing(true);
-    await Promise.all([flushSave(styleOverrides), flushCurrencySave(currencyId)]);
+    await Promise.all([flushSave(styleOverrides), contentAutosave.flushNow()]);
     router.push(`/menus/${menuId}/result`);
   }
 
@@ -226,28 +210,33 @@ export function MenuStyleEditor({
         <div className="min-w-0 flex-1">
           <MenuLivePreview orderedContent={orderedContent} style={effectiveStyle} />
         </div>
-        <EditorControlsPanel
-          accentColorId={effectiveStyle.accentColorId}
-          fontId={effectiveStyle.fontId}
-          columns={effectiveStyle.columns}
-          currencyId={currencyId}
-          onAccentColorChange={(accentColorId) => updateStyle({ accentColorId })}
-          onFontChange={(fontId) => updateStyle({ fontId })}
-          onColumnsChange={(columns) => updateStyle({ columns })}
-          onCurrencyChange={handleCurrencyChange}
-          className="border-border bg-surface fixed inset-x-0 bottom-0 z-10 max-h-[45vh] overflow-y-auto rounded-t-lg border-t p-4 shadow-lg lg:static lg:max-h-none lg:w-72 lg:shrink-0 lg:overflow-visible lg:rounded-lg lg:border lg:p-4 lg:shadow-sm"
-        />
+        <div className="border-border bg-surface fixed inset-x-0 bottom-0 z-10 flex max-h-[45vh] flex-col gap-6 overflow-y-auto rounded-t-lg border-t p-4 shadow-lg lg:static lg:max-h-none lg:w-72 lg:shrink-0 lg:overflow-visible lg:rounded-lg lg:border lg:p-4 lg:shadow-sm">
+          <EditorControlsPanel
+            accentColorId={effectiveStyle.accentColorId}
+            fontId={effectiveStyle.fontId}
+            columns={effectiveStyle.columns}
+            currencyId={currencyId}
+            onAccentColorChange={(accentColorId) => updateStyle({ accentColorId })}
+            onFontChange={(fontId) => updateStyle({ fontId })}
+            onColumnsChange={(columns) => updateStyle({ columns })}
+            onCurrencyChange={contentAutosave.changeCurrency}
+          />
+          <VenueDetailsForm
+            venue={contentAutosave.venue}
+            onChange={contentAutosave.changeVenueField}
+          />
+        </div>
       </div>
 
       <div className="mt-6 flex items-center justify-between">
-        <SaveStatusLabel status={combineSaveStatus(saveStatus, currencySaveStatus)} />
+        <SaveStatusLabel status={combineSaveStatus(saveStatus, contentAutosave.saveStatus)} />
         <div className="flex gap-2">
           <Button
             type="button"
             variant="secondary"
             onClick={() => {
               void flushSave(styleOverrides);
-              void flushCurrencySave(currencyId);
+              void contentAutosave.flushNow();
             }}
           >
             {t("save")}

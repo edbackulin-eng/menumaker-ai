@@ -49,7 +49,7 @@ export default async function MenuTemplatePage({ params }: PageProps) {
   const supabase = await createClient();
   const { data: menu } = await supabase
     .from("menus")
-    .select("id, title, locale, content, content_confirmed_at, status")
+    .select("id, title, locale, content, content_confirmed_at, status, business_type")
     .eq("id", id)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -67,7 +67,7 @@ export default async function MenuTemplatePage({ params }: PageProps) {
 
   const { data: templates } = await supabase
     .from("menu_templates")
-    .select("id, slug, name, category, config, engine, palette")
+    .select("id, slug, name, category, config, engine, palette, business_types")
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
 
@@ -79,6 +79,7 @@ export default async function MenuTemplatePage({ params }: PageProps) {
     id: template.id,
     slug: template.slug,
     category: template.category,
+    businessTypes: template.business_types,
     name: localizedTemplateName(template.name, menu.locale, defaultName),
     style: resolveTemplateDefaults({
       config: template.config as Record<string, unknown> | null,
@@ -95,7 +96,12 @@ export default async function MenuTemplatePage({ params }: PageProps) {
         <div className="mt-6 mb-8">
           <WizardSteps current="template" />
         </div>
-        <TemplateGallery menuId={menu.id} templates={cards} content={content} />
+        <TemplateGallery
+          menuId={menu.id}
+          templates={cards}
+          content={content}
+          initialBusinessType={menu.business_type}
+        />
       </WizardExitProvider>
     </Container>
   );
