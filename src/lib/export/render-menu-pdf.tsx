@@ -1,5 +1,6 @@
 import "server-only";
 
+import { renderBistroPdf } from "@/lib/export/bistro/render-bistro-pdf";
 import { renderClassicPdf } from "@/lib/export/classic/render-classic-pdf";
 import { renderGridPdf } from "@/lib/export/grid/render-grid-pdf";
 import { renderModernPdf } from "@/lib/export/modern/render-modern-pdf";
@@ -19,6 +20,7 @@ const PDF_ENGINE_REGISTRY: Record<MenuLayoutEngine, (menu: ExportableMenu) => Pr
   classic: renderClassicPdf,
   "banner-two-column": renderModernPdf,
   grid: renderGridPdf,
+  "classic-elegant": renderBistroPdf,
 };
 
 /** The PDF export's single engine dispatch point. */

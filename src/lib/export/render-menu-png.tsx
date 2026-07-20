@@ -1,5 +1,6 @@
 import "server-only";
 
+import { renderBistroPng } from "@/lib/export/bistro/render-bistro-png";
 import { renderClassicPng } from "@/lib/export/classic/render-classic-png";
 import { renderGridPng } from "@/lib/export/grid/render-grid-png";
 import { renderModernPng } from "@/lib/export/modern/render-modern-png";
@@ -24,6 +25,7 @@ const PNG_ENGINE_REGISTRY: Record<MenuLayoutEngine, (menu: ExportableMenu) => Pr
   classic: renderClassicPng,
   "banner-two-column": renderModernPng,
   grid: renderGridPng,
+  "classic-elegant": renderBistroPng,
 };
 
 /** The PNG export's single engine dispatch point. */

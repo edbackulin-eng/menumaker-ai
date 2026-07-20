@@ -55,6 +55,10 @@ const DISH_PHOTO_CROP_SIZE: Record<MenuLayoutEngine, number> = {
   classic: 130,
   "banner-two-column": 200,
   grid: 800,
+  // Bistro renders no dish photos at all (a dense typographic menu, by
+  // design), so nothing ever calls dishPhotoUrlForEngine with this engine
+  // — the entry exists only to keep the Record total. Sized like classic.
+  "classic-elegant": 130,
 };
 
 /**

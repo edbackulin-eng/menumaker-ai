@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 
 import type { MenuLayoutEngine } from "@/lib/utils/resolve-menu-style";
 import type { MenuEngineViewProps } from "@/components/menu-render/engine-view-props";
+import { BistroMenuView } from "@/components/menu-render/bistro/bistro-menu-view";
 import { ClassicMenuView } from "@/components/menu-render/classic/classic-menu-view";
 import { GridMenuView } from "@/components/menu-render/grid/grid-menu-view";
 import { ModernMenuView } from "@/components/menu-render/modern/modern-menu-view";
@@ -29,6 +30,7 @@ const DOM_ENGINE_REGISTRY: Record<MenuLayoutEngine, ComponentType<MenuEngineView
   classic: ClassicMenuView,
   "banner-two-column": ModernMenuView,
   grid: GridMenuView,
+  "classic-elegant": BistroMenuView,
 };
 
 /**
