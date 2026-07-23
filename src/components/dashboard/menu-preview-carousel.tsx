@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   useSyncExternalStore,
@@ -29,6 +30,23 @@ const TRANSITION_MS = 800;
  * the user will actually get.
  */
 const SOURCE_WIDTH = 720;
+
+/**
+ * Bounds on how far the render scale can drift from `SOURCE_WIDTH`.
+ *
+ * The scale itself is computed from the stage's *measured* pixel width
+ * (see `useStageScale` below), not a fixed set of breakpoint values — a
+ * 768px stage on a 1280px dashboard and a 768px stage on a 2560px monitor
+ * used to render identically small, because the old scale came from three
+ * fixed Tailwind breakpoints (`sm:`/`lg:`) that stopped moving once the
+ * widest one was reached. The floor keeps a very narrow phone from
+ * shrinking the preview to the point of being unreadable; the ceiling is
+ * the "reasonable max-width" the stage itself is capped at (`max-w-5xl`
+ * below) translated into a scale, so it's really just documentation, not
+ * a second source of truth for the cap.
+ */
+const MIN_STAGE_SCALE = 0.4;
+const MAX_STAGE_SCALE = 1.5;
 
 export interface MenuPreviewSlide {
   id: string;
@@ -69,6 +87,41 @@ function useReducedMotion(): boolean {
   );
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+/**
+ * Render scale, derived from the stage's actual measured pixel width
+ * rather than fixed breakpoint values — `scale = measuredWidth /
+ * SOURCE_WIDTH`, clamped. `useLayoutEffect` (not `useEffect`) for the
+ * first measurement so it lands before the browser paints; without that,
+ * the initial render would use the `initialScale` guess for one frame and
+ * visibly jump once the real width is known. `ResizeObserver` keeps it
+ * correct afterward — a browser window resize, not just a route change,
+ * is exactly what this needs to react to.
+ */
+function useStageScale(stageRef: React.RefObject<HTMLDivElement | null>): number {
+  const [scale, setScale] = useState(MIN_STAGE_SCALE);
+
+  useLayoutEffect(() => {
+    const node = stageRef.current;
+    if (!node) return;
+    const updateScale = () => {
+      const width = node.getBoundingClientRect().width;
+      if (width > 0) {
+        setScale(clamp(width / SOURCE_WIDTH, MIN_STAGE_SCALE, MAX_STAGE_SCALE));
+      }
+    };
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [stageRef]);
+
+  return scale;
+}
+
 /**
  * Auto-advancing preview of the layout engines, for the "no menus yet"
  * empty state.
@@ -91,6 +144,8 @@ export function MenuPreviewCarousel({ slides }: MenuPreviewCarouselProps) {
   const [isPaused, setIsPaused] = useState(false);
   const reducedMotion = useReducedMotion();
   const parkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const scale = useStageScale(stageRef);
 
   const goTo = useCallback(
     (next: number, dir: number) => {
@@ -154,8 +209,21 @@ export function MenuPreviewCarousel({ slides }: MenuPreviewCarouselProps) {
 
   return (
     <div
-      className="w-full"
-      onMouseEnter={() => setIsPaused(true)}
+      className="mx-auto w-full max-w-5xl"
+      // Pausing on `mouseenter` rather than genuine movement is a real
+      // trap here: browsers recompute hover state (and re-fire
+      // mouseenter/mouseout) under a *stationary* cursor whenever the
+      // layout changes under it — which is exactly what happens the
+      // instant this large card paints on load. If the visitor's cursor
+      // simply happened to be resting anywhere over this area, that one
+      // synthetic mouseenter would set `isPaused` true with no real
+      // `mouseleave` ever following (the cursor never moves), freezing
+      // the carousel from the very first frame with nothing to do with
+      // `prefers-reduced-motion`. `mousemove` doesn't have this problem —
+      // per spec it only ever fires on actual pointer motion — so it's
+      // used here as the "the visitor is deliberately hovering" signal
+      // instead.
+      onMouseMove={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       // Focus pauses too: a keyboard user tabbing to the arrows needs the
       // slide to hold still while they decide, exactly as hover does.
@@ -164,7 +232,17 @@ export function MenuPreviewCarousel({ slides }: MenuPreviewCarouselProps) {
     >
       <div className="relative">
         <div
-          className="border-border bg-surface-secondary relative h-[300px] overflow-hidden rounded-xl border sm:h-[400px] lg:h-[440px]"
+          ref={stageRef}
+          // Width fills whatever the `max-w-5xl` root allots (down to the
+          // viewport on mobile); height is proportional to that measured
+          // width via `aspect-ratio`, clamped so a very narrow phone or a
+          // very wide monitor don't push it to a cramped or absurd height.
+          // `w-full` + `aspect-[7/4]` here, `scale` on each slide below,
+          // are two views of the *same* measured width (see useStageScale)
+          // — the stage was previously a fixed 768×440 that stayed that
+          // size all the way up to a 2560px screen, leaving it visibly
+          // adrift in empty space.
+          className="border-border bg-surface-secondary relative aspect-[7/4] max-h-[480px] min-h-[280px] w-full overflow-hidden rounded-xl border"
           style={{ perspective: 1200 }}
         >
           {slides.map((slide, position) => (
@@ -184,8 +262,8 @@ export function MenuPreviewCarousel({ slides }: MenuPreviewCarouselProps) {
                   render several times too small. Measured at 375px: the box
                   collapsed to ~222px and the slide drew at 98px. */}
               <div
-                className="shrink-0 origin-top [--preview-scale:0.4] sm:[--preview-scale:0.58] lg:[--preview-scale:0.66]"
-                style={{ width: SOURCE_WIDTH, transform: "scale(var(--preview-scale))" }}
+                className="shrink-0 origin-top"
+                style={{ width: SOURCE_WIDTH, transform: `scale(${scale})` }}
               >
                 {slide.content}
               </div>

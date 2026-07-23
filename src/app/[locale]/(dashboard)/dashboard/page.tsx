@@ -165,7 +165,12 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
       {items.length === 0 ? (
         <EmptyState
           className="mt-6 gap-4 px-4 py-10 sm:px-8"
-          previewClassName="w-full max-w-3xl"
+          // No max-width override here: MenuPreviewCarousel caps its own
+          // width (`max-w-5xl`) and derives its scale from the measured
+          // result, so it fills whatever room this slot gives it up to
+          // that cap instead of sitting fixed at a size tuned for one
+          // screen width.
+          previewClassName="w-full"
           preview={<MenuPreviewShowcase slides={previewSlides} />}
           title={t("emptyTitle")}
           titleClassName="text-h4"
