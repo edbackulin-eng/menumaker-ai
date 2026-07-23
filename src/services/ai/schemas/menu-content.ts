@@ -47,6 +47,23 @@ export const menuItemSchema = z.object({
    * (dish-photo-placeholder.tsx), not an error.
    */
   photoUrl: z.string().trim().min(1).optional(),
+  /**
+   * Where `photoUrl` came from — `"stock"` for a provider (Pexels) result,
+   * `"upload"` for a file the owner uploaded themselves.
+   *
+   * This exists to protect the owner's own work: the "re-pick photos for
+   * this venue type" action re-runs the stock search and replaces results,
+   * and it must never overwrite a photo the owner uploaded. Without a
+   * provenance marker the two are indistinguishable — `photoUrl` is just a
+   * string — so a bulk refresh would silently destroy uploaded photos,
+   * which is the worst class of bug this feature could have.
+   *
+   * Absent on menus created before this field existed. Such a photo is
+   * treated as `"stock"` by the refresh action only when its URL is a
+   * provider URL; anything pointing at our own `menu-photos` bucket is
+   * treated as an upload regardless — see isStockPhoto().
+   */
+  photoSource: z.enum(["stock", "upload"]).optional(),
 });
 
 export const menuCategorySchema = z.object({

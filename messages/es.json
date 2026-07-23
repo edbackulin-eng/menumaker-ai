@@ -323,6 +323,18 @@
         "address": "Dirección",
         "phone": "Teléfono"
       },
+      "refreshPhotos": {
+        "heading": "Fotos de los platos",
+        "note": "Vuelve a elegir fotos de stock según el tipo de local elegido en el paso «Plantilla».",
+        "button": "Volver a elegir fotos",
+        "nothingToRefresh": "No hay fotos de stock para reemplazar.",
+        "confirmTitle": "¿Volver a elegir las fotos de los platos?",
+        "confirmBody": "Fotos de stock que se reemplazarán: {replaceable}. Tus propias fotos subidas ({ownUploads}) no se tocarán.",
+        "confirm": "Volver a elegir",
+        "cancel": "Cancelar",
+        "done": "Fotos reemplazadas: {replaced}. Propias conservadas: {kept}.",
+        "error": "No se pudieron volver a elegir las fotos."
+      },
       "save": "Guardar",
       "continue": "Continuar",
       "saveStatus": {

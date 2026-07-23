@@ -2,7 +2,7 @@ import { apiSuccess } from "@/lib/api/respond";
 import { requireAuth } from "@/lib/api/require-auth";
 import { validateParams } from "@/lib/api/validate-request";
 import { withApiHandler } from "@/lib/api/with-api-handler";
-import { DEFAULT_VENUE_STYLE_TYPE, styleSuffix } from "@/config/photo-style";
+import { styleSuffix, toBusinessType } from "@/config/photo-style";
 import { PHOTO_CONFIG } from "@/config/photos";
 import { ApiError, NotFoundError } from "@/lib/errors";
 import { menuItemParamsSchema } from "@/lib/validations/menu-photo";
@@ -31,7 +31,7 @@ export const POST = withApiHandler<RouteContext>(
 
     const { data: menu, error } = await supabase
       .from("menus")
-      .select("content")
+      .select("content, business_type")
       .eq("id", id)
       .eq("user_id", user.id)
       .maybeSingle();
@@ -51,11 +51,14 @@ export const POST = withApiHandler<RouteContext>(
       throw new NotFoundError("Страву не знайдено.");
     }
 
+    // The menu's real venue type, picked on the Template step. `null` here
+    // (the user hasn't got that far yet) means a plain search with no motif
+    // suffix — see styleSuffix's doc comment.
     const candidates = await findDishPhotoCandidates({
       name: item.name,
       searchQuery: item.searchQuery,
       styleSuffix: PHOTO_CONFIG.styleSuffixEnabled
-        ? styleSuffix(DEFAULT_VENUE_STYLE_TYPE)
+        ? styleSuffix(toBusinessType(menu.business_type))
         : undefined,
     });
 

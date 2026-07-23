@@ -25,6 +25,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { EditorControlsPanel } from "@/components/menu-editor/editor-controls-panel";
 import { MenuLivePreview } from "@/components/menu-editor/menu-live-preview";
+import { RefreshPhotosSection } from "@/components/menu-editor/refresh-photos-section";
 import { VenueDetailsForm } from "@/components/menu-editor/venue-details-form";
 import { useMenuContentAutosave } from "@/components/menu-editor/use-menu-content-autosave";
 import { useReportWizardDirty } from "@/components/menu-generator/wizard-exit";
@@ -225,6 +226,7 @@ export function MenuStyleEditor({
             venue={contentAutosave.venue}
             onChange={contentAutosave.changeVenueField}
           />
+          <RefreshPhotosSection menuId={menuId} content={content} />
         </div>
       </div>
 

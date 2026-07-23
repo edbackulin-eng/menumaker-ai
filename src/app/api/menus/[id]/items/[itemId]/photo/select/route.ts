@@ -23,7 +23,7 @@ export const POST = withApiHandler<RouteContext>(
     const { id, itemId } = validateParams(await params, menuItemParamsSchema);
     const { photoUrl } = await validateBody(request, selectItemPhotoSchema);
 
-    await updateItemPhotoUrl(supabase, user.id, id, itemId, photoUrl);
+    await updateItemPhotoUrl(supabase, user.id, id, itemId, photoUrl, "stock");
     return apiSuccess({ photoUrl });
   },
   { rateLimitTier: "authenticated" },

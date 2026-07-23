@@ -6,11 +6,16 @@ import { menuContentSchema, type MenuContent } from "@/services/ai/schemas/menu-
 import type { Database, Json } from "@/types/database.types";
 
 /**
- * Shared by both photo endpoints (auto-search and user-upload replace) —
- * finds the item by id across all categories and sets its `photoUrl`,
- * validating the whole content shape again before persisting so a
- * malformed `menus.content` (e.g. from a pre-Stage-2 menu that predates
- * this schema) can't silently corrupt the save.
+ * Shared by both photo endpoints (stock-pick and owner upload) — finds the
+ * item by id across all categories and sets its `photoUrl` together with
+ * its `photoSource`, validating the whole content shape again before
+ * persisting so a malformed `menus.content` (e.g. from a pre-Stage-2 menu
+ * that predates this schema) can't silently corrupt the save.
+ *
+ * `source` is required, not defaulted: it is what protects an owner's
+ * uploaded photo from being replaced by the bulk stock refresh, and a
+ * silent default would be exactly the way that protection gets lost when a
+ * third write path is added later.
  */
 export async function updateItemPhotoUrl(
   supabase: SupabaseClient<Database>,
@@ -18,6 +23,7 @@ export async function updateItemPhotoUrl(
   menuId: string,
   itemId: string,
   photoUrl: string,
+  source: "stock" | "upload",
 ): Promise<MenuContent> {
   const { data: menu, error: fetchError } = await supabase
     .from("menus")
@@ -43,7 +49,7 @@ export async function updateItemPhotoUrl(
       items: category.items.map((item) => {
         if (item.id !== itemId) return item;
         found = true;
-        return { ...item, photoUrl };
+        return { ...item, photoUrl, photoSource: source };
       }),
     })),
   };

@@ -83,7 +83,7 @@ export const POST = withApiHandler<RouteContext>(
     // new query string or browsers/CDNs keep serving the old cached photo.
     const photoUrl = `${publicUrl}?v=${Date.now()}`;
 
-    await updateItemPhotoUrl(supabase, user.id, id, itemId, photoUrl);
+    await updateItemPhotoUrl(supabase, user.id, id, itemId, photoUrl, "upload");
     return apiSuccess({ photoUrl });
   },
   { rateLimitTier: "authenticated" },

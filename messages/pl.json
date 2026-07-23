@@ -323,6 +323,18 @@
         "address": "Adres",
         "phone": "Telefon"
       },
+      "refreshPhotos": {
+        "heading": "Zdjęcia dań",
+        "note": "Dobiera zdjęcia stockowe do typu lokalu wybranego w kroku „Szablon”.",
+        "button": "Dobierz zdjęcia ponownie",
+        "nothingToRefresh": "Brak zdjęć stockowych do zamiany.",
+        "confirmTitle": "Dobrać zdjęcia dań ponownie?",
+        "confirmBody": "Zdjęcia stockowe do zamiany: {replaceable}. Twoje własne przesłane zdjęcia ({ownUploads}) pozostaną nietknięte.",
+        "confirm": "Dobierz ponownie",
+        "cancel": "Anuluj",
+        "done": "Zamieniono zdjęć: {replaced}. Własnych zachowano: {kept}.",
+        "error": "Nie udało się dobrać zdjęć."
+      },
       "save": "Zapisz",
       "continue": "Dalej",
       "saveStatus": {

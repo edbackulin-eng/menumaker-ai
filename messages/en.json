@@ -323,6 +323,18 @@
         "address": "Address",
         "phone": "Phone"
       },
+      "refreshPhotos": {
+        "heading": "Dish photos",
+        "note": "Re-picks stock photos to match the venue type chosen on the Template step.",
+        "button": "Re-pick photos",
+        "nothingToRefresh": "No stock photos to replace.",
+        "confirmTitle": "Re-pick dish photos?",
+        "confirmBody": "Stock photos to be replaced: {replaceable}. Your own uploaded photos ({ownUploads}) will be left untouched.",
+        "confirm": "Re-pick",
+        "cancel": "Cancel",
+        "done": "Photos replaced: {replaced}. Your own kept: {kept}.",
+        "error": "Couldn't re-pick photos."
+      },
       "save": "Save",
       "continue": "Continue",
       "saveStatus": {

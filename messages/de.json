@@ -323,6 +323,18 @@
         "address": "Adresse",
         "phone": "Telefon"
       },
+      "refreshPhotos": {
+        "heading": "Gerichtsfotos",
+        "note": "Wählt Stockfotos passend zur im Schritt „Vorlage“ gewählten Lokalart neu aus.",
+        "button": "Fotos neu wählen",
+        "nothingToRefresh": "Keine Stockfotos zum Ersetzen.",
+        "confirmTitle": "Gerichtsfotos neu wählen?",
+        "confirmBody": "Zu ersetzende Stockfotos: {replaceable}. Ihre eigenen hochgeladenen Fotos ({ownUploads}) bleiben unberührt.",
+        "confirm": "Neu wählen",
+        "cancel": "Abbrechen",
+        "done": "Ersetzte Fotos: {replaced}. Eigene behalten: {kept}.",
+        "error": "Fotos konnten nicht neu gewählt werden."
+      },
       "save": "Speichern",
       "continue": "Weiter",
       "saveStatus": {

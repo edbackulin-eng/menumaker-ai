@@ -150,6 +150,16 @@ export const menusApi = {
     });
   },
 
+  /** Re-picks stock dish photos for the whole menu under its current venue type. Never replaces owner uploads — see refreshStockPhotos. */
+  refreshStockPhotos(menuId: string): Promise<{
+    replaced: number;
+    skippedOwnUploads: number;
+    unchanged: number;
+    content: MenuContent;
+  }> {
+    return fetchJson(`/api/menus/${menuId}/photos/refresh`, { method: "POST" });
+  },
+
   uploadItemPhoto(menuId: string, itemId: string, file: File): Promise<{ photoUrl: string }> {
     const form = new FormData();
     form.set("file", file);
