@@ -123,7 +123,11 @@
       "noSearchResults": "No menus match “{query}”",
       "promoTitle": "Create a menu in 30 seconds",
       "promoSubtitle": "Upload a PDF, Word or Excel file — AI does the rest.",
-      "promoCta": "Start now"
+      "promoCta": "Start now",
+      "preview": {
+        "previous": "Previous layout",
+        "next": "Next layout"
+      }
     },
     "credits": {
       "metaTitle": "Credits — MenuMaker AI",

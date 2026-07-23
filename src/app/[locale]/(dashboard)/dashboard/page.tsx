@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { DEMO_PREVIEW_SLIDES, type DemoSlideSpec } from "@/config/demo-menu-preview";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
 import { resolveEffectiveStyle, resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
@@ -12,7 +13,7 @@ import { Link, redirect } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
-import { MenuTemplatePreviewMockups } from "@/components/dashboard/menu-template-preview-mockups";
+import { MenuPreviewShowcase } from "@/components/dashboard/menu-preview-showcase";
 import { MyMenusView } from "@/components/dashboard/my-menus-view";
 
 /** Interface-locale name lookup (not the content-locale lookup used once a menu exists — see template/page.tsx's own version of this) — this empty state has no menu yet, so the interface language is the only locale signal available. */
@@ -25,8 +26,26 @@ function localizedTemplateName(name: Json, locale: string, fallback: string): st
   return fallback;
 }
 
-/** A deliberately spread trio for the empty-state preview — light/warm, dark/formal, light/cool — not three shades of the same look. */
-const EMPTY_STATE_PREVIEW_SLUGS = ["coffee-shop", "luxury", "modern"];
+/**
+ * Picks the template row a preview slide renders: the named preset when it
+ * exists, otherwise any row with the right engine.
+ *
+ * The fallback is the point. Slugs multiplied per business type in Stage 3
+ * (grid-burger / grid-pizza / grid-fresh …), so a slug-only lookup would
+ * silently fall through to a default style the moment the preset set is
+ * reshuffled — and the empty state would quietly show four near-identical
+ * layouts instead of four distinct ones. Every engine is guaranteed at
+ * least one row, so matching on engine cannot come up empty.
+ */
+function findPreviewTemplate<T extends { slug: string; engine: string | null }>(
+  templates: T[],
+  spec: DemoSlideSpec,
+): T | undefined {
+  return (
+    templates.find((candidate) => candidate.slug === spec.preferredSlug) ??
+    templates.find((candidate) => candidate.engine === spec.engine)
+  );
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("dashboard.myMenus");
@@ -89,13 +108,17 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
   );
 
   const defaultTemplateName = t("emptyPreviewTemplateFallback");
-  const emptyStatePreviewTemplates = EMPTY_STATE_PREVIEW_SLUGS.map((slug) => {
-    const template = (templates ?? []).find((candidate) => candidate.slug === slug);
+  const previewSlides = DEMO_PREVIEW_SLIDES.map((spec) => {
+    const template = findPreviewTemplate(templates ?? [], spec);
     return {
-      name: localizedTemplateName(template?.name ?? null, locale, defaultTemplateName),
+      id: spec.engine,
+      label: localizedTemplateName(template?.name ?? null, locale, defaultTemplateName),
       style: resolveTemplateDefaults({
         config: template?.config as Record<string, unknown> | null,
-        engine: template?.engine,
+        // The spec's engine wins over the row's own: the slide's whole
+        // purpose is to show *this* engine, so a preferred-slug miss must
+        // not quietly demote the slide to whatever engine it landed on.
+        engine: spec.engine,
         palette: template?.palette as Record<string, unknown> | null,
       }),
     };
@@ -141,13 +164,15 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
 
       {items.length === 0 ? (
         <EmptyState
-          className="mt-8"
-          preview={<MenuTemplatePreviewMockups templates={emptyStatePreviewTemplates} />}
+          className="mt-6 gap-4 px-4 py-10 sm:px-8"
+          previewClassName="w-full max-w-3xl"
+          preview={<MenuPreviewShowcase slides={previewSlides} />}
           title={t("emptyTitle")}
+          titleClassName="text-h4"
           description={t("emptyDescription")}
           action={
             eligibility ? (
-              <Link href="/menus/new" className={buttonVariants()}>
+              <Link href="/menus/new" className={buttonVariants({ size: "lg" })}>
                 {t("createFirst")}
               </Link>
             ) : undefined

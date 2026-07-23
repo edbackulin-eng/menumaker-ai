@@ -123,7 +123,11 @@
       "noSearchResults": "Keine Speisekarte passt zu „{query}“",
       "promoTitle": "Speisekarte in 30 Sekunden erstellen",
       "promoSubtitle": "Laden Sie eine PDF-, Word- oder Excel-Datei hoch — den Rest macht die KI.",
-      "promoCta": "Jetzt starten"
+      "promoCta": "Jetzt starten",
+      "preview": {
+        "previous": "Vorheriges Layout",
+        "next": "Nächstes Layout"
+      }
     },
     "credits": {
       "metaTitle": "Guthaben — MenuMaker AI",

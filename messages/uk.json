@@ -123,7 +123,11 @@
       "noSearchResults": "Немає меню за запитом «{query}»",
       "promoTitle": "Створіть меню за 30 секунд",
       "promoSubtitle": "Завантажте PDF, Word чи Excel — решту зробить AI.",
-      "promoCta": "Почати"
+      "promoCta": "Почати",
+      "preview": {
+        "previous": "Попередня розкладка",
+        "next": "Наступна розкладка"
+      }
     },
     "credits": {
       "metaTitle": "Кредити — MenuMaker AI",

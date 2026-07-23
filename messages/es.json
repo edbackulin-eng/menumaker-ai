@@ -123,7 +123,11 @@
       "noSearchResults": "Ninguna carta coincide con «{query}»",
       "promoTitle": "Crea una carta en 30 segundos",
       "promoSubtitle": "Sube un archivo PDF, Word o Excel — la IA hace el resto.",
-      "promoCta": "Empezar"
+      "promoCta": "Empezar",
+      "preview": {
+        "previous": "Diseño anterior",
+        "next": "Diseño siguiente"
+      }
     },
     "credits": {
       "metaTitle": "Créditos — MenuMaker AI",

@@ -123,7 +123,11 @@
       "noSearchResults": "Brak menu dla „{query}”",
       "promoTitle": "Utwórz menu w 30 sekund",
       "promoSubtitle": "Wgraj plik PDF, Word lub Excel — resztę zrobi AI.",
-      "promoCta": "Zacznij teraz"
+      "promoCta": "Zacznij teraz",
+      "preview": {
+        "previous": "Poprzedni układ",
+        "next": "Następny układ"
+      }
     },
     "credits": {
       "metaTitle": "Kredyty — MenuMaker AI",
