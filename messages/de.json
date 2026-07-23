@@ -314,6 +314,9 @@
       "font": "Schriftart",
       "columns": "Anzahl der Spalten",
       "currency": "Währung",
+      "photos": "Gerichtsfotos",
+      "hidePhotos": "Speisekarte ohne Fotos",
+      "hidePhotosHint": "Jedes Gericht nur mit Name und Preis, ohne Platz für ein Foto.",
       "venue": {
         "heading": "Lokaldaten",
         "note": "Werden in Vorlagen mit Kopf- oder Fußzeile angezeigt.",

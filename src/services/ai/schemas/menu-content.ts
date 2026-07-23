@@ -97,6 +97,22 @@ export const menuVenueSchema = z.object({
 export const menuContentSchema = z.object({
   currency: z.string().trim().min(1).max(8).optional(),
   venue: menuVenueSchema.optional(),
+  /**
+   * The owner's choice to print this menu without dish photos at all.
+   *
+   * A property of the *menu*, not of the template: the same restaurant may
+   * want a photo-led menu for delivery and a plain one for the table, and
+   * switching templates must not silently change that decision. Lives in
+   * `content` (schema-less jsonb, no migration) alongside `currency` and
+   * `venue`.
+   *
+   * The three photo-led engines (Modern, Grid, Editorial) each collapse
+   * their dish row to name + price when this is on — no image, and no
+   * reserved space or placeholder either, so the result reads as a
+   * deliberate text menu rather than one with holes in it. Bistro and the
+   * classic engine never render dish photos, so it is a no-op there.
+   */
+  hidePhotos: z.boolean().optional(),
   categories: z.array(menuCategorySchema),
 });
 

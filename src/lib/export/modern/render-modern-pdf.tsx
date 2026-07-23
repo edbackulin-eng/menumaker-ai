@@ -81,8 +81,14 @@ function registerModernPdfFonts(menu: ExportableMenu) {
  */
 export async function renderModernPdf(menu: ExportableMenu): Promise<Buffer> {
   registerModernPdfFonts(menu);
+  const hidePhotos = menu.content.hidePhotos ?? false;
+  // Downloading every dish photo to embed bytes is by far the slowest part
+  // of a PDF export, so a menu set to show none skips the fetch entirely
+  // rather than fetching and discarding.
   const [photos, qrDataUri] = await Promise.all([
-    fetchPhotoBytes(menu.content, "banner-two-column"),
+    hidePhotos
+      ? Promise.resolve<PhotoBytesByItemId>(new Map())
+      : fetchPhotoBytes(menu.content, "banner-two-column"),
     buildQrDataUri(menu),
   ]);
   return renderToBuffer(
@@ -167,24 +173,29 @@ function ModernPdfRow({
   categoryName,
   currency,
   showBadges,
+  hidePhotos,
   photoDataUri,
 }: {
   item: MenuItem;
   categoryName: string;
   currency: string | undefined;
   showBadges: boolean;
+  hidePhotos: boolean;
   photoDataUri: string | undefined;
 }) {
   const badges = showBadges ? (item.badges ?? []) : [];
   return (
-    <View style={styles.row} wrap={false}>
-      {photoDataUri ? (
-        <Image src={photoDataUri} style={styles.photo} />
-      ) : (
-        // A flat category-colored square, never an empty gap: a dish whose
-        // photo didn't resolve must still look deliberate in print.
-        <View style={[styles.photo, { backgroundColor: getDishPlaceholderColor(categoryName) }]} />
-      )}
+    <View style={hidePhotos ? [styles.row, { gap: 0 }] : styles.row} wrap={false}>
+      {!hidePhotos &&
+        (photoDataUri ? (
+          <Image src={photoDataUri} style={styles.photo} />
+        ) : (
+          // A flat category-colored square, never an empty gap: a dish whose
+          // photo didn't resolve must still look deliberate in print.
+          <View
+            style={[styles.photo, { backgroundColor: getDishPlaceholderColor(categoryName) }]}
+          />
+        ))}
       <View style={styles.rowBody}>
         <View style={styles.nameLine}>
           <Text style={styles.dishName}>{item.name}</Text>
@@ -222,11 +233,13 @@ function ModernPdfCategory({
   category,
   currency,
   showBadges,
+  hidePhotos,
   photos,
 }: {
   category: MenuCategory;
   currency: string | undefined;
   showBadges: boolean;
+  hidePhotos: boolean;
   photos: PhotoBytesByItemId;
 }) {
   return (
@@ -241,6 +254,7 @@ function ModernPdfCategory({
             categoryName={category.name}
             currency={currency}
             showBadges={showBadges}
+            hidePhotos={hidePhotos}
             photoDataUri={photos.get(item.id)}
           />
         ))}
@@ -283,6 +297,7 @@ export function ModernPdfPage({
                 category={category}
                 currency={currency}
                 showBadges={menu.style.showBadges}
+                hidePhotos={menu.content.hidePhotos ?? false}
                 photos={photos}
               />
             ))}

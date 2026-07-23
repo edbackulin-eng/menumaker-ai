@@ -17,6 +17,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CURATED_CURRENCIES, type CurrencyId } from "@/config/menu-currency";
 import { menusApi } from "@/lib/api-client/menus";
 import { categoryAwareKeyboardCoordinates } from "@/lib/dnd/category-aware-keyboard-coordinates";
+import { engineRendersDishPhotos } from "@/lib/utils/dish-photo-url";
 import { applyStyleOrder } from "@/lib/utils/menu-content-order";
 import { resolveEffectiveStyle, type ResolvedMenuStyle } from "@/lib/utils/resolve-menu-style";
 import type { StyleOverridesInput } from "@/lib/validations/menu-style";
@@ -108,9 +109,21 @@ export function MenuStyleEditor({
   const orderedContent = useMemo(() => {
     const ordered = applyStyleOrder(content, styleOverrides);
     const currencySymbol = CURATED_CURRENCIES.find((c) => c.id === currencyId)?.symbol;
-    return { ...ordered, currency: currencySymbol ?? currencyId, venue: venueOverlay };
+    return {
+      ...ordered,
+      currency: currencySymbol ?? currencyId,
+      venue: venueOverlay,
+      hidePhotos: contentAutosave.hidePhotos,
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, styleOverrides.categoryOrder, styleOverrides.itemOrder, currencyId, venueOverlay]);
+  }, [
+    content,
+    styleOverrides.categoryOrder,
+    styleOverrides.itemOrder,
+    currencyId,
+    venueOverlay,
+    contentAutosave.hidePhotos,
+  ]);
 
   // Takes the style to save as a parameter rather than reading current
   // state via a ref — mutating a ref during render is a React error, and
@@ -217,16 +230,24 @@ export function MenuStyleEditor({
             fontId={effectiveStyle.fontId}
             columns={effectiveStyle.columns}
             currencyId={currencyId}
+            hidePhotos={contentAutosave.hidePhotos}
+            photosApplyToTemplate={engineRendersDishPhotos(effectiveStyle.layoutEngine)}
             onAccentColorChange={(accentColorId) => updateStyle({ accentColorId })}
             onFontChange={(fontId) => updateStyle({ fontId })}
             onColumnsChange={(columns) => updateStyle({ columns })}
             onCurrencyChange={contentAutosave.changeCurrency}
+            onHidePhotosChange={contentAutosave.changeHidePhotos}
           />
           <VenueDetailsForm
             venue={contentAutosave.venue}
             onChange={contentAutosave.changeVenueField}
           />
-          <RefreshPhotosSection menuId={menuId} content={content} />
+          {/* Re-picking photos is meaningless while the menu is set to
+              show none — hide the action rather than leave it live but
+              inert. */}
+          {engineRendersDishPhotos(effectiveStyle.layoutEngine) && !contentAutosave.hidePhotos && (
+            <RefreshPhotosSection menuId={menuId} content={content} />
+          )}
         </div>
       </div>
 

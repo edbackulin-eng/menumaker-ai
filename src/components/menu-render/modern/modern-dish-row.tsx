@@ -10,6 +10,13 @@ export interface ModernDishRowProps {
   categoryName: string;
   currency?: string;
   showBadges: boolean;
+  /**
+   * The menu-level "without photos" choice. Renders no photo AND no
+   * placeholder AND no reserved column — the row becomes a pure
+   * name/leader/price line, so the menu reads as a deliberate text menu
+   * rather than one whose images failed to load.
+   */
+  hidePhotos: boolean;
   isLast: boolean;
 }
 
@@ -34,6 +41,7 @@ export function ModernDishRow({
   categoryName,
   currency,
   showBadges,
+  hidePhotos,
   isLast,
 }: ModernDishRowProps) {
   const badges = showBadges ? (item.badges ?? []) : [];
@@ -41,19 +49,25 @@ export function ModernDishRow({
   return (
     <div
       data-testid="modern-dish-row"
-      style={{ display: "flex", gap: 11, marginBottom: isLast ? 0 : 16 }}
+      style={{ display: "flex", gap: hidePhotos ? 0 : 11, marginBottom: isLast ? 0 : 16 }}
     >
       {/* 60×60 fixed, never flex-shrunk: the reference's photo column is a
           constant, and letting it compress on a long dish name would make
-          rows visibly ragged down the column. */}
-      <DishPhotoImage
-        src={
-          item.photoUrl ? dishPhotoUrlForEngine(item.photoUrl, "banner-two-column") : item.photoUrl
-        }
-        alt=""
-        categoryName={categoryName}
-        className="size-[60px] shrink-0 rounded-[8px]"
-      />
+          rows visibly ragged down the column. Omitted entirely (not hidden,
+          not zero-width) when the menu is set to show no photos, so the text
+          starts at the row's left edge. */}
+      {!hidePhotos && (
+        <DishPhotoImage
+          src={
+            item.photoUrl
+              ? dishPhotoUrlForEngine(item.photoUrl, "banner-two-column")
+              : item.photoUrl
+          }
+          alt=""
+          categoryName={categoryName}
+          className="size-[60px] shrink-0 rounded-[8px]"
+        />
+      )}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
           {/*

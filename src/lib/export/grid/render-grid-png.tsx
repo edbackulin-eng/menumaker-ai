@@ -34,6 +34,8 @@ const CATEGORY_BLOCK_HEIGHT = 96;
 /** Photo + the text block beneath it (name, two description lines, a badge row) + the gap to the next row. */
 const CARD_TEXT_HEIGHT = 132;
 const ROW_HEIGHT = PHOTO_HEIGHT + CARD_TEXT_HEIGHT + GUTTER;
+/** Same row with `hidePhotos` on — the 4:3 photo box is gone, only the text card remains. */
+const ROW_HEIGHT_NO_PHOTO = CARD_TEXT_HEIGHT + GUTTER;
 
 /**
  * Satori has no intrinsic sizing — the canvas height is declared upfront
@@ -48,9 +50,10 @@ const ROW_HEIGHT = PHOTO_HEIGHT + CARD_TEXT_HEIGHT + GUTTER;
  * background costs nothing; a cropped dish is a broken menu.
  */
 function estimateHeight(menu: ExportableMenu): number {
+  const rowHeight = menu.content.hidePhotos ? ROW_HEIGHT_NO_PHOTO : ROW_HEIGHT;
   const body = menu.content.categories.reduce((sum, category) => {
     const rows = Math.ceil(category.items.length / GRID_EXPORT_COLUMNS);
-    return sum + CATEGORY_BLOCK_HEIGHT + rows * ROW_HEIGHT;
+    return sum + CATEGORY_BLOCK_HEIGHT + rows * rowHeight;
   }, 0);
   const total = HEADER_HEIGHT + VERTICAL_PADDING + body + FOOTER_HEIGHT;
   return Math.min(MAX_HEIGHT, Math.max(MIN_HEIGHT, total));
@@ -61,6 +64,7 @@ function dishCard(
   categoryName: string,
   currency: string | undefined,
   showBadges: boolean,
+  hidePhotos: boolean,
   palette: GridPalette,
 ) {
   const badges = showBadges ? (item.badges ?? []) : [];
@@ -77,26 +81,33 @@ function dishCard(
         overflow: "hidden",
       }}
     >
-      {item.photoUrl ? (
-        // Satori fetches remote images itself, so this path passes the URL
-        // straight through — unlike the PDF path, which must embed bytes.
-        <img
-          src={dishPhotoUrlForEngine(item.photoUrl, "grid")}
-          width={CARD_WIDTH}
-          height={PHOTO_HEIGHT}
-          style={{ width: CARD_WIDTH, height: PHOTO_HEIGHT, objectFit: "cover" }}
-        />
-      ) : (
-        <div
-          style={{
-            width: CARD_WIDTH,
-            height: PHOTO_HEIGHT,
-            backgroundColor: getDishPlaceholderColor(categoryName),
-          }}
-        />
-      )}
+      {!hidePhotos &&
+        (item.photoUrl ? (
+          // Satori fetches remote images itself, so this path passes the URL
+          // straight through — unlike the PDF path, which must embed bytes.
+          <img
+            src={dishPhotoUrlForEngine(item.photoUrl, "grid")}
+            width={CARD_WIDTH}
+            height={PHOTO_HEIGHT}
+            style={{ width: CARD_WIDTH, height: PHOTO_HEIGHT, objectFit: "cover" }}
+          />
+        ) : (
+          <div
+            style={{
+              width: CARD_WIDTH,
+              height: PHOTO_HEIGHT,
+              backgroundColor: getDishPlaceholderColor(categoryName),
+            }}
+          />
+        ))}
 
-      <div style={{ display: "flex", flexDirection: "column", padding: "12px 14px 14px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          padding: hidePhotos ? "14px" : "12px 14px 14px",
+        }}
+      >
         <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
           <div style={{ display: "flex", fontSize: 21, color: palette.text }}>{item.name}</div>
           {item.price !== undefined && (
@@ -251,7 +262,14 @@ export async function renderGridPng(menu: ExportableMenu): Promise<Buffer> {
             {chunkIntoRows(category.items).map((row, rowIndex) => (
               <div key={rowIndex} style={{ display: "flex", gap: GUTTER, marginBottom: GUTTER }}>
                 {row.map((item) =>
-                  dishCard(item, category.name, currency, menu.style.showBadges, palette),
+                  dishCard(
+                    item,
+                    category.name,
+                    currency,
+                    menu.style.showBadges,
+                    menu.content.hidePhotos ?? false,
+                    palette,
+                  ),
                 )}
               </div>
             ))}

@@ -314,6 +314,9 @@
       "font": "Czcionka",
       "columns": "Liczba kolumn",
       "currency": "Waluta",
+      "photos": "Zdjęcia dań",
+      "hidePhotos": "Menu bez zdjęć",
+      "hidePhotosHint": "Każde danie to tylko nazwa i cena, bez miejsca na zdjęcie.",
       "venue": {
         "heading": "Dane lokalu",
         "note": "Widoczne w szablonach z nagłówkiem lub stopką.",

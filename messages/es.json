@@ -314,6 +314,9 @@
       "font": "Fuente",
       "columns": "Número de columnas",
       "currency": "Moneda",
+      "photos": "Fotos de platos",
+      "hidePhotos": "Menú sin fotos",
+      "hidePhotosHint": "Cada plato solo con nombre y precio, sin espacio para una foto.",
       "venue": {
         "heading": "Datos del local",
         "note": "Se muestran en plantillas con encabezado o pie.",

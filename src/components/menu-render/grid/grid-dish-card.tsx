@@ -15,6 +15,12 @@ export interface GridDishCardProps {
   categoryName: string;
   currency: string | undefined;
   showBadges: boolean;
+  /**
+   * Menu-level "without photos". The 4:3 box is dropped entirely rather
+   * than left empty — a grid of text cards is a valid look, a grid of
+   * empty color blocks is not.
+   */
+  hidePhotos: boolean;
   palette: GridPalette;
 }
 
@@ -39,6 +45,7 @@ export function GridDishCard({
   categoryName,
   currency,
   showBadges,
+  hidePhotos,
   palette,
 }: GridDishCardProps) {
   const badges = showBadges ? (item.badges ?? []) : [];
@@ -53,24 +60,25 @@ export function GridDishCard({
         breakInside: "avoid",
       }}
     >
-      {item.photoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={dishPhotoUrlForEngine(item.photoUrl, "grid")}
-          alt=""
-          style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", display: "block" }}
-        />
-      ) : (
-        <div
-          style={{
-            width: "100%",
-            aspectRatio: "4 / 3",
-            backgroundColor: getDishPlaceholderColor(categoryName),
-          }}
-        />
-      )}
+      {!hidePhotos &&
+        (item.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={dishPhotoUrlForEngine(item.photoUrl, "grid")}
+            alt=""
+            style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", display: "block" }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              aspectRatio: "4 / 3",
+              backgroundColor: getDishPlaceholderColor(categoryName),
+            }}
+          />
+        ))}
 
-      <div style={{ padding: "10px 12px 12px" }}>
+      <div style={{ padding: hidePhotos ? "12px" : "10px 12px 12px" }}>
         <div
           style={{
             display: "flex",

@@ -110,6 +110,7 @@ function GridPdfCard({
   categoryName,
   currency,
   showBadges,
+  hidePhotos,
   photoDataUri,
   palette,
   styles,
@@ -118,6 +119,7 @@ function GridPdfCard({
   categoryName: string;
   currency: string | undefined;
   showBadges: boolean;
+  hidePhotos: boolean;
   photoDataUri: string | undefined;
   palette: GridPalette;
   styles: GridStyles;
@@ -125,14 +127,17 @@ function GridPdfCard({
   const badges = showBadges ? (item.badges ?? []) : [];
   return (
     <View style={styles.card}>
-      {photoDataUri ? (
-        <Image src={photoDataUri} style={styles.photo} />
-      ) : (
-        // Same fixed box as a real photo, filled with the dish's
-        // category color. In this engine the photo *is* the tile, so an
-        // empty gap here would leave a visibly broken hole in the grid.
-        <View style={[styles.photo, { backgroundColor: getDishPlaceholderColor(categoryName) }]} />
-      )}
+      {!hidePhotos &&
+        (photoDataUri ? (
+          <Image src={photoDataUri} style={styles.photo} />
+        ) : (
+          // Same fixed box as a real photo, filled with the dish's
+          // category color. In this engine the photo *is* the tile, so an
+          // empty gap here would leave a visibly broken hole in the grid.
+          <View
+            style={[styles.photo, { backgroundColor: getDishPlaceholderColor(categoryName) }]}
+          />
+        ))}
       <View style={styles.cardBody}>
         <View style={styles.nameLine}>
           <Text style={styles.dishName}>{item.name}</Text>
@@ -170,6 +175,7 @@ function GridPdfCategory({
   category,
   currency,
   showBadges,
+  hidePhotos,
   photos,
   palette,
   styles,
@@ -177,6 +183,7 @@ function GridPdfCategory({
   category: MenuCategory;
   currency: string | undefined;
   showBadges: boolean;
+  hidePhotos: boolean;
   photos: PhotoBytesByItemId;
   palette: GridPalette;
   styles: GridStyles;
@@ -184,8 +191,10 @@ function GridPdfCategory({
   return (
     <View style={{ marginBottom: 14 }}>
       {/* minPresenceAhead keeps a heading from stranding alone at the foot
-          of a page — it must be followed by at least one tile row. */}
-      <View minPresenceAhead={PHOTO_HEIGHT + 30}>
+          of a page — it must be followed by at least one tile row. Without
+          photos a row is only its text card, so requiring a photo's worth
+          of space would push headings onto the next page for no reason. */}
+      <View minPresenceAhead={(hidePhotos ? 0 : PHOTO_HEIGHT) + 30}>
         <Text style={styles.categoryName}>{category.name}</Text>
         <View style={styles.categoryRule} />
       </View>
@@ -203,6 +212,7 @@ function GridPdfCategory({
                 categoryName={category.name}
                 currency={currency}
                 showBadges={showBadges}
+                hidePhotos={hidePhotos}
                 photoDataUri={photos.get(item.id)}
                 palette={palette}
                 styles={styles}
@@ -236,8 +246,12 @@ export async function renderGridPdf(menu: ExportableMenu): Promise<Buffer> {
   const venue = menu.content.venue;
   const contactLine = [venue?.address, venue?.phone].filter(Boolean).join(" · ");
 
+  const hidePhotos = menu.content.hidePhotos ?? false;
+  // Skip the downloads entirely rather than fetching bytes nothing renders.
   const [photos, qrDataUri] = await Promise.all([
-    fetchPhotoBytes(menu.content, "grid"),
+    hidePhotos
+      ? Promise.resolve<PhotoBytesByItemId>(new Map())
+      : fetchPhotoBytes(menu.content, "grid"),
     buildQrDataUri(menu),
   ]);
 
@@ -256,6 +270,7 @@ export async function renderGridPdf(menu: ExportableMenu): Promise<Buffer> {
               category={category}
               currency={currency}
               showBadges={menu.style.showBadges}
+              hidePhotos={hidePhotos}
               photos={photos}
               palette={palette}
               styles={styles}

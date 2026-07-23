@@ -30,6 +30,27 @@ import type { MenuLayoutEngine } from "@/lib/utils/resolve-menu-style";
 const PEXELS_HOSTNAME = "images.pexels.com";
 
 /**
+ * Whether an engine draws dish photos at all.
+ *
+ * A `Record`, so adding an engine forces an explicit answer rather than
+ * defaulting into "shows photos" and then rendering a broken slot. Drives
+ * two things in the editor: whether the "menu without photos" toggle is
+ * offered (it would control nothing for a text-only engine), and whether
+ * the "re-pick photos" action is shown.
+ */
+const ENGINE_RENDERS_DISH_PHOTOS: Record<MenuLayoutEngine, boolean> = {
+  classic: false,
+  "banner-two-column": true,
+  grid: true,
+  "classic-elegant": false,
+  editorial: true,
+};
+
+export function engineRendersDishPhotos(engine: MenuLayoutEngine): boolean {
+  return ENGINE_RENDERS_DISH_PHOTOS[engine];
+}
+
+/**
  * Target crop size (px, square) per layout engine.
  *
  * A `Record`, not a lookup with a default, for the same reason

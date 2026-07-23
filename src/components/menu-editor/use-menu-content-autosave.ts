@@ -18,6 +18,13 @@ export type VenueDraft = {
   phone: string;
 };
 
+/** Every `menus.content` field the editor can change, held together so they always save together. */
+type ContentDraft = {
+  currencyId: CurrencyId;
+  venue: VenueDraft;
+  hidePhotos: boolean;
+};
+
 function venueFromContent(venue: MenuVenue | undefined): VenueDraft {
   return {
     name: venue?.name ?? "",
@@ -45,19 +52,19 @@ function venueForStorage(draft: VenueDraft): MenuVenue | undefined {
 
 /**
  * One debounced save path for every field that lives in `menus.content`
- * rather than `style_overrides` — currently the currency and the venue
- * details.
+ * rather than `style_overrides` — the currency, the venue details, and the
+ * "no photos" choice.
  *
- * They MUST share one save: the menu PATCH replaces `content` wholesale, so
- * two independent savers each sending `{ ...content, <their field> }` would
+ * They MUST save together: the menu PATCH replaces `content` wholesale, so
+ * independent savers each sending `{ ...content, <their field> }` would
  * clobber each other's change (each starts from the same base `content`
- * prop, unaware of the other's latest value). Holding both here and sending
- * them together in a single `{ ...content, currency, venue }` is what keeps
- * a currency change and a venue edit from overwriting one another.
+ * prop, unaware of the others' latest values). One `draft` object holding
+ * all three, sent in a single PATCH, is what prevents that — and is why a
+ * fourth content field must be added here rather than given its own timer.
  *
- * The style_overrides autosave (colors/fonts/order) stays separate — it
- * targets a different endpoint (menusApi.updateStyle) and a different
- * column, so it has no such conflict with this one.
+ * The style_overrides autosave (colors/fonts/order) stays separate: it
+ * targets a different endpoint and a different column, so it has no such
+ * conflict with this one.
  */
 export function useMenuContentAutosave({
   menuId,
@@ -68,13 +75,16 @@ export function useMenuContentAutosave({
   content: MenuContent;
   initialCurrencyId: CurrencyId;
 }) {
-  const [currencyId, setCurrencyId] = useState<CurrencyId>(initialCurrencyId);
-  const [venue, setVenue] = useState<VenueDraft>(() => venueFromContent(content.venue));
+  const [draft, setDraft] = useState<ContentDraft>(() => ({
+    currencyId: initialCurrencyId,
+    venue: venueFromContent(content.venue),
+    hidePhotos: content.hidePhotos ?? false,
+  }));
   const [saveStatus, setSaveStatus] = useState<ContentSaveStatus>("idle");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const flush = useCallback(
-    async (nextCurrency: CurrencyId, nextVenue: VenueDraft) => {
+    async (next: ContentDraft) => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -84,8 +94,9 @@ export function useMenuContentAutosave({
         await menusApi.update(menuId, {
           content: {
             ...content,
-            currency: nextCurrency,
-            venue: venueForStorage(nextVenue),
+            currency: next.currencyId,
+            venue: venueForStorage(next.venue),
+            hidePhotos: next.hidePhotos,
           },
         });
         setSaveStatus("saved");
@@ -96,45 +107,42 @@ export function useMenuContentAutosave({
     [menuId, content],
   );
 
-  const schedule = useCallback(
-    (nextCurrency: CurrencyId, nextVenue: VenueDraft) => {
-      setSaveStatus("pending");
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(
-        () => void flush(nextCurrency, nextVenue),
-        AUTOSAVE_DEBOUNCE_MS,
-      );
+  /**
+   * Applies a change and schedules the debounced save from the *resulting*
+   * draft — computed inside the state updater so it is always the latest
+   * value, never a stale closure over a sibling field.
+   */
+  const change = useCallback(
+    (patch: Partial<ContentDraft>) => {
+      setDraft((prev) => {
+        const next = { ...prev, ...patch };
+        setSaveStatus("pending");
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => void flush(next), AUTOSAVE_DEBOUNCE_MS);
+        return next;
+      });
     },
     [flush],
   );
 
-  const changeCurrency = useCallback(
-    (id: CurrencyId) => {
-      setCurrencyId(id);
-      setVenue((currentVenue) => {
-        schedule(id, currentVenue);
-        return currentVenue;
-      });
-    },
-    [schedule],
-  );
+  const changeCurrency = useCallback((id: CurrencyId) => change({ currencyId: id }), [change]);
 
   const changeVenueField = useCallback(
-    (field: keyof VenueDraft, value: string) => {
-      setVenue((prev) => {
-        const next = { ...prev, [field]: value };
-        setCurrencyId((currentCurrency) => {
-          schedule(currentCurrency, next);
-          return currentCurrency;
-        });
+    (field: keyof VenueDraft, value: string) =>
+      setDraft((prev) => {
+        const next = { ...prev, venue: { ...prev.venue, [field]: value } };
+        setSaveStatus("pending");
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => void flush(next), AUTOSAVE_DEBOUNCE_MS);
         return next;
-      });
-    },
-    [schedule],
+      }),
+    [flush],
   );
 
+  const changeHidePhotos = useCallback((value: boolean) => change({ hidePhotos: value }), [change]);
+
   /** Force an immediate save of the current values — for the Save/Continue buttons. */
-  const flushNow = useCallback(() => flush(currencyId, venue), [flush, currencyId, venue]);
+  const flushNow = useCallback(() => flush(draft), [flush, draft]);
 
   useEffect(() => {
     return () => {
@@ -145,12 +153,14 @@ export function useMenuContentAutosave({
   const isDirty = saveStatus === "pending" || saveStatus === "saving" || saveStatus === "error";
 
   return {
-    currencyId,
-    venue,
+    currencyId: draft.currencyId,
+    venue: draft.venue,
+    hidePhotos: draft.hidePhotos,
     saveStatus,
     isDirty,
     changeCurrency,
     changeVenueField,
+    changeHidePhotos,
     flushNow,
   };
 }

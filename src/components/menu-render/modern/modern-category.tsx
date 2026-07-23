@@ -6,6 +6,7 @@ export interface ModernCategoryProps {
   category: MenuCategory;
   currency?: string;
   showBadges: boolean;
+  hidePhotos: boolean;
 }
 
 /**
@@ -14,7 +15,12 @@ export interface ModernCategoryProps {
  * typographically rather than with boxes, which is what stops the result
  * reading as a list of panels.
  */
-export function ModernCategory({ category, currency, showBadges }: ModernCategoryProps) {
+export function ModernCategory({
+  category,
+  currency,
+  showBadges,
+  hidePhotos,
+}: ModernCategoryProps) {
   return (
     <div data-testid="modern-category" style={{ breakInside: "avoid" }}>
       <div style={{ marginBottom: 14 }}>
@@ -42,6 +48,7 @@ export function ModernCategory({ category, currency, showBadges }: ModernCategor
           categoryName={category.name}
           currency={currency}
           showBadges={showBadges}
+          hidePhotos={hidePhotos}
           isLast={index === category.items.length - 1}
         />
       ))}

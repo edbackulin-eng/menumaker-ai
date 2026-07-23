@@ -314,6 +314,9 @@
       "font": "Font",
       "columns": "Number of columns",
       "currency": "Currency",
+      "photos": "Dish photos",
+      "hidePhotos": "Menu without photos",
+      "hidePhotosHint": "Each dish is just a name and a price, with no space left for a photo.",
       "venue": {
         "heading": "Venue details",
         "note": "Shown in templates with a header or footer.",

@@ -12,6 +12,7 @@ import {
   type LayoutColumns,
 } from "@/config/menu-style";
 import { CURATED_CURRENCIES, type CurrencyId } from "@/config/menu-currency";
+import { Switch } from "@/components/ui/switch";
 import { FONT_ID_TO_CSS_VARIABLE } from "@/lib/fonts/menu-fonts";
 import {
   contrastRatio,
@@ -25,10 +26,14 @@ export interface EditorControlsPanelProps {
   fontId: FontId;
   columns: LayoutColumns;
   currencyId: CurrencyId;
+  hidePhotos: boolean;
+  /** False for engines that never render dish photos (Bistro, classic) — the toggle would control nothing there. */
+  photosApplyToTemplate: boolean;
   onAccentColorChange: (id: AccentColorId) => void;
   onFontChange: (id: FontId) => void;
   onColumnsChange: (columns: LayoutColumns) => void;
   onCurrencyChange: (id: CurrencyId) => void;
+  onHidePhotosChange: (value: boolean) => void;
   className?: string;
 }
 
@@ -37,10 +42,13 @@ export function EditorControlsPanel({
   fontId,
   columns,
   currencyId,
+  hidePhotos,
+  photosApplyToTemplate,
   onAccentColorChange,
   onFontChange,
   onColumnsChange,
   onCurrencyChange,
+  onHidePhotosChange,
   className,
 }: EditorControlsPanelProps) {
   const t = useTranslations("menuGenerator.editor");
@@ -137,6 +145,18 @@ export function EditorControlsPanel({
           })}
         </div>
       </section>
+
+      {photosApplyToTemplate && (
+        <section className="flex flex-col gap-2">
+          <h3 className="text-body-sm text-foreground font-medium">{t("photos")}</h3>
+          <Switch
+            checked={hidePhotos}
+            onCheckedChange={onHidePhotosChange}
+            label={t("hidePhotos")}
+            description={t("hidePhotosHint")}
+          />
+        </section>
+      )}
 
       <section className="flex flex-col gap-2">
         <h3 className="text-body-sm text-foreground font-medium">{t("columns")}</h3>

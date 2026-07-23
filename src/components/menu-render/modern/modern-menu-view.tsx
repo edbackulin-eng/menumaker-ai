@@ -63,6 +63,7 @@ export function ModernMenuView({
               category={category}
               {...(currencyDisplay ? { currency: currencyDisplay } : {})}
               showBadges={style.showBadges}
+              hidePhotos={content.hidePhotos ?? false}
             />
           </div>
         ))}

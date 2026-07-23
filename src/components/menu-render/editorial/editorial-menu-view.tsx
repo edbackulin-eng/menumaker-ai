@@ -77,24 +77,31 @@ function EditorialCategory({
   category,
   currency,
   palette,
+  hidePhotos,
 }: {
   category: MenuCategory;
   currency: string | undefined;
   palette: EditorialPalette;
+  hidePhotos: boolean;
 }) {
-  const hero = categoryHeroPhotoUrl(category.items);
+  // Editorial's photo is the category hero, not a per-dish thumbnail, so
+  // "without photos" drops the hero (and its placeholder) and the heading
+  // becomes the section's opening — a magazine feature can lead with a
+  // display heading alone.
+  const hero = hidePhotos ? undefined : categoryHeroPhotoUrl(category.items);
   return (
     <section style={{ marginBottom: 56 }}>
-      {hero ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={dishPhotoUrlForEngine(hero, "editorial")}
-          alt=""
-          style={{ width: "100%", height: 300, objectFit: "cover", display: "block" }}
-        />
-      ) : (
-        <div style={{ width: "100%", height: 300, backgroundColor: palette.heroPlaceholder }} />
-      )}
+      {!hidePhotos &&
+        (hero ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={dishPhotoUrlForEngine(hero, "editorial")}
+            alt=""
+            style={{ width: "100%", height: 300, objectFit: "cover", display: "block" }}
+          />
+        ) : (
+          <div style={{ width: "100%", height: 300, backgroundColor: palette.heroPlaceholder }} />
+        ))}
       <h3
         style={{
           fontFamily: "var(--menu-heading-font)",
@@ -102,7 +109,7 @@ function EditorialCategory({
           fontWeight: 500,
           letterSpacing: 0.5,
           color: palette.text,
-          margin: "22px 0 4px",
+          margin: hidePhotos ? "0 0 4px" : "22px 0 4px",
         }}
       >
         {category.name}
@@ -210,6 +217,7 @@ export function EditorialMenuView({
             category={category}
             currency={currency}
             palette={palette}
+            hidePhotos={content.hidePhotos ?? false}
           />
         ))}
       </div>

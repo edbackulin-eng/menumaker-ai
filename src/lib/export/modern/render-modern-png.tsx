@@ -27,8 +27,25 @@ const FOOTER_HEIGHT = 90;
 const VERTICAL_PADDING = 88;
 /** Category heading + gold rule + the gap to the next category. */
 const CATEGORY_BLOCK_HEIGHT = 130;
-/** One dish row: the 110px photo floors it, but a two-line description plus a badge runs taller. */
-const DISH_ROW_HEIGHT = 155;
+/**
+ * One dish row. The 110px photo is only a floor — the text stack beside it
+ * is what actually sets the height: a 26px name (~34 with leading), 7px
+ * gap, description at 20px/1.45 (≈29 a line), then a ~30px badge row and
+ * the 26px margin to the next dish.
+ *
+ * 200 budgets three description lines plus badges (34+7+87+9+30+26 = 193).
+ * The earlier 155 fell short of even two lines with badges (164), and a
+ * six-category test menu with long descriptions had its last dishes
+ * cropped off the PNG — verified against a real render, not on paper.
+ */
+const DISH_ROW_HEIGHT = 200;
+/**
+ * Same row with `hidePhotos` on. The photo floor is gone and the text gets
+ * the full column width, so it typically wraps to one line fewer — but the
+ * budget stays close to the photo case, because trailing background is
+ * free and a cropped dish is a broken menu.
+ */
+const DISH_ROW_HEIGHT_NO_PHOTO = 190;
 
 /**
  * Satori has no intrinsic sizing — the canvas height must be declared
@@ -44,10 +61,11 @@ const DISH_ROW_HEIGHT = 155;
  * nothing, a missing dish is a broken menu.
  */
 function estimateHeight(menu: ExportableMenu): number {
+  const rowHeight = menu.content.hidePhotos ? DISH_ROW_HEIGHT_NO_PHOTO : DISH_ROW_HEIGHT;
   const columns = distributeSequentially(menu.content.categories, 2);
   const columnHeight = (categories: (typeof columns)[number]) =>
     categories.reduce(
-      (sum, category) => sum + CATEGORY_BLOCK_HEIGHT + category.items.length * DISH_ROW_HEIGHT,
+      (sum, category) => sum + CATEGORY_BLOCK_HEIGHT + category.items.length * rowHeight,
       0,
     );
   const tallest = Math.max(...columns.map(columnHeight), 0);
@@ -70,29 +88,31 @@ function dishRow(
   categoryName: string,
   currency: string | undefined,
   showBadges: boolean,
+  hidePhotos: boolean,
 ) {
   const badges = showBadges ? (item.badges ?? []) : [];
   return (
-    <div key={item.id} style={{ display: "flex", gap: 18, marginBottom: 26 }}>
-      {item.photoUrl ? (
-        // Satori fetches remote images itself, so the PNG path passes URLs
-        // straight through — unlike the PDF path, which has to embed bytes.
-        <img
-          src={dishPhotoUrlForEngine(item.photoUrl, "banner-two-column")}
-          width={110}
-          height={110}
-          style={{ width: 110, height: 110, borderRadius: 14, objectFit: "cover" }}
-        />
-      ) : (
-        <div
-          style={{
-            width: 110,
-            height: 110,
-            borderRadius: 14,
-            backgroundColor: getDishPlaceholderColor(categoryName),
-          }}
-        />
-      )}
+    <div key={item.id} style={{ display: "flex", gap: hidePhotos ? 0 : 18, marginBottom: 26 }}>
+      {!hidePhotos &&
+        (item.photoUrl ? (
+          // Satori fetches remote images itself, so the PNG path passes URLs
+          // straight through — unlike the PDF path, which has to embed bytes.
+          <img
+            src={dishPhotoUrlForEngine(item.photoUrl, "banner-two-column")}
+            width={110}
+            height={110}
+            style={{ width: 110, height: 110, borderRadius: 14, objectFit: "cover" }}
+          />
+        ) : (
+          <div
+            style={{
+              width: 110,
+              height: 110,
+              borderRadius: 14,
+              backgroundColor: getDishPlaceholderColor(categoryName),
+            }}
+          />
+        ))}
       <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
           <div style={{ display: "flex", fontSize: 26, color: MODERN_PALETTE.text }}>
@@ -199,7 +219,13 @@ export async function renderModernPng(menu: ExportableMenu): Promise<Buffer> {
             }}
           />
           {category.items.map((item) =>
-            dishRow(item, category.name, currency, menu.style.showBadges),
+            dishRow(
+              item,
+              category.name,
+              currency,
+              menu.style.showBadges,
+              menu.content.hidePhotos ?? false,
+            ),
           )}
         </div>
       ))}

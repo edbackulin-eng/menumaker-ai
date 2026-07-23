@@ -29,8 +29,19 @@ const FOOTER_HEIGHT = 80;
 const VERTICAL_PADDING = 80;
 /** Hero band + category heading + accent rule + the section's bottom margin. */
 const CATEGORY_HEADER_HEIGHT = HERO_HEIGHT + 130;
-/** One dish: display name + a two-line description + the row's padding and rule (~118px worst case). */
-const DISH_ROW_HEIGHT = 118;
+/** Same header with `hidePhotos` on — the hero band is gone, only heading + rule + margin remain. */
+const CATEGORY_HEADER_HEIGHT_NO_PHOTO = 130;
+/**
+ * One dish: 18px padding top and bottom, a 26px display name (~34 with
+ * leading), 6px gap, then the description at 19px/1.45 (≈28px a line).
+ *
+ * 165 budgets three description lines (36 + 34 + 6 + 83). The earlier 118
+ * did not even cover two (that comes to 131) — a six-category test menu
+ * with long descriptions was cropping its last four dishes off the bottom
+ * of the PNG, silently, exactly as Satori always does. Measured against a
+ * real render, not derived on paper.
+ */
+const DISH_ROW_HEIGHT = 165;
 
 /**
  * Satori has no intrinsic sizing — the canvas height is declared upfront
@@ -41,45 +52,54 @@ const DISH_ROW_HEIGHT = 118;
  * background, under-budgeting collides the footer into the last dish.
  */
 function estimateHeight(menu: ExportableMenu): number {
+  const headerHeight = menu.content.hidePhotos
+    ? CATEGORY_HEADER_HEIGHT_NO_PHOTO
+    : CATEGORY_HEADER_HEIGHT;
   const body = menu.content.categories.reduce(
-    (sum, category) => sum + CATEGORY_HEADER_HEIGHT + category.items.length * DISH_ROW_HEIGHT,
+    (sum, category) => sum + headerHeight + category.items.length * DISH_ROW_HEIGHT,
     0,
   );
   const total = MASTHEAD_HEIGHT + VERTICAL_PADDING + body + FOOTER_HEIGHT;
   return Math.min(MAX_HEIGHT, Math.max(MIN_HEIGHT, total));
 }
 
-function category(cat: MenuCategory, currency: string | undefined, palette: EditorialPalette) {
-  const hero = categoryHeroPhotoUrl(cat.items);
+function category(
+  cat: MenuCategory,
+  currency: string | undefined,
+  palette: EditorialPalette,
+  hidePhotos: boolean,
+) {
+  const hero = hidePhotos ? undefined : categoryHeroPhotoUrl(cat.items);
   return (
     <div key={cat.id} style={{ display: "flex", flexDirection: "column", marginBottom: 50 }}>
-      {hero ? (
-        <img
-          src={dishPhotoUrlForEngine(hero, "editorial")}
-          width={CANVAS_WIDTH - PAGE_PADDING * 2}
-          height={HERO_HEIGHT}
-          style={{
-            width: CANVAS_WIDTH - PAGE_PADDING * 2,
-            height: HERO_HEIGHT,
-            objectFit: "cover",
-          }}
-        />
-      ) : (
-        <div
-          style={{
-            width: CANVAS_WIDTH - PAGE_PADDING * 2,
-            height: HERO_HEIGHT,
-            backgroundColor: palette.heroPlaceholder,
-          }}
-        />
-      )}
+      {!hidePhotos &&
+        (hero ? (
+          <img
+            src={dishPhotoUrlForEngine(hero, "editorial")}
+            width={CANVAS_WIDTH - PAGE_PADDING * 2}
+            height={HERO_HEIGHT}
+            style={{
+              width: CANVAS_WIDTH - PAGE_PADDING * 2,
+              height: HERO_HEIGHT,
+              objectFit: "cover",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: CANVAS_WIDTH - PAGE_PADDING * 2,
+              height: HERO_HEIGHT,
+              backgroundColor: palette.heroPlaceholder,
+            }}
+          />
+        ))}
       <div
         style={{
           display: "flex",
           fontFamily: HEADING_FONT,
           fontSize: 44,
           color: palette.text,
-          marginTop: 24,
+          marginTop: hidePhotos ? 0 : 24,
         }}
       >
         {cat.name}
@@ -214,7 +234,9 @@ export async function renderEditorialPng(menu: ExportableMenu): Promise<Buffer> 
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-        {menu.content.categories.map((cat) => category(cat, currency, palette))}
+        {menu.content.categories.map((cat) =>
+          category(cat, currency, palette, menu.content.hidePhotos ?? false),
+        )}
       </div>
 
       {contactLine && (

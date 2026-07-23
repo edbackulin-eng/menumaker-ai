@@ -128,24 +128,31 @@ type EditorialStyles = ReturnType<typeof buildStyles>;
 function EditorialPdfCategory({
   category,
   currency,
+  hidePhotos,
   heroDataUri,
   styles,
 }: {
   category: MenuCategory;
   currency: string | undefined;
+  hidePhotos: boolean;
   heroDataUri: string | undefined;
   styles: EditorialStyles;
 }) {
   return (
     <View style={styles.category} wrap>
-      {/* The hero band + heading must not split from the first dish. */}
-      <View minPresenceAhead={HERO_HEIGHT + 60}>
-        {heroDataUri ? (
-          <Image src={heroDataUri} style={styles.hero} />
-        ) : (
-          <View style={styles.heroPlaceholder} />
-        )}
-        <Text style={styles.categoryName}>{category.name}</Text>
+      {/* The hero band + heading must not split from the first dish. With
+          no hero there is no band to keep together, so the reservation
+          drops to the heading alone. */}
+      <View minPresenceAhead={(hidePhotos ? 0 : HERO_HEIGHT) + 60}>
+        {!hidePhotos &&
+          (heroDataUri ? (
+            <Image src={heroDataUri} style={styles.hero} />
+          ) : (
+            <View style={styles.heroPlaceholder} />
+          ))}
+        <Text style={hidePhotos ? [styles.categoryName, { marginTop: 0 }] : styles.categoryName}>
+          {category.name}
+        </Text>
         <View style={styles.categoryRule} />
       </View>
       {category.items.map((item, index) => (
@@ -190,8 +197,11 @@ export async function renderEditorialPdf(menu: ExportableMenu): Promise<Buffer> 
   const heading = venue?.name ?? menu.title;
   const contactLine = [venue?.address, venue?.phone].filter(Boolean).join(" · ");
 
+  const hidePhotos = menu.content.hidePhotos ?? false;
   const [heroPhotos, qrDataUri] = await Promise.all([
-    fetchPhotoBytes(heroBytesContent(menu.content), "editorial"),
+    hidePhotos
+      ? Promise.resolve(new Map<string, string>())
+      : fetchPhotoBytes(heroBytesContent(menu.content), "editorial"),
     buildQrDataUri(menu),
   ]);
 
@@ -218,6 +228,7 @@ export async function renderEditorialPdf(menu: ExportableMenu): Promise<Buffer> 
             key={category.id}
             category={category}
             currency={currency}
+            hidePhotos={hidePhotos}
             heroDataUri={heroByCategory(category)}
             styles={styles}
           />

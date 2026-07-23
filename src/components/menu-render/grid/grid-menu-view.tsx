@@ -112,6 +112,7 @@ export function GridMenuView({
                   categoryName={category.name}
                   currency={currencyDisplay}
                   showBadges={style.showBadges}
+                  hidePhotos={content.hidePhotos ?? false}
                   palette={palette}
                 />
               ))}
