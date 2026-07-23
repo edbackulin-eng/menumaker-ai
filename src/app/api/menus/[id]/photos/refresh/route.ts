@@ -5,6 +5,11 @@ import { withApiHandler } from "@/lib/api/with-api-handler";
 import { menuIdParamSchema } from "@/lib/validations/menu";
 import { refreshStockPhotos } from "@/services/photos/refresh-stock-photos";
 
+// Fans out into a Pexels search per dish (parallelized, but still bounded
+// by the provider's own latency/rate limits on a large menu) — can push
+// this well past Vercel's default function timeout.
+export const maxDuration = 60;
+
 interface RouteContext {
   params: Promise<{ id: string }>;
 }

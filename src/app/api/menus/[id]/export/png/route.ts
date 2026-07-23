@@ -9,6 +9,11 @@ import { menuIdParamSchema } from "@/lib/validations/menu";
 import { loadExportableMenu } from "@/services/export/load-menu";
 import { logMenuExport, uploadExportFile } from "@/services/export/storage";
 
+// Satori rasterization plus (for photo-led engines) remote image downloads
+// can push this well past Vercel's default function timeout — set
+// explicitly rather than discovered via a production timeout.
+export const maxDuration = 60;
+
 interface RouteContext {
   params: Promise<{ id: string }>;
 }

@@ -63,9 +63,11 @@
 
 ## 4. Чек-лист перед продакшеном
 
+Докладніші кроки (Vercel env vars, `maxDuration`) — [docs/deploy-vercel.md](deploy-vercel.md). Тут — лише пункти, специфічні для auth-провайдерів.
+
 - [ ] Додати продакшн-домен у `supabase/config.toml` (`additional_redirect_urls`) і запустити `supabase config push` ще раз.
 - [ ] Додати продакшн-домен як Authorized JavaScript origin у Google Cloud Console (redirect URI лишається той самий — це домен Supabase).
 - [ ] Додати продакшн-домен у список дозволених доменів Turnstile (зараз лише `localhost`).
-- [ ] Виставити `NEXT_PUBLIC_APP_URL` на реальний продакшн-URL, і реальні `NEXT_PUBLIC_TURNSTILE_SITE_KEY`/`TURNSTILE_SECRET_KEY` — у змінних середовища Vercel (не лише `.env.local`).
+- [ ] Виставити `NEXT_PUBLIC_APP_URL` на реальний продакшн-URL — у змінних середовища Vercel (не лише `.env.local`).
 - [ ] Опублікувати Google OAuth consent screen (зараз, ймовірно, у режимі Testing — production-користувачі поза Test users побачать "unverified app").
-- [ ] **Підключити власний SMTP** для auth-листів (Settings → Auth → SMTP Settings). Вбудований email-сервіс Supabase має дуже суворий ліміт — я впіймав `over_email_send_rate_limit` уже після ~3 листів під час тестування. Для реальних користувачів (лист скидання пароля тощо) це неприйнятно без власного SMTP (Resend, SendGrid тощо).
+- [x] ~~Підключити власний SMTP для auth-листів~~ — **свідомо відкладено (PO, Stage 15.5)**, не забуто. Вбудований email-сервіс Supabase має дуже суворий ліміт (`over_email_send_rate_limit` ловився вже після ~3 листів під час тестування Stage 4), тож скидання пароля для email-користувачів не працюватиме, доки не буде власного SMTP. Причина відкладення: SMTP-провайдеру (Resend/SendGrid) потрібен домен для DNS-верифікації (SPF/DKIM), а домену на старті ще немає. Google OAuth — головний і повністю робочий шлях входу, тому цей пробіл прийнятний до появи домену й реального попиту. Деталі: [docs/deploy-vercel.md](deploy-vercel.md#1-свідомо-відкладене-власний-smtp).

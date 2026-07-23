@@ -6,6 +6,10 @@ import { generateDescriptionSchema } from "@/lib/validations/ai";
 import { runCreditedAiCall } from "@/services/ai/credit-guard";
 import { generateDescription } from "@/services/ai/functions/generate-description";
 
+// See analyze-menu/route.ts: Vercel's default timeout is shorter than a
+// real Anthropic round-trip can take.
+export const maxDuration = 60;
+
 export const POST = withApiHandler(
   async (request) => {
     const { user } = await requireAuth();

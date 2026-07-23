@@ -6,6 +6,11 @@ import { analyzeMenuSchema } from "@/lib/validations/ai";
 import { runCreditedAiCall } from "@/services/ai/credit-guard";
 import { analyzeMenu } from "@/services/ai/functions/analyze-menu";
 
+// Vercel's default function timeout (10s on Hobby without this) is shorter
+// than a real Anthropic round-trip on a large pasted menu can take. Set
+// explicitly rather than discovered via a production timeout.
+export const maxDuration = 60;
+
 export const POST = withApiHandler(
   async (request) => {
     const { user } = await requireAuth();

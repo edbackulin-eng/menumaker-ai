@@ -12,6 +12,10 @@ import { deleteMenuFileSafe, uploadMenuFile } from "@/services/menu-generator/st
 import { validateMenuFile } from "@/services/menu-generator/file-validation";
 import type { Json } from "@/types/database.types";
 
+// File parsing (PDF/DOCX/XLSX) plus the AI analysis call together can run
+// well past Vercel's default function timeout on a large source document.
+export const maxDuration = 60;
+
 /**
  * Step 1 of the wizard (Import). Unlike every other Route Handler in this
  * codebase, the body isn't JSON — a file upload requires multipart/form-data

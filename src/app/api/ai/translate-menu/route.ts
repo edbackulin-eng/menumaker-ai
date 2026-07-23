@@ -6,6 +6,10 @@ import { translateMenuSchema } from "@/lib/validations/ai";
 import { runCreditedAiCall } from "@/services/ai/credit-guard";
 import { translateMenu } from "@/services/ai/functions/translate-menu";
 
+// See analyze-menu/route.ts: Vercel's default timeout is shorter than a
+// real Anthropic round-trip can take.
+export const maxDuration = 60;
+
 export const POST = withApiHandler(
   async (request) => {
     const { user } = await requireAuth();
