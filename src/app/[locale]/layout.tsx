@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { RootShell } from "@/app/root-shell";
+import { SITE_URL } from "@/config/seo";
 import { routing } from "@/i18n/routing";
 
 export function generateStaticParams() {
@@ -21,6 +22,12 @@ export async function generateMetadata({
   }
   const t = await getTranslations({ locale, namespace: "metadata" });
   return {
+    // Inherited by every page under this segment for resolving relative
+    // URLs in `alternates`/`openGraph` — set once here rather than on each
+    // leaf page. Only `/[locale]/page.tsx` (the landing page, the one page
+    // under this tree with real per-locale URL variants) currently adds
+    // its own `alternates.languages` on top of this.
+    metadataBase: SITE_URL,
     title: t("title"),
     description: t("description"),
   };

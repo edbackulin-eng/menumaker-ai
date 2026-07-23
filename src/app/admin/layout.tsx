@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { isLocaleId } from "@/config/profile";
+import { SITE_URL } from "@/config/seo";
 import { routing } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { AdminHeader } from "@/components/admin/admin-header";
@@ -10,8 +11,14 @@ import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { RootShell } from "@/app/root-shell";
 
 export const metadata: Metadata = {
+  metadataBase: SITE_URL,
   title: "Адмін-панель — MenuMaker AI",
   description: "Адміністративна панель MenuMaker AI.",
+  // Auth-gated already, and robots.ts disallows crawling it too — this
+  // `<meta>` is the third, redundant-by-design layer: it still protects
+  // against an admin URL that leaked via a link somewhere robots.txt can't
+  // see.
+  robots: { index: false, follow: false },
 };
 
 /**

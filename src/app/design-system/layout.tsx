@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 
+import { SITE_URL } from "@/config/seo";
 import { RootShell } from "@/app/root-shell";
 
 // Defense-in-depth alongside the notFound() gate in page.tsx: even if this
 // route is somehow reachable, it's never indexed.
 export const metadata: Metadata = {
+  metadataBase: SITE_URL,
   robots: { index: false, follow: false },
 };
 

@@ -3,8 +3,10 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { publicEnv } from "@/config/env";
+import { SITE_URL } from "@/config/seo";
 import { generateQrPng } from "@/lib/export/qr";
 import { MENU_EDITOR_FONT_VARIABLES_CLASSNAME } from "@/lib/fonts/menu-fonts";
+import { buildMenuJsonLd } from "@/lib/seo/menu-schema";
 import { createClient } from "@/lib/supabase/server";
 import { applyStyleOrder } from "@/lib/utils/menu-content-order";
 import {
@@ -15,6 +17,7 @@ import {
 } from "@/lib/utils/resolve-menu-style";
 import { styleOverridesSchema } from "@/lib/validations/menu-style";
 import { menuContentSchema } from "@/services/ai/schemas/menu-content";
+import { JsonLd } from "@/components/seo/json-ld";
 import { MenuStaticView } from "@/components/menu-render/menu-static-view";
 
 interface PageProps {
@@ -60,7 +63,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const result = await getPublicMenu(slug);
   if (!result) {
-    return { title: "Меню не знайдено — MenuMaker AI" };
+    return {
+      metadataBase: SITE_URL,
+      title: "Меню не знайдено — MenuMaker AI",
+      // A missing/unpublished slug is still worth keeping out of the
+      // index — nothing here is a body of content search should surface.
+      robots: { index: false, follow: false },
+    };
   }
 
   const { menu } = result;
@@ -68,16 +77,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = "Перегляньте меню — створено на MenuMaker AI.";
 
   return {
+    metadataBase: SITE_URL,
     title,
     description,
+    alternates: { canonical: `/m/${slug}` },
     openGraph: {
       title,
       description,
       type: "website",
     },
-    // Public menus are working pages for real businesses, not marketing
-    // content of ours — leave indexing/crawling policy to a future SEO
-    // stage rather than guessing at one now.
+    // A business publishes a menu here to hand out a QR code at a table,
+    // not to compete for search rankings — that is a decision the owner
+    // hasn't made yet, so `noindex` is the default (Stage 15 report). This
+    // is a `<meta>` tag, not a robots.txt disallow: the page must stay
+    // crawlable for Google to ever see this directive. `follow: true`
+    // because the page has no outbound links to withhold crawl equity
+    // from in the first place — there's nothing for `follow: false` to do
+    // here beyond the (harmless) precedent set for /design-system.
+    robots: { index: false, follow: true },
   };
 }
 
@@ -140,6 +157,13 @@ export default async function PublicMenuPage({ params }: PageProps) {
       style={{ backgroundColor: MENU_SURFACE.pageBackground }}
       className={`min-h-full py-6 ${MENU_EDITOR_FONT_VARIABLES_CLASSNAME}`}
     >
+      <JsonLd
+        data={buildMenuJsonLd({
+          content: orderedContent,
+          venueName: orderedContent.venue?.name ?? menu.title,
+          url: `${publicEnv.NEXT_PUBLIC_APP_URL}/m/${slug}`,
+        })}
+      />
       <div className="mx-auto max-w-2xl px-4">
         {!hasOwnBanner && (
           <h1 className="text-h4 mb-4" style={{ color: canvasForeground.primary }}>
