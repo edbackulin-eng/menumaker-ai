@@ -14,6 +14,9 @@ export const registerSchema = z
     password: passwordSchema,
     confirmPassword: z.string().min(1, "Підтвердіть пароль."),
     turnstileToken: z.string().min(1, "Підтвердіть, що ви не робот."),
+    consent: z.literal(true, {
+      message: "Потрібна згода з Політикою конфіденційності та Умовами використання.",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Паролі не збігаються.",

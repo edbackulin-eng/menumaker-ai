@@ -7,6 +7,12 @@
     "title": "MenuMaker AI",
     "subtitle": "Coming soon"
   },
+  "regionUnavailable": {
+    "metaTitle": "Service unavailable in your region — MenuMaker AI",
+    "title": "This service isn't available in your region yet",
+    "message": "MenuMaker AI doesn't currently accept new sign-ups or sign-ins from the European Union, the United Kingdom, the European Economic Area, or Switzerland. Thank you for understanding.",
+    "backHome": "Back to home"
+  },
   "common": {
     "or": "or",
     "genericError": "Something went wrong. Please try again.",
@@ -29,6 +35,11 @@
   "localeSwitcher": {
     "label": "Language",
     "ariaLabel": "Choose interface language"
+  },
+  "footer": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "rights": "© {year} MenuMaker AI"
   },
   "nav": {
     "brand": "MenuMaker AI",
@@ -67,6 +78,22 @@
       "passwordLabel": "Password",
       "submit": "Log in"
     },
+    "oauthConsent": {
+      "metaTitle": "Continue with Google — MenuMaker AI",
+      "title": "Continue with Google",
+      "subtitle": "Please agree to our Privacy Policy and Terms of Service to continue with Google.",
+      "consentPrefix": "I agree to the",
+      "consentPrivacyLink": "Privacy Policy",
+      "consentAnd": "and",
+      "consentTermsLink": "Terms of Service",
+      "consentSuffix": ".",
+      "continueButton": "Continue",
+      "cancelButton": "Cancel",
+      "genericError": "Something went wrong. Please try again.",
+      "invalidRequestTitle": "Invalid request",
+      "invalidRequestMessage": "This page was opened without a valid sign-in provider.",
+      "backHome": "Back to home"
+    },
     "register": {
       "metaTitle": "Sign up — MenuMaker AI",
       "title": "Create an account",
@@ -78,6 +105,12 @@
       "passwordLabel": "Password",
       "passwordHelper": "At least 8 characters.",
       "confirmPasswordLabel": "Confirm password",
+      "consentPrefix": "I agree to the",
+      "consentPrivacyLink": "Privacy Policy",
+      "consentAnd": "and",
+      "consentTermsLink": "Terms of Service",
+      "consentSuffix": ".",
+      "consentError": "You must agree to the Privacy Policy and Terms of Service.",
       "submit": "Sign up"
     },
     "forgotPassword": {

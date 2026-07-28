@@ -123,13 +123,26 @@ export const POST = withApiHandler(
         .update({
           content: content as unknown as Json,
           status: "draft",
-          ...(uploadedPath ? { original_file_url: uploadedPath } : {}),
         })
         .eq("id", menu.id)
         .select()
         .single();
       if (updateError || !updated) {
         throw new ApiError(500, "db_error", "Не вдалося зберегти розпізнані дані меню.");
+      }
+
+      // GDPR data minimisation (docs/privacy-audit.md): the uploaded source
+      // file is written to Storage once and never read again anywhere in
+      // the codebase past this point — the wizard's Review/Editor/Result
+      // steps all work off `menus.content`, and there is no UI path back to
+      // Import for an existing menu. Deleting it right after a successful
+      // parse (rather than leaving it until account deletion) means we stop
+      // holding a copy of the user's raw document the moment it has served
+      // its purpose. `original_file_url` is deliberately no longer written
+      // above — a path to a file that won't exist would just be a dangling
+      // reference.
+      if (uploadedPath) {
+        await deleteMenuFileSafe(uploadedPath);
       }
 
       return apiSuccess({ ...updated, usedFreeMenu, creditsBalance: balance }, 201);

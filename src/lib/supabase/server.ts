@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
+import { SESSION_COOKIE_MAX_AGE_SECONDS } from "@/config/auth";
 import { publicEnv } from "@/config/env";
 import type { Database } from "@/types/database.types";
 
@@ -34,6 +35,7 @@ export async function createClient() {
           }
         },
       },
+      cookieOptions: { maxAge: SESSION_COOKIE_MAX_AGE_SECONDS },
     },
   );
 }

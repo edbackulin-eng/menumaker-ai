@@ -2,7 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { SESSION_COOKIE_MAX_AGE_SECONDS } from "@/config/auth";
 import { publicEnv } from "@/config/env";
+import { isBlockedCountry } from "@/config/geo-block";
 import { isLocaleId, type LocaleId } from "@/config/profile";
 import { routing } from "@/i18n/routing";
 import type { Database } from "@/types/database.types";
@@ -12,6 +14,26 @@ import type { Database } from "@/types/database.types";
 // entirely (see the early-return branch below) and keeps its own
 // always-Ukrainian, unlocalized guard.
 const PROTECTED_PREFIXES = ["/dashboard", "/menus"];
+// Account creation and sign-in are blocked for visitors in the countries
+// listed in src/config/geo-block.ts (GDPR audit, Stage 15.5 — see
+// docs/privacy-audit.md). `/forgot-password` and `/reset-password` are
+// included deliberately, not just `/login`/`/register`: Supabase's recovery
+// flow signs the visitor in directly from the emailed link, which would
+// otherwise let a blocked visitor reach an authenticated session without
+// ever touching `/login` — a gap identified before shipping, not after.
+// `/oauth-consent` is the same kind of gap: it's the only page that actually
+// starts the Google OAuth flow (Stage 15.6), so leaving it out would let a
+// blocked visitor reach a Google-authenticated session via a URL one hop
+// removed from `/login`. `/m/[slug]` (public menus) is untouched by this
+// list on purpose: it collects no personal data from the visitor and a QR
+// code on a table must keep working for any guest, foreign or not.
+const GEOBLOCKED_PREFIXES = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/oauth-consent",
+];
 const ADMIN_PREFIX = "/admin";
 // `/m` (public menu pages, Stage 11) is deliberately unlocalized too — its
 // URLs are permanent, externally shared artifacts (QR codes, printed
@@ -102,6 +124,7 @@ export async function proxy(request: NextRequest) {
           }
         },
       },
+      cookieOptions: { maxAge: SESSION_COOKIE_MAX_AGE_SECONDS },
     },
   );
 
@@ -198,6 +221,15 @@ export async function proxy(request: NextRequest) {
 
   const localeMatch = LOCALE_PATH_PATTERN.exec(pathname);
   const pathWithoutLocale = localeMatch ? pathname.slice(localeMatch[0].length) || "/" : pathname;
+
+  const isGeoblocked = GEOBLOCKED_PREFIXES.some(
+    (prefix) => pathWithoutLocale === prefix || pathWithoutLocale.startsWith(`${prefix}/`),
+  );
+  if (isGeoblocked && isBlockedCountry(request.headers.get("x-vercel-ip-country"))) {
+    const locale = localeMatch?.[1] ?? routing.defaultLocale;
+    return NextResponse.redirect(new URL(`/${locale}/region-unavailable`, request.url));
+  }
+
   const isProtected = PROTECTED_PREFIXES.some(
     (prefix) => pathWithoutLocale === prefix || pathWithoutLocale.startsWith(`${prefix}/`),
   );

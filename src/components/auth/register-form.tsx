@@ -3,8 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
+import { TermsConsentCheckbox } from "@/components/auth/terms-consent-checkbox";
 import { TurnstileWidget, type TurnstileWidgetHandle } from "@/components/auth/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,11 +21,13 @@ export function RegisterForm() {
     handleSubmit,
     setValue,
     setError,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: { turnstileToken: "" },
   });
+  const consentChecked = useWatch({ control, name: "consent" });
 
   const onSubmit = async (data: RegisterInput) => {
     const result = await signUpAction(data);
@@ -65,6 +68,22 @@ export function RegisterForm() {
         autoComplete="new-password"
         error={errors.confirmPassword?.message}
         {...register("confirmPassword")}
+      />
+      <TermsConsentCheckbox
+        checked={consentChecked === true}
+        onCheckedChange={(checked) =>
+          // registerSchema requires the literal `true`, so unchecking still
+          // sets a `boolean` at runtime for zodResolver to reject — the cast
+          // only widens the compile-time type RHF infers from that literal
+          // schema, it doesn't change what's actually stored.
+          setValue("consent", checked as true, { shouldValidate: true })
+        }
+        error={errors.consent?.message}
+        prefix={t("consentPrefix")}
+        privacyLabel={t("consentPrivacyLink")}
+        and={t("consentAnd")}
+        termsLabel={t("consentTermsLink")}
+        suffix={t("consentSuffix")}
       />
       <div className="flex flex-col gap-1.5">
         <TurnstileWidget

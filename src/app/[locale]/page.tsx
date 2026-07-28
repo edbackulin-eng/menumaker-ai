@@ -5,6 +5,7 @@ import { SITE_URL, buildLocaleAlternates } from "@/config/seo";
 import { Link } from "@/i18n/navigation";
 import { JsonLd } from "@/components/seo/json-ld";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
+import { SiteFooter } from "@/components/shared/site-footer";
 
 /**
  * The landing page's own metadata, layered on top of `[locale]/layout.tsx`'s
@@ -57,6 +58,7 @@ export default async function Home() {
         </h1>
         <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">{t("subtitle")}</p>
       </div>
+      <SiteFooter />
     </div>
   );
 }

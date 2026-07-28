@@ -7,6 +7,12 @@
     "title": "MenuMaker AI",
     "subtitle": "Незабаром"
   },
+  "regionUnavailable": {
+    "metaTitle": "Сервіс недоступний у вашому регіоні — MenuMaker AI",
+    "title": "Сервіс поки недоступний у вашому регіоні",
+    "message": "MenuMaker AI поки не приймає нових користувачів і вхід із Європейського Союзу, Великої Британії, Європейського економічного простору та Швейцарії. Дякуємо за розуміння.",
+    "backHome": "На головну"
+  },
   "common": {
     "or": "або",
     "genericError": "Щось пішло не так. Спробуйте ще раз.",
@@ -29,6 +35,11 @@
   "localeSwitcher": {
     "label": "Мова",
     "ariaLabel": "Обрати мову інтерфейсу"
+  },
+  "footer": {
+    "privacy": "Політика конфіденційності",
+    "terms": "Умови використання",
+    "rights": "© {year} MenuMaker AI"
   },
   "nav": {
     "brand": "MenuMaker AI",
@@ -67,6 +78,22 @@
       "passwordLabel": "Пароль",
       "submit": "Увійти"
     },
+    "oauthConsent": {
+      "metaTitle": "Продовжити через Google — MenuMaker AI",
+      "title": "Продовжити через Google",
+      "subtitle": "Щоб продовжити через Google, будь ласка, погодьтесь з нашою Політикою конфіденційності та Умовами використання.",
+      "consentPrefix": "Я погоджуюсь з",
+      "consentPrivacyLink": "Політикою конфіденційності",
+      "consentAnd": "та",
+      "consentTermsLink": "Умовами використання",
+      "consentSuffix": ".",
+      "continueButton": "Продовжити",
+      "cancelButton": "Скасувати",
+      "genericError": "Щось пішло не так. Спробуйте ще раз.",
+      "invalidRequestTitle": "Некоректний запит",
+      "invalidRequestMessage": "Цю сторінку відкрито без коректного провайдера входу.",
+      "backHome": "На головну"
+    },
     "register": {
       "metaTitle": "Реєстрація — MenuMaker AI",
       "title": "Створити акаунт",
@@ -78,6 +105,12 @@
       "passwordLabel": "Пароль",
       "passwordHelper": "Щонайменше 8 символів.",
       "confirmPasswordLabel": "Підтвердіть пароль",
+      "consentPrefix": "Я погоджуюсь з",
+      "consentPrivacyLink": "Політикою конфіденційності",
+      "consentAnd": "та",
+      "consentTermsLink": "Умовами використання",
+      "consentSuffix": ".",
+      "consentError": "Потрібна згода з Політикою конфіденційності та Умовами використання.",
       "submit": "Зареєструватись"
     },
     "forgotPassword": {

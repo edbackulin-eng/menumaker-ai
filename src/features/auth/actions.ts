@@ -7,6 +7,7 @@ import { publicEnv } from "@/config/env";
 import { redirect } from "@/i18n/navigation";
 import { checkLoginLock, recordLoginFailure, recordLoginSuccess } from "@/lib/auth/rate-limit";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 import { verifyTurnstileToken } from "@/lib/turnstile/verify";
 import { parseAcceptLanguage } from "@/lib/utils/locale";
 import {
@@ -51,7 +52,7 @@ export async function signUpAction(input: RegisterInput): Promise<ActionResult> 
   const locale = parseAcceptLanguage(acceptLanguage);
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: { locale } },
@@ -62,6 +63,20 @@ export async function signUpAction(input: RegisterInput): Promise<ActionResult> 
       return { success: false, error: "Акаунт з таким email вже існує. Спробуйте увійти." };
     }
     return { success: false, error: "Не вдалося зареєструватись. Спробуйте пізніше." };
+  }
+
+  // registerSchema already required `consent: true` above — this is the
+  // legal record of it. Written via the service-role client (not the
+  // session client `supabase` already in scope): `terms_accepted_at` is
+  // protected by the same trigger that guards `role`/`subscription_*`
+  // (Stage 15.6 migration), so an ordinary authenticated update would be
+  // rejected even from the user's own just-created row.
+  if (data.user) {
+    const admin = createServiceClient();
+    await admin
+      .from("profiles")
+      .update({ terms_accepted_at: new Date().toISOString() })
+      .eq("id", data.user.id);
   }
 
   return redirect({ href: "/dashboard", locale: await getLocale() });

@@ -7,6 +7,12 @@
     "title": "MenuMaker AI",
     "subtitle": "Już wkrótce"
   },
+  "regionUnavailable": {
+    "metaTitle": "Usługa niedostępna w Twoim regionie — MenuMaker AI",
+    "title": "Ta usługa nie jest jeszcze dostępna w Twoim regionie",
+    "message": "MenuMaker AI nie przyjmuje obecnie nowych rejestracji ani logowań z Unii Europejskiej, Wielkiej Brytanii, Europejskiego Obszaru Gospodarczego ani Szwajcarii. Dziękujemy za zrozumienie.",
+    "backHome": "Powrót na stronę główną"
+  },
   "common": {
     "or": "lub",
     "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
@@ -29,6 +35,11 @@
   "localeSwitcher": {
     "label": "Język",
     "ariaLabel": "Wybierz język interfejsu"
+  },
+  "footer": {
+    "privacy": "Polityka prywatności",
+    "terms": "Warunki korzystania z usługi",
+    "rights": "© {year} MenuMaker AI"
   },
   "nav": {
     "brand": "MenuMaker AI",
@@ -67,6 +78,22 @@
       "passwordLabel": "Hasło",
       "submit": "Zaloguj się"
     },
+    "oauthConsent": {
+      "metaTitle": "Kontynuuj przez Google — MenuMaker AI",
+      "title": "Kontynuuj przez Google",
+      "subtitle": "Aby kontynuować przez Google, zaakceptuj naszą Politykę prywatności i Warunki korzystania z usługi.",
+      "consentPrefix": "Akceptuję",
+      "consentPrivacyLink": "Politykę prywatności",
+      "consentAnd": "oraz",
+      "consentTermsLink": "Warunki korzystania z usługi",
+      "consentSuffix": ".",
+      "continueButton": "Kontynuuj",
+      "cancelButton": "Anuluj",
+      "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
+      "invalidRequestTitle": "Nieprawidłowe żądanie",
+      "invalidRequestMessage": "Ta strona została otwarta bez prawidłowego dostawcy logowania.",
+      "backHome": "Powrót do strony głównej"
+    },
     "register": {
       "metaTitle": "Rejestracja — MenuMaker AI",
       "title": "Utwórz konto",
@@ -78,6 +105,12 @@
       "passwordLabel": "Hasło",
       "passwordHelper": "Minimum 8 znaków.",
       "confirmPasswordLabel": "Potwierdź hasło",
+      "consentPrefix": "Akceptuję",
+      "consentPrivacyLink": "Politykę prywatności",
+      "consentAnd": "oraz",
+      "consentTermsLink": "Warunki korzystania z usługi",
+      "consentSuffix": ".",
+      "consentError": "Musisz zaakceptować Politykę prywatności i Warunki korzystania z usługi.",
       "submit": "Zarejestruj się"
     },
     "forgotPassword": {

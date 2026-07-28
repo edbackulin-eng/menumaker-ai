@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 
 /**
  * Exchanges the PKCE `code` param for a session — used by both Google OAuth
@@ -21,8 +22,30 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Only Google sign-ins go through this stamp — password-recovery links
+      // land here too (see the doc comment above) but never through
+      // /oauth-consent, so they must never be treated as "consent just
+      // given". `terms_accepted_at` is set only if still unset: a returning
+      // Google user re-authenticates through /oauth-consent on every login
+      // (see google-signin-button.tsx — there is no way to reach Google
+      // without it), but the *database* record of their original consent
+      // date must never be overwritten by a later login.
+      if (data.user?.app_metadata.provider === "google") {
+        const admin = createServiceClient();
+        const { data: profile } = await admin
+          .from("profiles")
+          .select("terms_accepted_at")
+          .eq("id", data.user.id)
+          .single();
+        if (profile && !profile.terms_accepted_at) {
+          await admin
+            .from("profiles")
+            .update({ terms_accepted_at: new Date().toISOString() })
+            .eq("id", data.user.id);
+        }
+      }
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

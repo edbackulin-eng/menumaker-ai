@@ -7,6 +7,12 @@
     "title": "MenuMaker AI",
     "subtitle": "Próximamente"
   },
+  "regionUnavailable": {
+    "metaTitle": "Servicio no disponible en tu región — MenuMaker AI",
+    "title": "Este servicio aún no está disponible en tu región",
+    "message": "MenuMaker AI actualmente no acepta nuevos registros ni inicios de sesión desde la Unión Europea, el Reino Unido, el Espacio Económico Europeo o Suiza. Gracias por tu comprensión.",
+    "backHome": "Volver al inicio"
+  },
   "common": {
     "or": "o",
     "genericError": "Algo salió mal. Inténtalo de nuevo.",
@@ -29,6 +35,11 @@
   "localeSwitcher": {
     "label": "Idioma",
     "ariaLabel": "Elegir idioma de la interfaz"
+  },
+  "footer": {
+    "privacy": "Política de privacidad",
+    "terms": "Términos del servicio",
+    "rights": "© {year} MenuMaker AI"
   },
   "nav": {
     "brand": "MenuMaker AI",
@@ -67,6 +78,22 @@
       "passwordLabel": "Contraseña",
       "submit": "Iniciar sesión"
     },
+    "oauthConsent": {
+      "metaTitle": "Continuar con Google — MenuMaker AI",
+      "title": "Continuar con Google",
+      "subtitle": "Para continuar con Google, acepte nuestra Política de privacidad y los Términos del servicio.",
+      "consentPrefix": "Acepto la",
+      "consentPrivacyLink": "Política de privacidad",
+      "consentAnd": "y los",
+      "consentTermsLink": "Términos del servicio",
+      "consentSuffix": ".",
+      "continueButton": "Continuar",
+      "cancelButton": "Cancelar",
+      "genericError": "Algo salió mal. Inténtalo de nuevo.",
+      "invalidRequestTitle": "Solicitud no válida",
+      "invalidRequestMessage": "Esta página se abrió sin un proveedor de inicio de sesión válido.",
+      "backHome": "Volver al inicio"
+    },
     "register": {
       "metaTitle": "Registro — MenuMaker AI",
       "title": "Crear una cuenta",
@@ -78,6 +105,12 @@
       "passwordLabel": "Contraseña",
       "passwordHelper": "Al menos 8 caracteres.",
       "confirmPasswordLabel": "Confirma la contraseña",
+      "consentPrefix": "Acepto la",
+      "consentPrivacyLink": "Política de privacidad",
+      "consentAnd": "y los",
+      "consentTermsLink": "Términos del servicio",
+      "consentSuffix": ".",
+      "consentError": "Debe aceptar la Política de privacidad y los Términos del servicio.",
       "submit": "Registrarse"
     },
     "forgotPassword": {

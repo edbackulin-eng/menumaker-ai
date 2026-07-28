@@ -7,6 +7,12 @@
     "title": "MenuMaker AI",
     "subtitle": "Demnächst verfügbar"
   },
+  "regionUnavailable": {
+    "metaTitle": "Dienst in Ihrer Region nicht verfügbar — MenuMaker AI",
+    "title": "Dieser Dienst ist in Ihrer Region noch nicht verfügbar",
+    "message": "MenuMaker AI akzeptiert derzeit keine neuen Registrierungen oder Anmeldungen aus der Europäischen Union, dem Vereinigten Königreich, dem Europäischen Wirtschaftsraum oder der Schweiz. Vielen Dank für Ihr Verständnis.",
+    "backHome": "Zurück zur Startseite"
+  },
   "common": {
     "or": "oder",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
@@ -29,6 +35,11 @@
   "localeSwitcher": {
     "label": "Sprache",
     "ariaLabel": "Sprache der Benutzeroberfläche wählen"
+  },
+  "footer": {
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen",
+    "rights": "© {year} MenuMaker AI"
   },
   "nav": {
     "brand": "MenuMaker AI",
@@ -67,6 +78,22 @@
       "passwordLabel": "Passwort",
       "submit": "Anmelden"
     },
+    "oauthConsent": {
+      "metaTitle": "Weiter mit Google — MenuMaker AI",
+      "title": "Weiter mit Google",
+      "subtitle": "Um mit Google fortzufahren, stimmen Sie bitte unserer Datenschutzerklärung und den Nutzungsbedingungen zu.",
+      "consentPrefix": "Ich stimme der",
+      "consentPrivacyLink": "Datenschutzerklärung",
+      "consentAnd": "und den",
+      "consentTermsLink": "Nutzungsbedingungen",
+      "consentSuffix": " zu.",
+      "continueButton": "Weiter",
+      "cancelButton": "Abbrechen",
+      "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "invalidRequestTitle": "Ungültige Anfrage",
+      "invalidRequestMessage": "Diese Seite wurde ohne gültigen Anmeldeanbieter geöffnet.",
+      "backHome": "Zurück zur Startseite"
+    },
     "register": {
       "metaTitle": "Registrieren — MenuMaker AI",
       "title": "Konto erstellen",
@@ -78,6 +105,12 @@
       "passwordLabel": "Passwort",
       "passwordHelper": "Mindestens 8 Zeichen.",
       "confirmPasswordLabel": "Passwort bestätigen",
+      "consentPrefix": "Ich stimme der",
+      "consentPrivacyLink": "Datenschutzerklärung",
+      "consentAnd": "und den",
+      "consentTermsLink": "Nutzungsbedingungen",
+      "consentSuffix": " zu.",
+      "consentError": "Bitte stimmen Sie der Datenschutzerklärung und den Nutzungsbedingungen zu.",
       "submit": "Registrieren"
     },
     "forgotPassword": {

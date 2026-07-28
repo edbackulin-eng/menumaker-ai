@@ -1,47 +1,29 @@
-"use client";
-
-import * as React from "react";
-
 import { GoogleIcon } from "@/components/auth/google-icon";
-import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { Link } from "@/i18n/navigation";
 
 export interface GoogleSignInButtonProps {
   label: string;
 }
 
 /**
- * Runs client-side (not a Server Action): signInWithOAuth needs to redirect
- * the *browser* to Google's consent screen, which is a full navigation, not
- * something a server round-trip is needed for. No Turnstile here — Google
- * itself is the anti-bot control for this path.
+ * A plain link styled as a button, not a client component that calls
+ * `signInWithOAuth` directly — that used to happen here, but it let a
+ * visitor reach Google's consent screen (and, on return, a live Supabase
+ * session) without ever seeing our own Privacy Policy/Terms consent
+ * checkbox. Every "continue with Google" click now goes through
+ * `/oauth-consent` first, which is the only place that actually calls
+ * `signInWithOAuth` (see oauth-consent-form.tsx) — and only once that
+ * checkbox is ticked.
  */
 export function GoogleSignInButton({ label }: GoogleSignInButtonProps) {
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const handleClick = async () => {
-    setIsLoading(true);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
-    });
-    if (error) {
-      setIsLoading(false);
-    }
-    // On success the browser navigates away to Google; nothing left to do.
-  };
-
   return (
-    <Button
-      type="button"
-      variant="secondary"
-      className="w-full"
-      isLoading={isLoading}
-      onClick={handleClick}
+    <Link
+      href="/oauth-consent?provider=google"
+      className={buttonVariants({ variant: "secondary", className: "w-full" })}
     >
-      {!isLoading && <GoogleIcon className="size-4" />}
+      <GoogleIcon className="size-4" />
       {label}
-    </Button>
+    </Link>
   );
 }

@@ -10,7 +10,7 @@ export interface CheckboxProps extends Omit<
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>,
   "children"
 > {
-  label?: string;
+  label?: React.ReactNode;
   description?: string;
 }
 
