@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { isDemoMode } from "@/config/demo";
+import { DEMO_MENU_CONTENT, DEMO_MENU_LOCALE, DEMO_MENU_TITLE } from "@/config/demo-menu";
 import { publicEnv } from "@/config/env";
 import { SITE_URL } from "@/config/seo";
 import { generateQrPng } from "@/lib/export/qr";
@@ -36,7 +38,38 @@ interface PageProps {
  * unreachable for an anonymous visitor, but this still checks explicitly so
  * the 404 path doesn't depend on RLS alone.
  */
+/**
+ * The single point that would otherwise hit Supabase for this page — so the
+ * DEMO_MODE substitution lives here, covering both `generateMetadata` and the
+ * page body in one place. In demo the portfolio build has no database: any
+ * `/m/*` slug renders the one hardcoded sample menu (`config/demo-menu.ts`),
+ * and this branch returns BEFORE `createClient()`, so nothing on the demo path
+ * touches Supabase at all. Shape matches the real query's result exactly
+ * (`template: null` → renderer falls back to default template resolution).
+ */
+function getDemoMenu(): NonNullable<Awaited<ReturnType<typeof getRealPublicMenu>>> {
+  return {
+    menu: {
+      id: "demo",
+      title: DEMO_MENU_TITLE,
+      content: DEMO_MENU_CONTENT,
+      style_overrides: {},
+      template_id: null,
+      locale: DEMO_MENU_LOCALE,
+      is_public: true,
+    },
+    template: null,
+  };
+}
+
 async function getPublicMenu(slug: string) {
+  if (isDemoMode) {
+    return getDemoMenu();
+  }
+  return getRealPublicMenu(slug);
+}
+
+async function getRealPublicMenu(slug: string) {
   const supabase = await createClient();
   const { data: menu } = await supabase
     .from("menus")

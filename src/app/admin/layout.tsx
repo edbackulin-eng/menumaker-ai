@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { isDemoMode } from "@/config/demo";
 import { isLocaleId } from "@/config/profile";
 import { SITE_URL } from "@/config/seo";
 import { routing } from "@/i18n/routing";
@@ -35,6 +36,13 @@ export const metadata: Metadata = {
  * pattern used by every protected route since Stage 4.
  */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // Демо-заслон: у демо-режимі адмінка недоступна повністю — жодної сторінки
+  // (і read-only теж). Стоїть найпершим, до звернення до Supabase. Покриває всі
+  // сторінки під /admin, оскільки цей layout — їхній спільний корінь.
+  if (isDemoMode) {
+    redirect("/");
+  }
+
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") {
     // "/login" and "/dashboard" now live under `[locale]` — resolving the

@@ -1,10 +1,32 @@
 import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { DEMO_MODE_MESSAGE, isDemoMode } from "@/config/demo";
 import { checkRateLimit } from "@/lib/api/rate-limit";
 import type { RateLimitTier } from "@/lib/api/rate-limit-config";
 import { ApiError, RateLimitError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
+
+const HEAVY_METHODS = new Set(["POST", "PATCH", "DELETE", "PUT"]);
+
+/**
+ * Демо-заслон №1 (покриває всі роути, обгорнуті `withApiHandler`). У демо-режимі
+ * блокуємо будь-яку «важку» точку — на бекенді, до звернення до сервісів/ключів:
+ *   • будь-яка мутація (POST/PATCH/DELETE/PUT);
+ *   • будь-який AI- або export-роут (tier `ai` / `export`);
+ *   • будь-який адмін-роут (`/api/admin/**`) — навіть read-only GET.
+ * Живими лишаються тільки read-only GET-и не-адмінських роутів (tier
+ * `authenticated`): `menus` GET, `menus/[id]` GET, `dashboard/summary` GET —
+ * саме те, що потрібно, щоб демо показало готовий приклад меню й інтерфейс.
+ */
+function isBlockedInDemo(pathname: string, method: string, tier: RateLimitTier): boolean {
+  return (
+    pathname.startsWith("/api/admin") ||
+    HEAVY_METHODS.has(method) ||
+    tier === "ai" ||
+    tier === "export"
+  );
+}
 
 const SLOW_REQUEST_THRESHOLD_MS = 1000;
 
@@ -29,6 +51,15 @@ export function withApiHandler<Context = unknown>(
     const start = Date.now();
     const path = request.nextUrl.pathname;
     const { method } = request;
+
+    // Демо-заслон — найпершим, до rate-limit і будь-якого звернення до
+    // сервісів/ключів (принцип: заслоном є прапорець, а не порожні ключі).
+    if (isDemoMode && isBlockedInDemo(path, method, options.rateLimitTier)) {
+      return NextResponse.json(
+        { error: { code: "demo_mode", message: DEMO_MODE_MESSAGE } },
+        { status: 403 },
+      );
+    }
 
     try {
       const rateLimit = await checkRateLimit(request, options.rateLimitTier);

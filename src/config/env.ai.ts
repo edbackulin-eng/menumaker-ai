@@ -17,7 +17,13 @@ const aiEnvSchema = z.object({
     .min(1, "ANTHROPIC_API_KEY не може бути порожньою."),
 });
 
-function loadAiEnv() {
+type AiEnv = z.infer<typeof aiEnvSchema>;
+
+let cachedAiEnv: AiEnv | null = null;
+
+function loadAiEnv(): AiEnv {
+  if (cachedAiEnv) return cachedAiEnv;
+
   const parsed = aiEnvSchema.safeParse({
     AI_PROVIDER: process.env.AI_PROVIDER,
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
@@ -30,7 +36,23 @@ function loadAiEnv() {
     );
   }
 
-  return parsed.data;
+  cachedAiEnv = parsed.data;
+  return cachedAiEnv;
 }
 
-export const aiEnv = loadAiEnv();
+/**
+ * Лінивий проксі: валідація ключів відкладена до ПЕРШОГО реального доступу до
+ * властивості (перший AI-виклик), а не виконується під час import цього модуля.
+ * Критично для DEMO_MODE — route-файли на import транзитивно тягнуть цей конфіг;
+ * якби `loadAiEnv()` виконувався тут, порожній `ANTHROPIC_API_KEY` у демо-
+ * оточенні завалив би завантаження роуту 500-кою ще до того, як демо-заслон у
+ * `with-api-handler` встиг би повернути ввічливу 403. Усі споживачі читають ключі
+ * лениво (конструктор `AnthropicProvider`, функція `getAIProvider`), тому доступ
+ * до властивості настає лише коли операція реально виконується — у демо ніколи.
+ * У проді поведінка незмінна: перший доступ валідує і кидає ту саму помилку.
+ */
+export const aiEnv: AiEnv = new Proxy({} as AiEnv, {
+  get(_target, prop) {
+    return loadAiEnv()[prop as keyof AiEnv];
+  },
+});

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { isDemoMode } from "@/config/demo";
 import { SITE_URL, buildLocaleAlternates } from "@/config/seo";
 import { Link } from "@/i18n/navigation";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -47,9 +48,11 @@ export default async function Home() {
         <span className="text-h6 text-foreground font-semibold">{t("title")}</span>
         <div className="flex items-center gap-3">
           <LocaleSwitcher />
-          <Link href="/login" className="text-body-sm text-foreground-secondary hover:underline">
-            {tAuth("title")}
-          </Link>
+          {!isDemoMode && (
+            <Link href="/login" className="text-body-sm text-foreground-secondary hover:underline">
+              {tAuth("title")}
+            </Link>
+          )}
         </div>
       </header>
       <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 px-6 text-center dark:bg-black">

@@ -24,7 +24,13 @@ const serverEnvSchema = z.object({
     .min(1, "TURNSTILE_SECRET_KEY не може бути порожньою."),
 });
 
-function loadServerEnv() {
+type ServerEnv = z.infer<typeof serverEnvSchema>;
+
+let cachedServerEnv: ServerEnv | null = null;
+
+function loadServerEnv(): ServerEnv {
+  if (cachedServerEnv) return cachedServerEnv;
+
   const parsed = serverEnvSchema.safeParse({
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
@@ -37,7 +43,21 @@ function loadServerEnv() {
     );
   }
 
-  return parsed.data;
+  cachedServerEnv = parsed.data;
+  return cachedServerEnv;
 }
 
-export const serverEnv = loadServerEnv();
+/**
+ * Лінивий проксі — та сама причина, що й у `env.ai.ts`. Додатковий нюанс тут:
+ * `TURNSTILE_SECRET_KEY` у демо-оточенні порожній (авторизацію вимкнено), тож
+ * top-level валідація завалила б будь-який серверний шлях, що транзитивно тягне
+ * цей конфіг. Ключі читаються лениво: `TURNSTILE_SECRET_KEY` — у
+ * `verifyTurnstileToken` (усередині заблокованих у демо auth-actions),
+ * `SUPABASE_SERVICE_ROLE_KEY` — у `createServiceClient` (лише на важких,
+ * заблокованих у демо шляхах). Тому в демо ці властивості не читаються ніколи.
+ */
+export const serverEnv: ServerEnv = new Proxy({} as ServerEnv, {
+  get(_target, prop) {
+    return loadServerEnv()[prop as keyof ServerEnv];
+  },
+});

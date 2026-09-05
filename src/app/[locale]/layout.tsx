@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { RootShell } from "@/app/root-shell";
+import { isDemoMode } from "@/config/demo";
 import { SITE_URL } from "@/config/seo";
 import { routing } from "@/i18n/routing";
 
@@ -30,6 +31,9 @@ export async function generateMetadata({
     metadataBase: SITE_URL,
     title: t("title"),
     description: t("description"),
+    // Demo (portfolio) build: keep every page under this segment out of the
+    // index. Prod (DEMO_MODE=false) omits this entirely — unchanged SEO.
+    ...(isDemoMode ? { robots: { index: false, follow: false } } : {}),
   };
 }
 

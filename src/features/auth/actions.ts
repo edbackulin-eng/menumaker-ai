@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { getLocale } from "next-intl/server";
 
+import { demoActionRejection, isDemoMode } from "@/config/demo";
 import { publicEnv } from "@/config/env";
 import { redirect } from "@/i18n/navigation";
 import { checkLoginLock, recordLoginFailure, recordLoginSuccess } from "@/lib/auth/rate-limit";
@@ -36,6 +37,8 @@ async function getRequestMeta() {
 }
 
 export async function signUpAction(input: RegisterInput): Promise<ActionResult> {
+  if (isDemoMode) return demoActionRejection();
+
   const parsed = registerSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Некоректні дані форми." };
@@ -83,6 +86,8 @@ export async function signUpAction(input: RegisterInput): Promise<ActionResult> 
 }
 
 export async function signInAction(input: LoginInput): Promise<ActionResult> {
+  if (isDemoMode) return demoActionRejection();
+
   const parsed = loginSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Некоректні дані форми." };
@@ -113,6 +118,8 @@ export async function signInAction(input: LoginInput): Promise<ActionResult> {
 export async function resetPasswordRequestAction(
   input: ForgotPasswordInput,
 ): Promise<ActionResult> {
+  if (isDemoMode) return demoActionRejection();
+
   const parsed = forgotPasswordSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Некоректні дані форми." };
@@ -129,6 +136,8 @@ export async function resetPasswordRequestAction(
 }
 
 export async function updatePasswordAction(input: ResetPasswordInput): Promise<ActionResult> {
+  if (isDemoMode) return demoActionRejection();
+
   const parsed = resetPasswordSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Некоректні дані форми." };

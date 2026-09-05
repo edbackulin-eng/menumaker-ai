@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { isDemoMode } from "@/config/demo";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 
@@ -10,6 +11,14 @@ import { createServiceClient } from "@/lib/supabase/service";
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
+
+  // Демо-заслон: у демо-режимі OAuth вимкнено — не обмінюємо код на сесію
+  // (жодна сесія не створюється), нейтрально повертаємо на головну. Це і є
+  // серверний заслон для клієнтського старту Google OAuth (oauth-consent-form).
+  if (isDemoMode) {
+    return NextResponse.redirect(`${origin}/?notice=demo`);
+  }
+
   const code = searchParams.get("code");
   const nextParam = searchParams.get("next");
   // Only allow relative, same-origin paths — `next` is attacker-influenceable

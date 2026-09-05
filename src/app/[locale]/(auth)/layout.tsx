@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { isDemoMode } from "@/config/demo";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { SiteFooter } from "@/components/shared/site-footer";
@@ -16,7 +17,24 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
           </Link>
           <LocaleSwitcher />
         </div>
-        <div className="w-full max-w-sm">{children}</div>
+        <div className="w-full max-w-sm">
+          {isDemoMode ? (
+            <div className="border-border bg-surface-secondary rounded-lg border p-6 text-center">
+              <p className="text-body-sm text-foreground-secondary">
+                Вхід і реєстрація вимкнені в демо-режимі. Це портфоліо-версія MenuMaker AI —
+                перегляньте готовий приклад меню без авторизації.
+              </p>
+              <Link
+                href="/"
+                className="text-accent-600 text-body-sm mt-3 inline-block font-medium hover:underline"
+              >
+                ← На головну
+              </Link>
+            </div>
+          ) : (
+            children
+          )}
+        </div>
       </main>
       <SiteFooter />
     </div>

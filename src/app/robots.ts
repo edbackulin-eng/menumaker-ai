@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { isDemoMode } from "@/config/demo";
 import { SITE_URL } from "@/config/seo";
 
 /**
@@ -22,6 +23,16 @@ import { SITE_URL } from "@/config/seo";
  * in the index instead of being kept out of it.
  */
 export default function robots(): MetadataRoute.Robots {
+  // Demo (portfolio) build must never appear in search — disallow the whole
+  // site. Pairs with the page-level `noindex` added in DEMO_MODE metadata so
+  // any URL already crawled is dropped, not left as a bare entry.
+  if (isDemoMode) {
+    return {
+      rules: { userAgent: "*", disallow: "/" },
+      sitemap: `${SITE_URL.origin}/sitemap.xml`,
+    };
+  }
+
   return {
     rules: {
       userAgent: "*",

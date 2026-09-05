@@ -1,5 +1,6 @@
 "use server";
 
+import { demoActionRejection, isDemoMode } from "@/config/demo";
 import { createClient } from "@/lib/supabase/server";
 import { changePasswordSchema, type ChangePasswordInput } from "@/lib/validations/profile";
 
@@ -16,6 +17,8 @@ export interface ActionResult {
  * success message.
  */
 export async function changePasswordAction(input: ChangePasswordInput): Promise<ActionResult> {
+  if (isDemoMode) return demoActionRejection();
+
   const parsed = changePasswordSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Некоректні дані форми." };

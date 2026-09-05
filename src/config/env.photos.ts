@@ -18,7 +18,13 @@ const photosEnvSchema = z.object({
     .min(1, "PEXELS_API_KEY не може бути порожньою."),
 });
 
-function loadPhotosEnv() {
+type PhotosEnv = z.infer<typeof photosEnvSchema>;
+
+let cachedPhotosEnv: PhotosEnv | null = null;
+
+function loadPhotosEnv(): PhotosEnv {
+  if (cachedPhotosEnv) return cachedPhotosEnv;
+
   const parsed = photosEnvSchema.safeParse({
     PHOTO_PROVIDER: process.env.PHOTO_PROVIDER,
     PEXELS_API_KEY: process.env.PEXELS_API_KEY,
@@ -31,7 +37,18 @@ function loadPhotosEnv() {
     );
   }
 
-  return parsed.data;
+  cachedPhotosEnv = parsed.data;
+  return cachedPhotosEnv;
 }
 
-export const photosEnv = loadPhotosEnv();
+/**
+ * Лінивий проксі — та сама причина, що й у `env.ai.ts`: import цього конфігу
+ * (транзитивно з фото-роутів) не має валідувати `PEXELS_API_KEY`, щоб порожній
+ * ключ у демо-оточенні не завалював завантаження роуту раніше за демо-заслон.
+ * Споживачі (`PexelsProvider.search`, `getPhotoProvider`) читають ключ лениво.
+ */
+export const photosEnv: PhotosEnv = new Proxy({} as PhotosEnv, {
+  get(_target, prop) {
+    return loadPhotosEnv()[prop as keyof PhotosEnv];
+  },
+});
