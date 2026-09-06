@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { isDemoMode } from "@/config/demo";
 import { MENU_GENERATOR_CONFIG } from "@/config/menu-generator";
 import type { Database } from "@/types/database.types";
 
@@ -53,6 +54,40 @@ export interface DashboardSummary {
 }
 
 const RECENT_TRANSACTIONS_LIMIT = 5;
+
+/**
+ * Hardcoded dashboard figures for DEMO_MODE — returned by getDashboardSummary
+ * below instead of the four Supabase queries. Also drives the demo History
+ * page (it imports these transactions directly), so a guest sees the same
+ * numbers in the sidebar, the Credits page and History with zero DB access.
+ */
+export const DEMO_SUMMARY: DashboardSummary = {
+  menuCount: 3,
+  balance: 12,
+  freeMenusUsed: 1,
+  freeMenuLimit: MENU_GENERATOR_CONFIG.freeMenuLimit,
+  creditBlock: { mode: "credits", value: 12, total: 20, fillRatio: 0.6 },
+  recentTransactions: [
+    {
+      id: "demo-tx-1",
+      amount: -1,
+      type: "menu_generation",
+      description: "Menu generation — Trattoria Bella",
+      created_at: "2024-01-03T10:00:00.000Z",
+      related_menu_id: null,
+      related_menu_title: "Trattoria Bella",
+    },
+    {
+      id: "demo-tx-2",
+      amount: 20,
+      type: "bonus",
+      description: "Welcome bonus",
+      created_at: "2024-01-01T09:00:00.000Z",
+      related_menu_id: null,
+      related_menu_title: null,
+    },
+  ],
+};
 
 function clamp01(value: number): number {
   if (!Number.isFinite(value) || value <= 0) return 0;
@@ -122,6 +157,11 @@ export async function getDashboardSummary(
   supabase: SupabaseClient<Database>,
   userId: string,
 ): Promise<DashboardSummary> {
+  // Demo: return the canned figures before touching Supabase at all — the
+  // sidebar (rendered on every dashboard navigation) and the Credits page
+  // both go through here, so this one guard keeps them DB-free.
+  if (isDemoMode) return DEMO_SUMMARY;
+
   // The ledger query is a 4th member of the same Promise.all, not a
   // follow-up — the sidebar renders on every dashboard navigation, so the
   // credits block must not cost a serial round-trip. It selects `amount`

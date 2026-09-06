@@ -3,6 +3,7 @@ import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { SESSION_COOKIE_MAX_AGE_SECONDS } from "@/config/auth";
+import { isDemoMode } from "@/config/demo";
 import { publicEnv } from "@/config/env";
 import { isBlockedCountry } from "@/config/geo-block";
 import { isLocaleId, type LocaleId } from "@/config/profile";
@@ -234,7 +235,11 @@ export async function proxy(request: NextRequest) {
     (prefix) => pathWithoutLocale === prefix || pathWithoutLocale.startsWith(`${prefix}/`),
   );
 
-  if (isProtected && !user) {
+  // Demo: a guest must reach /dashboard and /menus without a session. The
+  // page/layout gates (getCurrentUser → DEMO_USER) take over from here, and
+  // /admin keeps its own guard above, so this only lifts the /login bounce
+  // for the two public-in-demo prefixes.
+  if (isProtected && !user && !isDemoMode) {
     const locale = localeMatch?.[1] ?? routing.defaultLocale;
     const loginUrl = new URL(`/${locale}/login`, request.url);
     loginUrl.searchParams.set("next", pathname);

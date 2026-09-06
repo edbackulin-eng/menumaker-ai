@@ -8,7 +8,9 @@ import { MenuReviewEditor } from "@/components/menu-generator/menu-review-editor
 import { WizardExitButton, WizardExitProvider } from "@/components/menu-generator/wizard-exit";
 import { WizardSteps } from "@/components/menu-generator/wizard-steps";
 import { redirect } from "@/i18n/navigation";
+import { isDemoMode } from "@/config/demo";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { DemoUnavailable } from "@/components/shared/demo-unavailable";
 import { createClient } from "@/lib/supabase/server";
 import { menuContentSchema } from "@/services/ai/schemas/menu-content";
 
@@ -22,6 +24,8 @@ interface PageProps {
 }
 
 export default async function MenuReviewPage({ params }: PageProps) {
+  if (isDemoMode) return <DemoUnavailable />;
+
   const { locale, id } = await params;
   const t = await getTranslations("menuGenerator.review");
 

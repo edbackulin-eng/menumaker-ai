@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { CheckCircle2, CircleDashed, Coins, Gift } from "lucide-react";
 
+import { isDemoMode } from "@/config/demo";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
-import { getDashboardSummary } from "@/services/dashboard/get-summary";
+import { DEMO_SUMMARY, getDashboardSummary } from "@/services/dashboard/get-summary";
 import { Link, redirect } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,8 +31,10 @@ export default async function CreditsPage({ params }: PageProps) {
     return redirect({ href: "/login", locale });
   }
 
-  const supabase = await createClient();
-  const summary = await getDashboardSummary(supabase, user.id);
+  // Demo: canned summary, no Supabase client constructed.
+  const summary = isDemoMode
+    ? DEMO_SUMMARY
+    : await getDashboardSummary(await createClient(), user.id);
   const freeMenuAvailable = summary.freeMenusUsed < summary.freeMenuLimit;
 
   return (

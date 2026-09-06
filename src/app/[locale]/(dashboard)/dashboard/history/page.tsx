@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { isDemoMode } from "@/config/demo";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
+import { DEMO_SUMMARY } from "@/services/dashboard/get-summary";
 import { Link, redirect } from "@/i18n/navigation";
 import { Container } from "@/components/shared/container";
 import { PageHeader } from "@/components/shared/page-header";
@@ -27,6 +29,18 @@ export default async function HistoryPage({ params, searchParams }: PageProps) {
   const user = await getCurrentUser();
   if (!user) {
     return redirect({ href: "/login", locale });
+  }
+
+  // Demo: canned transactions, no Supabase. Single page, no pagination.
+  if (isDemoMode) {
+    return (
+      <Container size="lg" className="py-8">
+        <PageHeader title={t("title")} description={t("subtitle")} />
+        <div className="mt-6">
+          <TransactionList transactions={DEMO_SUMMARY.recentTransactions} />
+        </div>
+      </Container>
+    );
   }
 
   const { page: pageParam } = await searchParams;

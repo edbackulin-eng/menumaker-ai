@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { isDemoMode } from "@/config/demo";
 import { DEMO_PREVIEW_SLIDES, type DemoSlideSpec } from "@/config/demo-menu-preview";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
@@ -54,6 +55,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const PAGE_SIZE = 12;
 
+/** Slide labels for the DEMO_MODE carousel — prod reads template names from the DB, demo has no rows, so name the engines directly. */
+const DEMO_ENGINE_LABELS: Record<string, string> = {
+  "banner-two-column": "Modern",
+  grid: "Grid",
+  "classic-elegant": "Bistro",
+  editorial: "Editorial",
+};
+
 interface PageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ page?: string }>;
@@ -66,6 +75,37 @@ export default async function MyMenusPage({ params, searchParams }: PageProps) {
   const user = await getCurrentUser();
   if (!user) {
     return redirect({ href: "/login", locale });
+  }
+
+  // Demo: render the empty-state showcase (the 3D layout carousel) with zero
+  // Supabase access. Returns BEFORE createClient() below. The four slide
+  // styles come from resolveTemplateDefaults with a null template source —
+  // i.e. each engine's built-in defaults — instead of the `menu_templates`
+  // rows the prod path reads. The "Create first menu" button stays visible
+  // but its /menus/new target renders the demo stub (see menus/new/page.tsx).
+  if (isDemoMode) {
+    const previewSlides = DEMO_PREVIEW_SLIDES.map((spec) => ({
+      id: spec.engine,
+      label: DEMO_ENGINE_LABELS[spec.engine] ?? spec.engine,
+      style: resolveTemplateDefaults({ config: null, engine: spec.engine, palette: null }),
+    }));
+    return (
+      <Container size="xl" className="py-5">
+        <EmptyState
+          className="mt-6 gap-4 px-4 py-10 sm:px-8"
+          previewClassName="w-full"
+          preview={<MenuPreviewShowcase slides={previewSlides} />}
+          title={t("emptyTitle")}
+          titleClassName="text-h4"
+          description={t("emptyDescription")}
+          action={
+            <Link href="/menus/new" className={buttonVariants({ size: "lg" })}>
+              {t("createFirst")}
+            </Link>
+          }
+        />
+      </Container>
+    );
   }
 
   const { page: pageParam } = await searchParams;

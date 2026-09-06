@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { isDemoMode } from "@/config/demo";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { defaultCurrencyForLocale, isCurrencyId } from "@/config/menu-currency";
+import { DemoUnavailable } from "@/components/shared/demo-unavailable";
 import { MENU_EDITOR_FONT_VARIABLES_CLASSNAME } from "@/lib/fonts/menu-fonts";
 import { createClient } from "@/lib/supabase/server";
 import { resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
@@ -26,6 +28,8 @@ interface PageProps {
 }
 
 export default async function MenuEditorPage({ params }: PageProps) {
+  if (isDemoMode) return <DemoUnavailable />;
+
   const { locale, id } = await params;
   const t = await getTranslations("menuGenerator.editor");
 

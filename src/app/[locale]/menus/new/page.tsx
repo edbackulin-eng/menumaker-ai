@@ -7,8 +7,10 @@ import { PageHeader } from "@/components/shared/page-header";
 import { ImportForm } from "@/components/menu-generator/import-form";
 import { WizardExitButton, WizardExitProvider } from "@/components/menu-generator/wizard-exit";
 import { WizardSteps } from "@/components/menu-generator/wizard-steps";
+import { isDemoMode } from "@/config/demo";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { DemoUnavailable } from "@/components/shared/demo-unavailable";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("menuGenerator.import");
@@ -20,6 +22,8 @@ interface PageProps {
 }
 
 export default async function NewMenuPage({ params }: PageProps) {
+  if (isDemoMode) return <DemoUnavailable />;
+
   const { locale } = await params;
   const t = await getTranslations("menuGenerator.import");
 

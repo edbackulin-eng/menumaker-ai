@@ -1,7 +1,8 @@
+import { isDemoMode } from "@/config/demo";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { createClient } from "@/lib/supabase/server";
-import { getDashboardSummary } from "@/services/dashboard/get-summary";
+import { DEMO_SUMMARY, getDashboardSummary } from "@/services/dashboard/get-summary";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardMobileNav } from "@/components/dashboard/dashboard-mobile-nav";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
@@ -28,8 +29,12 @@ export default async function DashboardLayout({
   // extra query on every dashboard navigation, same tradeoff already made
   // for auth (getCurrentUser runs per-layout too, deduped via React
   // cache() within a request).
-  const supabase = await createClient();
-  const summary = await getDashboardSummary(supabase, user.id);
+  //
+  // Demo: use the canned summary directly and never construct a Supabase
+  // client — keeps the whole dashboard shell DB-free for a guest.
+  const summary = isDemoMode
+    ? DEMO_SUMMARY
+    : await getDashboardSummary(await createClient(), user.id);
 
   return (
     <div className="flex min-h-screen">

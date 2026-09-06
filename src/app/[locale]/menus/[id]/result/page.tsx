@@ -11,7 +11,9 @@ import { ExportPanel } from "@/components/menu-export/export-panel";
 import { WizardExitButton, WizardExitProvider } from "@/components/menu-generator/wizard-exit";
 import { WizardSteps } from "@/components/menu-generator/wizard-steps";
 import { MenuStaticView } from "@/components/menu-render/menu-static-view";
+import { isDemoMode } from "@/config/demo";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { DemoUnavailable } from "@/components/shared/demo-unavailable";
 import { createClient } from "@/lib/supabase/server";
 import { applyStyleOrder } from "@/lib/utils/menu-content-order";
 import { resolveEffectiveStyle, resolveTemplateDefaults } from "@/lib/utils/resolve-menu-style";
@@ -28,6 +30,8 @@ interface PageProps {
 }
 
 export default async function MenuResultPage({ params }: PageProps) {
+  if (isDemoMode) return <DemoUnavailable />;
+
   const { locale, id } = await params;
   const t = await getTranslations("menuGenerator.result");
 
