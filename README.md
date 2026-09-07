@@ -1,94 +1,55 @@
 # MenuMaker AI
 
-Міжнародний SaaS для автоматичного створення професійних меню ресторанів, кафе, барів і пекарень.
+An international SaaS platform for automatically creating professional menus for restaurants, cafés, bars and bakeries — powered by AI.
 
-## Стек
+**Live demo:** [menumaker-ai.vercel.app](https://menumaker-ai.vercel.app) — no login required, demo mode is open to explore.
 
-- **Next.js 16** (App Router, Server Components за замовчуванням, Turbopack)
-- **TypeScript** (strict mode, `noUncheckedIndexedAccess`)
-- **Tailwind CSS v4**
-- **Supabase** (Database, Auth, Storage) — інфраструктура клієнтів підключена, схема БД буде додана окремим етапом
-- **Vercel** (deployment)
-- **Оплата** — призупинено рішенням Product Owner (юридичні обмеження Stripe для України + перевірка попиту спершу); деталі й готовий, ще не змерджений код Stripe-інтеграції — `docs/payments-integration.md`
+---
 
-## Локальний запуск
+## Overview
+
+MenuMaker AI lets restaurant owners build, edit and export polished menus in minutes. It uses the Anthropic Claude API to analyze menus, generate dish descriptions, suggest improvements and translate content into multiple languages. Menus can be edited with a drag-and-drop interface and exported to multiple formats.
+
+## Features
+
+- **AI-powered menu builder** — menu analysis, automatic description generation and improvement suggestions via the Anthropic Claude API
+- **Multi-language** — fully internationalized in 5 locales (`next-intl`)
+- **Drag-and-drop editor** — reorder and organize menu items with `dnd-kit`
+- **Multi-format export** — export menus to PDF, PNG and QR code
+- **Import** — bring in existing menus from `.docx`, PDF and Excel files
+- **Credit system & admin analytics** — usage tracking and an admin dashboard
+- **Auth** — Supabase Auth with OAuth
+- **Compliance & security** — GDPR-compliant, geo-blocking and login rate-limiting
+- **Safe demo mode** — a sandboxed showcase with sample data, no real customer data exposed
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router, React Server Components, Turbopack)
+- **Language:** TypeScript (strict mode, `noUncheckedIndexedAccess`)
+- **Styling:** Tailwind CSS v4
+- **Backend / Database:** Supabase (PostgreSQL, Auth, Storage)
+- **AI:** Anthropic Claude API
+- **Internationalization:** next-intl (5 locales)
+- **Deployment:** Vercel
+
+## Getting Started
 
 ```bash
 npm install
-cp .env.example .env.local   # заповніть реальними значеннями
+cp .env.example .env.local   # fill in your own keys
 npm run dev
 ```
 
-Застосунок буде доступний на [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Інші команди
+## Screenshots
 
-| Команда                | Призначення                                  |
-| ---------------------- | -------------------------------------------- |
-| `npm run build`        | Production-білд                              |
-| `npm run start`        | Запуск production-білду                      |
-| `npm run lint`         | Перевірка ESLint                             |
-| `npm run format`       | Автоформатування Prettier                    |
-| `npm run format:check` | Перевірка форматування без запису            |
-| `npm run type-check`   | Перевірка типів TypeScript без емісії файлів |
+<!-- Add 2-3 screenshots here, e.g.: -->
+<!-- ![Dashboard](docs/screenshot-dashboard.png) -->
+<!-- ![Menu editor](docs/screenshot-editor.png) -->
 
-Pre-commit хук (Husky + lint-staged) автоматично лінтить і форматує застаговані файли перед кожним комітом.
+---
 
-## Структура проєкту
+Built by [Eduard Bakulin](https://github.com/edbackulin-eng) · Full Stack Developer
 
-```
-src/
-  app/                     Next.js App Router — маршрути та їх layout/page файли
-    [locale]/              Заготовка під i18n-маршрутизацію (буде активована на етапі i18n);
-                            наразі порожня — жива головна сторінка лежить у app/page.tsx
-      (marketing)/          Публічні сторінки (лендінг, ціни тощо)
-      (auth)/                Логін/реєстрація
-      (dashboard)/           Кабінет користувача
-      admin/                 Адмін-панель
-    api/                    Route Handlers (API-ендпоінти)
-  features/                Бізнес-логіка за доменами (кожна фіча — самодостатній модуль)
-    menu/                   Створення та редагування меню
-    auth/                   Логіка автентифікації/авторизації
-    credits/                Кредити/ліміти використання
-    ai/                     Логіка взаємодії з AI-функціями продукту
-    admin/                  Логіка адмін-функціоналу
-  components/
-    ui/                     Базові перевикористовувані UI-примітиви (кнопки, інпути тощо)
-    shared/                 Складені компоненти, що використовуються в кількох фічах
-  lib/
-    supabase/               Supabase-клієнти (browser/server)
-    utils/                  Загальні утиліти
-    validations/            Схеми валідації (zod)
-    constants/               Константи застосунку
-  services/
-    ai/                     Шар інтеграції з зовнішнім AI-провайдером (заготовка)
-  types/                    Спільні TypeScript-типи
-  config/
-    env.ts                  Типобезпечна публічна конфігурація (NEXT_PUBLIC_*)
-    env.server.ts           Типобезпечна серверна конфігурація (секрети, захищено server-only)
-  styles/
-    globals.css             Глобальні стилі та підключення Tailwind
-```
 
-Принцип: розділення за фічами (`features/`), а не за типом файлу. Це дозволяє в майбутньому легко винести домен в окремий пакет без переписування архітектури.
-
-### Чому `app/[locale]/` порожній
-
-Структура для майбутньої i18n-маршрутизації зарезервована наперед, щоб уникнути болючого переносу сторінок пізніше. Її активація (proxy для визначення locale, `generateStaticParams`, реальні сторінки всередині) — окремий етап. До того часу головна сторінка обслуговується напряму з `app/page.tsx`.
-
-## Змінні середовища
-
-Усі змінні описані в [.env.example](./.env.example) з коментарями українською. Валідація відбувається типобезпечно через `zod`:
-
-- `src/config/env.ts` — публічні змінні (`NEXT_PUBLIC_*`), безпечні для браузера.
-- `src/config/env.server.ts` — серверні секрети; захищені пакетом `server-only` від випадкового імпорту в клієнтський код.
-
-Обидва файли валідують значення одразу при імпорті модуля і кидають чітку помилку, якщо обов'язкова змінна відсутня або некоректна.
-
-## Supabase
-
-Клієнти для браузера (`src/lib/supabase/client.ts`) та сервера (`src/lib/supabase/server.ts`) підключені, коректно працюють з cookies у Next.js App Router (async `cookies()`). Схема бази даних, RLS-політики та реальні запити — окремий етап.
-
-## Контриб'ютинг
-
-Формат комітів та процес розробки описані в [CONTRIBUTING.md](./CONTRIBUTING.md).
